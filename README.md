@@ -144,11 +144,11 @@ Three next days?
     #object[java.time.LocalDate "2015-09-30"])
 ```
 
-When is the next working day?
+When is the first Monday in month?
 
 ```clj
-(adjust now :next-working-day)
-=> #object[java.time.LocalDate "2015-09-28"]
+(adjust now :first-in-month :monday)
+=> #object[java.time.LocalDate "2015-09-07"]
 ```
 
 Date with some of its fields truncated:
@@ -263,8 +263,33 @@ Any date which can be converted to an instant, can also be converted to pre-Java
 => #inst "2015-09-27T22:00:00.000000000-00:00"
 ```
 
-Bonus! if you have Joda Time on the classpath, you can seamlessly convert from
-Joda Time to Java Time types:
+#### Three-Ten Extra
+
+If you add an optional `[org.threeten/threeten-extra "0.9"]` dependency to the
+project, you will get an `Interval`, `AmPm`, `DayOfMonth`, `DayOfYear`,
+`Quarter` and `YearQuarter` data types as well as a couple more adjusters.
+
+An interval can be constructed from two entities that can be converted to
+instants:
+
+```clj
+(interval (offset-date-time 2015 1 1 +0) (zoned-date-time 2016 1 1 "UTC"))
+=> #<org.threeten.extra.Interval 2015-01-01T00:00:00Z/2016-01-01T00:00:00Z>
+
+(move-start-by *1 (duration 5 :days))
+=> #<org.threeten.extra.Interval 2015-01-06T00:00:00Z/2016-01-01T00:00:00Z>
+
+(move-end-by *1 (duration 5 :days))
+=> #<org.threeten.extra.Interval 2015-01-06T00:00:00Z/2016-01-06T00:00:00Z>
+
+(contains? *1 (offset-date-time 2015 1 1 +0))
+=> false
+```
+
+#### Joda-Time
+
+Bonus! if you have Joda Time on the classpath (either directly, or via
+`clj-time`), you can seamlessly convert from Joda Time to Java Time types:
 
 ```clj
 (java-time.repl/show-path org.joda.time.DateTime java.time.OffsetTime)
@@ -403,3 +428,24 @@ of the identical conversion logic. However, the flexibility comes with a cost:
    both on the performance and the conversion path chosen for certain arguments.
 
 Hopefully, the performance issue will be resolved in the future...
+
+You can play with the conversion graph using the following helpers:
+
+```clj
+(java-time.repl/show-path org.joda.time.DateTime java.time.OffsetTime)
+=> {:cost 2.0,
+    :path [[#<java_time.graph.Types@15e43c24 [org.joda.time.DateTime]>
+            #<java_time.graph.Types@78a2235c [java.time.Instant java.time.ZoneId]>]
+           [#<java_time.graph.Types@6d8ded1a [java.time.Instant java.time.ZoneId]>
+            #<java_time.graph.Types@5360f6ae [java.time.OffsetTime]>]]}
+
+(java-time.repl/show-graph)
+=> {1
+     {org.threeten.extra.DayOfYear
+      [[#object[java_time.graph.Types "[java.lang.Number]"]
+        #object[java_time.graph.Conversion "Cost:1.0"]]],
+      java.lang.Number
+      [[#object[java_time.graph.Types "[java.time.Instant]"]
+        #object[java_time.graph.Conversion "Cost:1.0"]]
+        ...
+```
