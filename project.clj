@@ -25,6 +25,4 @@
                                                  [org.threeten/threeten-extra "0.9"]
                                                  [joda-time/joda-time "2.9"]]}}
   :aliases {"test-all" ["do"
-                        ["with-profile" "1.7:1.8:1.7-three-ten-joda:1.8-three-ten-joda" "test"]]}
-  :deploy-repositories [["clojars" {:url "https://clojars.org/repo"
-                                    :sign-releases false}]])
+                        ["with-profile" "1.7:1.8:1.7-three-ten-joda:1.8-three-ten-joda" "test"]]})
