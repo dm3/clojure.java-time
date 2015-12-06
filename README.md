@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.org/dm3/clojure.java-time.png?branch=master)](https://travis-ci.org/dm3/clojure.java-time)
 
-An idiomatic Clojure wrapper for Java 8 Date-Time API.
+A Clojure wrapper for Java 8 Date-Time API.
 
 Main goals:
 
@@ -216,6 +216,17 @@ Parse a date:
 => #object[java.time.LocalDate "2015-09-28"]
 ```
 
+Zoned date-times and offset date-times/times always take the zone/offset as the
+last argument. Offsets can be specified as float values:
+
+```clj
+(j/offset-time +1.5)
+=> #<java.time.OffsetTime 10:16:08.000+01:30>
+
+(j/offset-time -1.5)
+=> #<java.time.OffsetTime 07:16:08.000-01:30>
+```
+
 #### Conversions
 
 Time entities can be converted to other time entities if the target contains
@@ -378,3 +389,17 @@ queries uniformly across all of the entity types.
 (properties (local-date 2015 9 28))
 => {:proleptic-month #java_time.temporal.TemporalFieldProperty{...}, ...}
 ```
+
+## Implementation Details
+
+Most of the temporal entity constructors with arities 1 to 3 use the conversion
+graph underneath. This provides for a very flexible way of defining the
+conversions while avoiding huge conditional statements and multiple definitions
+of the identical conversion logic. However, the flexibility comes with a cost:
+
+1. The first call to a constructor will take around ~100ms as it will try to
+   find a path in the conversion graph. Subsequent calls will reuse the path.
+2. It's not trivial to evaluate the impact of adding and removing conversions
+   both on the performance and the conversion path chosen for certain arguments.
+
+Hopefully, the performance issue will be resolved in the future...
