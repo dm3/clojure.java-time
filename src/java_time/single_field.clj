@@ -1,0 +1,224 @@
+(ns java-time.single-field
+  (:require [clojure.string :as string]
+            [java-time.zone :as jt.z]
+            [java-time.format :as jt.f]
+            [java-time.core :as jt.c]
+            [java-time.util :as jt.u]
+            [java-time.clock :as jt.clock]
+            [java-time.defconversion :refer (conversion!)])
+  (:import [java.time.temporal TemporalAccessor TemporalAmount TemporalUnit ChronoUnit]
+           [java.time.format DateTimeFormatter]
+           [java.time Clock Year Month YearMonth MonthDay DayOfWeek ZoneId Instant]))
+
+(defn- ^long get-only-unit-value [^TemporalAmount a, ^TemporalUnit u]
+  (let [non-zero-units
+        (->> (.getUnits a)
+             (map (fn [^TemporalUnit tu] (vector tu (.get a tu))))
+             (filter (fn [[_ uv]] (not (zero? uv)))))
+        [our-unit our-value] (first (filter (fn [[tu]] (= tu u)) non-zero-units))]
+    (when-not our-unit
+      (throw (java.time.temporal.UnsupportedTemporalTypeException.
+               (format "No unit: %s found in %s!" u a))))
+    (when (> (count non-zero-units) 1)
+      (throw (java.time.temporal.UnsupportedTemporalTypeException.
+               (format "Cannot use: %s, expected only %s to be non-zero!" a u))))
+    (long our-value)))
+
+(defmacro enumerated-entity [tp doc & {:keys [unit]}]
+  (let [fname (with-meta (symbol (jt.u/dashize (str tp))) {:tag tp})
+        fields (symbol (str fname "-fields"))]
+    `(do
+       (def ~fields
+         (->> (jt.u/get-static-fields-of-type ~tp TemporalAccessor)
+              (vals)
+              (map (fn [m#] [(keyword (string/lower-case (str m#))) m#]))
+              (into {})))
+
+       (defn ^{:doc ~(str "True if `" tp "`.")} ~(symbol (str fname "?"))
+         [o#]
+         (instance? ~tp o#))
+
+       (conversion! ~tp Number jt.c/value)
+
+       (defn ~fname ~doc
+         ([] (. ~tp from (jt.z/zoned-date-time)))
+         ([v#] (cond (keyword? v#)
+                     (v# ~fields)
+
+                     (number? v#)
+                     (. ~tp of (int v#))
+
+                     (instance? TemporalAccessor v#)
+                     (. ~tp from v#)))
+         ([fmt# arg#]
+          (~fname (jt.f/parse fmt# arg#))))
+
+       (extend-type ~tp
+         jt.c/Ordered
+         (single-after? [d# o#]
+           (> (.getValue d#) (.getValue (~fname o#))))
+         (single-before? [d# o#]
+           (< (.getValue d#) (.getValue (~fname o#)))))
+
+        ;; Enum-based entities do not implement `Temporal`, thus we don't have an easy
+        ;; option to add/subtract a TemporalAmount.
+        ~@(when unit
+            (for [[protocol proto-op op] [[`jt.c/Plusable 'seq-plus 'plus]
+                                          [`jt.c/Minusable 'seq-minus 'minus]]]
+              (let [typed-arg (with-meta (gensym) {:tag tp})]
+                `(extend-type ~tp ~protocol
+                   (~proto-op [o# os#]
+                     (reduce
+                       (fn [~typed-arg v#]
+                         (cond (number? v#)
+                               (. ~typed-arg ~op (long v#))
+
+                               (instance? TemporalAmount v#)
+                               (. ~typed-arg ~op (get-only-unit-value v# ~unit))))
+                       o# os#)))))))))
+
+(defmacro single-field-entity [tp doc & {:keys [parseable?]}]
+  (let [fname (with-meta (symbol (jt.u/dashize (str tp))) {:tag tp})
+        arg (gensym)]
+    `(do
+       (defn ^{:doc ~(str "True if `" tp "`.")} ~(symbol (str fname "?"))
+         [o#]
+         (instance? ~tp o#))
+
+       (conversion! ~tp Number jt.c/value)
+
+       (defn ~fname ~doc
+         ([] (. ~tp from (jt.z/zoned-date-time)))
+         ([~arg] (cond (number? ~arg)
+                       (. ~tp of (int ~arg))
+
+                       (instance? TemporalAccessor ~arg)
+                       (. ~tp from ~arg)
+
+                       (instance? Clock ~arg)
+                       (. ~tp now ~(with-meta arg {:tag `Clock}))
+
+                       (instance? ZoneId ~arg)
+                       (. ~tp now ~(with-meta arg {:tag `ZoneId}))
+
+                       ~@(when parseable?
+                           `[(string? ~arg)
+                             (try (. ~tp parse ~arg)
+                                  (catch java.time.format.DateTimeParseException _#
+                                    (. ~tp now (jt.z/zone-id ~arg))))])))
+         ([fmt# arg#]
+          (~fname (jt.f/parse fmt# arg#))))
+
+       (extend-type ~tp
+         jt.c/Ordered
+         (single-after? [d# o#]
+           (> (.getValue d#) (.getValue (~fname o#))))
+         (single-before? [d# o#]
+           (< (.getValue d#) (.getValue (~fname o#))))))))
+
+(defmacro two-field-entity [tp doc & {:keys [major-field-types major-field-ctor
+                                             minor-field-ctor minor-field-default]}]
+  (let [fname (with-meta (symbol (jt.u/dashize (str tp))) {:tag tp})
+        arg (gensym)]
+    `(do
+       (defn ^{:doc ~(str "True if `" tp "`.") } ~(symbol (str fname "?"))
+         [o#]
+         (instance? ~tp o#))
+
+       (defn ~fname ~doc
+         ([] (. ~tp from (jt.z/zoned-date-time)))
+         ([~arg] (cond (some (fn [x#] (instance? x# ~arg)) ~major-field-types)
+                       (. ~tp of (~major-field-ctor ~arg) ~minor-field-default)
+
+                       (instance? TemporalAccessor ~arg)
+                       (. ~tp from ~arg)
+
+                       (instance? Clock ~arg)
+                       (. ~tp now ~(with-meta arg {:tag `Clock}))
+
+                       (instance? ZoneId ~arg)
+                       (. ~tp now ~(with-meta arg {:tag `ZoneId}))
+
+                       (string? ~arg)
+                       (try (. ~tp parse ~arg)
+                            (catch java.time.format.DateTimeParseException _#
+                              (. ~tp now (jt.z/zone-id ~arg))))
+
+                       :else (. ~tp of (~major-field-ctor ~arg) ~minor-field-default)))
+         ([a# b#]
+          (if (and (or (instance? DateTimeFormatter a#) (string? a#)) (string? b#))
+            (~fname (jt.f/parse a# b#))
+            (. ~tp of (~major-field-ctor a#) (~minor-field-ctor b#)))))
+
+       (extend-type ~tp
+         jt.c/Ordered
+         (single-after? [d# o#]
+           (.isAfter d# o#))
+         (single-before? [d# o#]
+           (.isBefore d# o#))))))
+
+(enumerated-entity DayOfWeek
+  "Returns the `DayOfWeek` for the given day keyword name (e.g. `:monday`),
+  ordinal or entity. Current day if no arguments given."
+  :unit ChronoUnit/DAYS)
+
+(enumerated-entity Month
+  "Returns the `Month` for the given month keyword name (e.g. `:january`),
+  ordinal or entity. Current month if no arguments given."
+  :unit ChronoUnit/MONTHS)
+
+(single-field-entity Year
+ "Returns the `Year` for the given entity, string, clock, zone or number.
+ Current year if no arguments given."
+ :parseable? true)
+
+(two-field-entity MonthDay
+  "Returns the `MonthDay` for the given entity, string, clock, zone or
+  month/day combination. Current month-day if no arguments given."
+  :major-field-ctor month
+  :major-field-types [Month Number]
+  :minor-field-ctor (comp int jt.c/value)
+  :minor-field-default 1)
+
+(two-field-entity YearMonth
+  "Returns the `YearMonth` for the given entity, string, clock, zone or
+  month/day combination. Current year-month if no arguments given."
+  :major-field-ctor (comp int jt.c/value)
+  :major-field-types [Year Number]
+  :minor-field-ctor month
+  :minor-field-default 1)
+
+;;;;;;;;;; Threeten Extra
+
+;; Do not use Months/Days/Weeks/Years as already covered by java.time.Period
+(jt.u/when-threeten-extra
+  (import [org.threeten.extra AmPm DayOfMonth DayOfYear Quarter YearQuarter])
+
+  (enumerated-entity AmPm
+    "Returns the `AmPm` for the given keyword name (`:am` or `:pm`),
+    ordinal or entity. Current AM/PM if no arguments given.")
+
+  (enumerated-entity Quarter
+    "Returns the `Quarter` for the given quarter keyword name (e.g. `:q1`),
+    ordinal or entity. Current quarter if no arguments given."
+    :unit java.time.temporal.IsoFields/QUARTER_YEARS)
+
+  (single-field-entity DayOfMonth
+    "Returns the `DayOfMonth` for the given entity, clock, zone or day of month.
+    Current day of month if no arguments given.")
+
+  (single-field-entity DayOfYear
+    "Returns the `DayOfYear` for the given entity, clock, zone or day of year.
+    Current day of year if no arguments given.")
+
+  (defn ^Integer year-to-int [x]
+    (if (number? x) (int x)
+      (.getValue ^Year x)))
+
+  (two-field-entity YearQuarter
+    "Returns the `YearQuarter` for the given entity, clock, zone or year with quarter.
+    Current year quarter if no arguments given."
+    :major-field-ctor year-to-int
+    :major-field-types [Year Number]
+    :minor-field-ctor quarter
+    :minor-field-default 1))
