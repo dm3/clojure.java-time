@@ -25,6 +25,10 @@ Java 8 Date-Time API to the Clojure world. It's very similar to
 Clojure.Joda-Time in its design goals and overall feeling, so if you ever used
 that you will feel at home!
 
+## Documentation
+
+* [API](http://dm3.github.io/clojure.java-time/)
+
 ## What's different in Java Time API?
 
 If you already used Joda Time before you might think: "What in the world could
@@ -49,9 +53,9 @@ Add the following dependency to your `project.clj` or `build.boot`:
 [clojure.java-time "0.1.0"]
 ```
 
-[API](http://dm3.github.io/clojure.java-time/) of the Clojure.Java-Time
-consists of one namespace, namely `java-time`.  For the purposes of this
-guide, we will `use` the main namespace:
+The [API](http://dm3.github.io/clojure.java-time/) of the Clojure.Java-Time
+consists of one namespace, namely `java-time`.  For the purposes of this guide,
+we will `use` the main namespace:
 
 ```clj
 (refer-clojure :exclude [range iterate format max min])
