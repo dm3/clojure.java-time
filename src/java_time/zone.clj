@@ -35,11 +35,6 @@
   (fn [^CharSequence s, ^ZoneOffset zo]
     (ZoneId/ofOffset s zo)))
 
-(conversion! Number ZoneOffset
-  (fn [n]
-    (let [[h m s] (to-hms n)]
-      (ZoneOffset/ofHoursMinutesSeconds h m s))))
-
 (defn- ^ZoneOffset clock->zone-offset [^Clock c]
   (-> (.getZone c)
       (.getRules)
@@ -68,7 +63,10 @@
 
              (number? o)
              (let [[h m s] (to-hms o)]
-               (zone-offset h m s))))
+               (zone-offset h m s))
+
+             :else (throw (java.time.DateTimeException.
+                            (format "Could not convert %s to a ZoneOffset!" o)))))
   ([h m] (ZoneOffset/ofHoursMinutes h m))
   ([h m s] (ZoneOffset/ofHoursMinutesSeconds h m s)))
 
