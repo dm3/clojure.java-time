@@ -207,7 +207,7 @@
 (conversion! CharSequence ZonedDateTime
   (fn [^CharSequence s]
     (ZonedDateTime/parse s))
-  3)
+  2)
 
 (conversion! CharSequence OffsetDateTime
   (fn [^CharSequence s]
@@ -217,17 +217,17 @@
 (conversion! CharSequence OffsetTime
   (fn [^CharSequence s]
     (OffsetTime/parse s))
- 2)
+  2)
 
 (conversion! ZoneOffset OffsetDateTime
   (fn [^ZoneOffset zo]
-    (.withOffsetSameLocal (OffsetDateTime/now) zo))
-  4)
+    (.withOffsetSameLocal (offset-date-time) zo))
+  2)
 
 (conversion! ZoneOffset OffsetTime
   (fn [^ZoneOffset zo]
-    (.withOffsetSameLocal (OffsetTime/now) zo))
-  4)
+    (.withOffsetSameLocal (offset-time) zo))
+  2)
 
 (conversion! ZonedDateTime [Instant ZoneId]
   (fn [^ZonedDateTime zdt]
