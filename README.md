@@ -81,6 +81,19 @@ the time of various events:
 * `LocalTime` - bus schedule, opening time of a shop
 * `LocalDateTime` - start of a competition
 
+A local date/time can be created as you'd expect:
+
+```clj
+(local-date 2015 10)
+=> #<java.time.LocalDate 2015-10-01>
+
+(local-time 10)
+=> #<java.time.LocalTime 10:00>
+
+(local-date-time 2015 10)
+=> #<java.time.LocalDateTime 2015-10-01T00:00>
+```
+
 #### Zoned Dates
 
 There are two types which deal with zones: `OffsetDateTime` and
@@ -88,6 +101,33 @@ There are two types which deal with zones: `OffsetDateTime` and
 You can think of the `Offset` time as a more concrete version of the `Zoned`
 time. For example, the same timezone can have different offsets throughout the
 year due to DST or governmental regulations.
+
+```clj
+(offset-time 10)
+=> #<java.time.OffsetTime 10:00+01:00>
+
+(offset-date-time 10)
+=> #<java.time.OffsetDateTime 2015-10-01T10:00+01:00>
+
+(zoned-date-time 10)
+=> #<java.time.ZonedDateTime 2015-10-01T10:00+01:00[Europe/London]>
+```
+
+Offset/Zone times only take the offset/zone as the last arguments for the
+maximum arity constructor. You can influence the zone/offset by using the
+`with-zone` or `with-offset` functions, like so:
+
+```clj
+(with-zone (zoned-date-time 2015 10) "UTC")
+=> #<java.time.ZonedDateTime 2015-10-01T00:00Z[UTC]>
+
+(with-zone-same-instant (zoned-date-time 2015 10) "UTC")
+=> #<java.time.ZonedDateTime 2015-09-30T23:00Z[UTC]>
+
+(with-clock (system-clock "UTC")
+  (zoned-date-time 2015 10))
+=> #<java.time.ZonedDateTime 2015-10-01T00:00Z[UTC]>
+```
 
 #### Instant
 
@@ -97,8 +137,9 @@ milliseconds since epoch (`1970-01-01T00:00:00Z`). An instant is directly
 analogous to `java.util.Date`:
 
 ```clj
-user=> (java.time.Instant/now)
-#object[java.time.Instant 0x1c1ac77a "2015-09-26T05:25:48.667Z"]
+user=> (instant)
+#<java.time.Instant "2015-09-26T05:25:48.667Z">
+
 user=> (java.util.Date.)
 #inst "2015-09-26T05:25:50.118-00:00"
 ```
@@ -209,7 +250,7 @@ java-time> (as *1 :minutes)
 Format a date:
 
 ```clj
-(format "MM/dd" (zoned-date-time 2015 9 28 "UTC"))
+(format "MM/dd" (zoned-date-time 2015 9 28))
 => "09/28"
 ```
 
@@ -224,32 +265,32 @@ Zoned date-times and offset date-times/times always take the zone/offset as the
 last argument. Offsets can be specified as float values:
 
 ```clj
-(j/offset-time +1.5)
-=> #<java.time.OffsetTime 10:16:08.000+01:30>
+(zone-offset +1.5)
+=> #<java.time.ZoneOffset +01:30>
 
-(j/offset-time -1.5)
-=> #<java.time.OffsetTime 07:16:08.000-01:30>
+(zone-offset -1.5)
+=> #<java.time.ZoneOffset -01:30>
 ```
 
 #### Conversions
 
 Time entities can be converted to other time entities if the target contains
-less information, e.g.:
+less information, e.g. (assuming we're in UTC timezone):
 
 ```clj
-(zoned-date-time (offset-date-time 2015 9 28 1 +0))
+(zoned-date-time (offset-date-time 2015 9 28 1))
 => #object[java.time.ZonedDateTime "2015-09-28T01:00Z"]
 
-(instant (offset-date-time 2015 9 28 1 +0))
+(instant (offset-date-time 2015 9 28 1))
 => #object[java.time.Instant "2015-09-28T01:00:00Z"]
 
-(offset-time (offset-date-time 2015 9 28 1 +0))
+(offset-time (offset-date-time 2015 9 28 1))
 => #object[java.time.OffsetTime "01:00Z"]
 
-(local-date-time (offset-date-time 2015 9 28 1 +0))
+(local-date-time (offset-date-time 2015 9 28 1))
 => #object[java.time.LocalDateTime "2015-09-28T01:00"]
 
-(local-time (offset-time 1 +0))
+(local-time (offset-time 1))
 => #object[java.time.LocalTime 0x3a3cd6d5 "01:00"]
 ```
 
@@ -257,13 +298,13 @@ Any date which can be converted to an instant, can also be converted to pre-Java
 8 date types:
 
 ```clj
-(to-java-date (zoned-date-time 2015 9 28 "UTC"))
+(to-java-date (zoned-date-time 2015 9 28))
 => #inst "2015-09-27T22:00:00.000-00:00"
 
-(to-sql-date (zoned-date-time 2015 9 28 "UTC"))
+(to-sql-date (zoned-date-time 2015 9 28))
 => #inst "2015-09-27T22:00:00.000-00:00"
 
-(to-sql-timestamp (zoned-date-time 2015 9 28 "UTC"))
+(to-sql-timestamp (zoned-date-time 2015 9 28))
 => #inst "2015-09-27T22:00:00.000000000-00:00"
 ```
 
@@ -277,7 +318,7 @@ An interval can be constructed from two entities that can be converted to
 instants:
 
 ```clj
-(interval (offset-date-time 2015 1 1 +0) (zoned-date-time 2016 1 1 "UTC"))
+(interval (offset-date-time 2015 1 1) (zoned-date-time 2016 1 1))
 => #<org.threeten.extra.Interval 2015-01-01T00:00:00Z/2016-01-01T00:00:00Z>
 
 (move-start-by *1 (duration 5 :days))
@@ -286,7 +327,7 @@ instants:
 (move-end-by *1 (duration 5 :days))
 => #<org.threeten.extra.Interval 2015-01-06T00:00:00Z/2016-01-06T00:00:00Z>
 
-(contains? *1 (offset-date-time 2015 1 1 +0))
+(contains? *1 (offset-date-time 2015 1 1))
 => false
 ```
 
@@ -426,10 +467,12 @@ graph underneath. This provides for a very flexible way of defining the
 conversions while avoiding huge conditional statements and multiple definitions
 of the identical conversion logic. However, the flexibility comes with a cost:
 
-1. The first call to a constructor will take around ~100ms as it will try to
+1. The first call to a constructor will take a _long_ time as it will try to
    find a path in the conversion graph. Subsequent calls will reuse the path.
 2. It's not trivial to evaluate the impact of adding and removing conversions
    both on the performance and the conversion path chosen for certain arguments.
+3. You might get nonsensical results for some of the paths in the graph that
+   you might expect would make sense.
 
 Hopefully, the performance issue will be resolved in the future...
 

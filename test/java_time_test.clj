@@ -187,19 +187,29 @@
 
     (is (j/zoned-date-time? (j/zoned-date-time (j/zone-id "UTC"))))
 
-    (is (= (j/zoned-date-time 2015 "UTC")
-           (j/zoned-date-time 2015 1 "UTC")
-           (j/zoned-date-time 2015 1 1 "UTC")
-           (j/zoned-date-time (j/year 2015) "UTC")
-           (j/zoned-date-time (j/year 2015) (j/month 1) "UTC")
-           (j/zoned-date-time (j/year 2015) (j/month 1) (j/day-of-week 1) "UTC")
-           (j/zoned-date-time 2015 1 1 0 "UTC")
-           (j/zoned-date-time 2015 1 1 0 0 "UTC")
-           (j/zoned-date-time 2015 1 1 0 0 0 "UTC")
-           (j/zoned-date-time 2015 1 1 0 0 0 0 "UTC")))
+    (j/with-clock (j/system-clock "UTC")
+      (is (= (j/zoned-date-time 2015)
+             (j/zoned-date-time 2015 1)
+             (j/zoned-date-time 2015 1 1)
+             (j/zoned-date-time (j/year 2015))
+             (j/zoned-date-time (j/year 2015) (j/month 1))
+             (j/zoned-date-time (j/year 2015) (j/month 1) (j/day-of-week 1))
+             (j/zoned-date-time 2015 1 1 0)
+             (j/zoned-date-time 2015 1 1 0 0)
+             (j/zoned-date-time 2015 1 1 0 0 0)
+             (j/zoned-date-time 2015 1 1 0 0 0 0))))
 
-    (is (= (j/truncate-to (j/zoned-date-time 2015 1 1 10 20 30 40 "UTC") :minutes)
-           (j/zoned-date-time 2015 1 1 10 20 "UTC"))))
+    (let [zone-id (j/zone-id)]
+      (is (= (j/zoned-date-time 2015 1 1 0 0 0 0)
+             (j/zoned-date-time 2015 1 1 0 0 0 0 zone-id))))
+
+    (let [utc (j/zoned-date-time 2015 1 1 0 0 0 0 "UTC")]
+      (is (= (j/zoned-date-time 2014 12 31 19 0 0 0 "America/New_York")
+             (j/with-zone-same-instant utc "America/New_York")
+             (j/with-zone (j/zoned-date-time 2014 12 31 19 0 0 0 "UTC") "America/New_York"))))
+
+    (is (= (j/truncate-to (j/zoned-date-time 2015 1 1 10 20 30 40) :minutes)
+           (j/zoned-date-time 2015 1 1 10 20))))
 
   (testing "offset date time"
     (is (= (j/offset-date-time clock)
@@ -207,10 +217,10 @@
            (j/offset-date-time "2015-11-26T10:20:30.000000040+00:00")
            (j/offset-date-time "2015-11-26T10:20:30.000000040Z")
            (j/offset-date-time "yyyy/MM/dd'T'HH:mm:ss-SSSSSSSSS'['X']'" "2015/11/26T10:20:30-000000040[Z]")
-           (j/offset-date-time (j/local-date clock) (j/local-time clock) +0)
-           (j/offset-date-time (j/local-date-time clock) +0)
-           (j/offset-date-time (j/zoned-date-time clock) +0)
-           (j/offset-date-time 2015 11 26 10 20 30 40 +0)
+           (j/offset-date-time (j/local-date clock) (j/local-time clock) (j/zone-offset +0))
+           (j/offset-date-time (j/local-date-time clock) (j/zone-offset +0))
+           (j/offset-date-time (j/zoned-date-time clock) (j/zone-offset +0))
+           (j/offset-date-time 2015 11 26 10 20 30 40 (j/zone-offset +0))
            (j/offset-date-time (j/instant clock) "UTC")))
 
     (is (= (j/truncate-to (j/offset-date-time clock) :millis)
@@ -218,19 +228,25 @@
 
     (is (j/offset-date-time? (j/offset-date-time)))
 
-    (is (= (j/offset-date-time 2015 +0)
-           (j/offset-date-time 2015 1 +0)
-           (j/offset-date-time 2015 1 1 +0)
-           (j/offset-date-time (j/year 2015) +0)
-           (j/offset-date-time (j/year 2015) (j/month 1) +0)
-           (j/offset-date-time (j/year 2015) (j/month 1) (j/day-of-week 1) +0)
-           (j/offset-date-time 2015 1 1 0 +0)
-           (j/offset-date-time 2015 1 1 0 0 +0)
-           (j/offset-date-time 2015 1 1 0 0 0 +0)
-           (j/offset-date-time 2015 1 1 0 0 0 0 +0)))
+    (j/with-clock (j/system-clock "UTC")
+      (is (= (j/offset-date-time 2015)
+             (j/offset-date-time 2015 1)
+             (j/offset-date-time 2015 1 1)
+             (j/offset-date-time (j/year 2015))
+             (j/offset-date-time (j/year 2015) (j/month 1))
+             (j/offset-date-time (j/year 2015) (j/month 1) (j/day-of-week 1))
+             (j/offset-date-time 2015 1 1 0)
+             (j/offset-date-time 2015 1 1 0 0)
+             (j/offset-date-time 2015 1 1 0 0 0)
+             (j/offset-date-time 2015 1 1 0 0 0 0 (j/zone-offset +0)))))
 
-    (is (= (j/truncate-to (j/offset-date-time 2015 1 1 10 20 30 40 0) :minutes)
-           (j/offset-date-time 2015 1 1 10 20 0))))
+    (is (= (j/truncate-to (j/offset-date-time 2015 1 1 10 20 30 40) :minutes)
+           (j/offset-date-time 2015 1 1 10 20)))
+
+    (let [utc (j/offset-date-time 2015 1 1 0 0 0 0 +0)]
+      (is (= (j/offset-date-time 2014 12 31 19 0 0 0 -5)
+             (j/with-offset-same-instant utc -5)
+             (j/with-offset (j/offset-date-time 2014 12 31 19 0 0 0 +0) -5)))))
 
   (testing "offset time"
     (is (= (j/offset-time clock)
@@ -239,9 +255,8 @@
            (j/offset-time "10:20:30.000000040+00:00")
            (j/offset-time "10:20:30.000000040Z")
            (j/offset-time "HH:mm:ss-SSSSSSSSS'['X']'" "10:20:30-000000040[Z]")
-           (j/offset-time (j/local-time clock) +0)
+           (j/offset-time (j/local-time clock) (j/zone-offset +0))
            (j/offset-time (j/instant clock) "UTC")
-           (j/offset-time 10 20 30 40 +0)
            (j/offset-time 10 20 30 40 +0)
            (j/offset-time (j/instant clock) "UTC")))
 
@@ -251,13 +266,19 @@
     (is (j/offset-time? (j/offset-time (j/zone-id "UTC"))))
     (is (j/offset-time? (j/offset-time +0)))
 
-    (is (= (j/offset-time 0 +0)
-           (j/offset-time 0 0 +0)
-           (j/offset-time 0 0 0 +0)
-           (j/offset-time 0 0 0 0 +0)))
+    (j/with-clock (j/system-clock "UTC")
+      (is (= (j/offset-time 0)
+             (j/offset-time 0 0)
+             (j/offset-time 0 0 0)
+             (j/offset-time 0 0 0 0))))
 
-    (is (= (j/truncate-to (j/offset-time 10 20 30 40 0) :minutes)
-           (j/offset-time 10 20 0))))
+    (is (= (j/truncate-to (j/offset-time 10 20 30 40) :minutes)
+           (j/offset-time 10 20)))
+
+    (let [utc (j/offset-time 15 0 0 0 +0)]
+      (is (= (j/offset-time 10 0 0 0 -5)
+             (j/with-offset-same-instant utc -5)
+             (j/with-offset (j/offset-time 10 0 0 0 +0) -5)))))
 
    (testing "instant"
      (is (= (j/instant clock)
@@ -529,7 +550,7 @@
   (testing "weekdays"
     (is (j/monday? (j/local-date 2015 1 5)))
     (is (j/tuesday? (j/offset-date-time 2015 1 6 0)))
-    (is (j/wednesday? (j/zoned-date-time 2015 1 7 "UTC")))
+    (is (j/wednesday? (j/zoned-date-time 2015 1 7)))
     (is (j/thursday? (j/local-date-time 2015 1 8)))
     (is (j/friday? (j/day-of-week 5)))
     (is (j/saturday? (j/day-of-week :saturday)))
@@ -598,8 +619,8 @@
   (testing "interval"
     (is (= (j/interval "1970-01-01T00:00:00Z/1970-01-01T00:00:01Z")
            (j/interval 0 1000)
-           (j/interval (j/offset-date-time 1970 1 1 +0)
-                       (j/offset-date-time 1970 1 1 0 0 1 +0))))
+           (j/interval (j/offset-date-time 1970 1 1 0 0 0 0 +0)
+                       (j/offset-date-time 1970 1 1 0 0 1 0 +0))))
 
     (is (= 1 (j/as (j/interval (j/instant 0) (j/instant 1)) :millis))))
 

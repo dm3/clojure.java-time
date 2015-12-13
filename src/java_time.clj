@@ -40,7 +40,8 @@
    available-zone-ids zone-id zone-offset
    offset-date-time offset-time zoned-date-time
    system-clock fixed-clock offset-clock tick-clock
-   zoned-date-time? offset-date-time? offset-time?]
+   zoned-date-time? offset-date-time? offset-time?
+   with-zone-same-instant with-offset with-offset-same-instant]
 
   [java-time.convert
    as-map convert-amount to-java-date to-sql-date to-sql-timestamp

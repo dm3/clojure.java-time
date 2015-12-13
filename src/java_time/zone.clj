@@ -92,26 +92,29 @@
     * no arguments - current date-time with the default offset
     * one argument
       + clock
-      + zone id
       + another temporal entity
       + string representation
-      + offset
+      + year
     * two arguments
       + formatter (format) and a string
       + local date-time and an offset
       + another temporal entity and an offset (preserves local time)
-      + year and an offset
+      + year and month
     * three arguments
       + local date, local time and an offset
-      + year, month and an offset
-    * four up to eight arguments - last is always the offset"
+      + year, month and date
+    * four up to seven arguments - position date-time constructors
+    * eight arguments - time fields up to nanoseconds and a zone offset
+
+  If zone offset is not specified, default will be used. You can check the
+  default offset by invoking `(zone-offset)`."
   :returns OffsetDateTime
   :implicit-arities [1 2 3]
   ([] (jt.clock/make (fn [^Clock c] (OffsetDateTime/now c))))
-  ([y m d o] (offset-date-time y m d 0 o))
-  ([y m d h o] (offset-date-time y m d h 0 o))
-  ([y mo d h m o] (offset-date-time y mo d h m 0 o))
-  ([y mo d h m s o] (offset-date-time y mo d h m s 0 o))
+  ([y m d h] (offset-date-time y m d h 0))
+  ([y mo d h m] (offset-date-time y mo d h m 0))
+  ([y mo d h m s] (offset-date-time y mo d h m s 0))
+  ([y mo d h m s n] (offset-date-time y mo d h m s n (zone-offset)))
   ([y mo d h m s n o]
    (OffsetDateTime/of
      (int (value y)) (int (value mo)) (int (value d))
@@ -126,17 +129,23 @@
       + zone id
       + another temporal entity
       + string representation
-      + offset - produces local time with the given offset
+      + hour
     * two arguments
       + formatter (format) and a string
       + local time and an offset
       + instant and an offset
-      + hour and an offset
-    * three up to five arguments - last is always the offset"
+      + hour and minutes
+    * three arguments - hours, minutes, seconds
+    * four arguments - hours, minutes, seconds, nanos
+    * five arguments - last is the offset
+
+  If zone offset is not specified, default will be used. You can check the
+  default offset by invoking `(zone-offset)`."
   :returns OffsetTime
-  :implicit-arities [1 2 3]
+  :implicit-arities [1 2]
   ([] (jt.clock/make (fn [^Clock c] (OffsetTime/now c))))
-  ([h m s o] (offset-time h m s 0 o))
+  ([h m s] (offset-time h m s 0))
+  ([h m s n] (offset-time h m s n (zone-offset)))
   ([h m s n o]
    (OffsetTime/of h m s n (zone-offset o))))
 
@@ -153,23 +162,22 @@
     * two arguments
       + formatter and a string
       + local date-time and a zone id
-      + year and a zone id
       + year and month
     * three arguments
       + local date, local time and a zone id
-      + year, month and a zone id
       + year, month and day
-    * four up to eight arguments - last is always the zone id
+    * four to seven arguments - date-time fields
+    * eight arguments - last is the zone id
 
   If zone id is not specified, default zone id will be used. You can check the
   default zone by invoking `(zone-id)`."
   :returns ZonedDateTime
   :implicit-arities [1 2 3]
   ([] (jt.clock/make (fn [^Clock c] (ZonedDateTime/now c))))
-  ([y m d o] (zoned-date-time y m d 0 o))
-  ([y m d h o] (zoned-date-time y m d h 0 o))
-  ([y mo d h m o] (zoned-date-time y mo d h m 0 o))
-  ([y mo d h m s o] (zoned-date-time y mo d h m s 0 o))
+  ([y m d h] (zoned-date-time y m d h 0))
+  ([y mo d h m] (zoned-date-time y mo d h m 0))
+  ([y mo d h m s] (zoned-date-time y mo d h m s 0))
+  ([y mo d h m s n] (zoned-date-time y mo d h m s n (zone-id)))
   ([y mo d h m s n o]
    (ZonedDateTime/of
      (int (value y)) (int (value mo)) (int (value d))
@@ -215,16 +223,6 @@
 (conversion! CharSequence OffsetTime
   (fn [^CharSequence s]
     (OffsetTime/parse s))
-  2)
-
-(conversion! ZoneOffset OffsetDateTime
-  (fn [^ZoneOffset zo]
-    (.withOffsetSameLocal (offset-date-time) zo))
-  2)
-
-(conversion! ZoneOffset OffsetTime
-  (fn [^ZoneOffset zo]
-    (.withOffsetSameLocal (offset-time) zo))
   2)
 
 (conversion! ZonedDateTime [Instant ZoneId]
@@ -277,38 +275,69 @@
 (conversion! [java.time.format.DateTimeFormatter CharSequence] OffsetTime
   #(OffsetTime/from (jt.f/parse %1 %2)))
 
-(conversion! [Number ZoneId] ZonedDateTime
-  (fn [value ^ZoneId z]
-    (zoned-date-time value 1 1 z)))
+(conversion! Number ZonedDateTime
+  (fn [value]
+    (zoned-date-time value 1 1 0)))
 
-(conversion! [Number ZoneOffset] OffsetDateTime
-  (fn [value ^ZoneOffset zo]
-    (offset-date-time value 1 1 zo)))
+(conversion! Number OffsetDateTime
+  (fn [value]
+    (offset-date-time value 1 1 0)))
 
-(conversion! [Number ZoneOffset] OffsetTime
-  (fn [value ^ZoneOffset zo]
-    (offset-time value 0 zo)))
+(conversion! Number OffsetTime
+  (fn [value]
+    (offset-time value 0 0)))
 
-(conversion! [Number Number ZoneId] ZonedDateTime
-  (fn [y m ^ZoneId z]
-    (zoned-date-time y m 1 z)))
+(conversion! [Number Number] ZonedDateTime
+  (fn [y m]
+    (zoned-date-time y m 1 0)))
 
-(conversion! [Number Number ZoneOffset] OffsetDateTime
-  (fn [y m ^ZoneOffset zo]
-    (offset-date-time y m 1 zo)))
+(conversion! [Number Number] OffsetDateTime
+  (fn [y m]
+    (offset-date-time y m 1 0)))
 
-(conversion! [Number Number ZoneOffset] OffsetTime
-  (fn [h m ^ZoneOffset zo]
-    (offset-time h m 0 zo)))
+(conversion! [Number Number] OffsetTime
+  (fn [h m]
+    (offset-time h m 0)))
+
+(conversion! [Number Number Number] ZonedDateTime
+  (fn [y m d]
+    (zoned-date-time y m d 0)))
+
+(conversion! [Number Number Number] OffsetDateTime
+  (fn [y m d]
+    (offset-date-time y m d 0)))
 
 (conversion! java.util.GregorianCalendar ZonedDateTime
   (fn [^java.util.GregorianCalendar cal]
     (.toZonedDateTime cal)))
 
+(defprotocol HasOffset
+  (with-offset [o offset]
+    "Sets the offset to the specified value ensuring that the local time stays
+    the same.
+
+      (offset-time 10 30 0 0 +2)
+      => #<java.time.OffsetTime 10:30+02:00>
+      (with-offset *1 +3)
+      => #<java.time.OffsetTime 10:30+03:00>")
+  (with-offset-same-instant [o offset]
+    "Sets the offset to the specified value ensuring that the result has the same instant, e.g.:
+
+      (offset-time 10 30 0 0 +2)
+      => #<java.time.OffsetTime 10:30+02:00>
+      (with-offset-same-instant *1 +3)
+      => #<java.time.OffsetTime 11:30+03:00>"))
+
 (extend-type OffsetDateTime
   jt.c/Truncatable
   (truncate-to [o u]
     (.truncatedTo o (get-unit-checked u)))
+
+  HasOffset
+  (with-offset [o offset]
+    (.withOffsetSameLocal o (zone-offset offset)))
+  (with-offset-same-instant [o offset]
+    (.withOffsetSameInstant o (zone-offset offset)))
 
   jt.c/Ordered
   (single-after? [d o]
@@ -321,6 +350,12 @@
   (truncate-to [o u]
     (.truncatedTo o (get-unit-checked u)))
 
+  HasOffset
+  (with-offset [o offset]
+    (.withOffsetSameLocal o (zone-offset offset)))
+  (with-offset-same-instant [o offset]
+    (.withOffsetSameInstant o (zone-offset offset)))
+
   jt.c/Ordered
   (single-after? [d o]
     (.isAfter d o))
@@ -330,7 +365,21 @@
 (extend-type ZonedDateTime
   jt.c/Truncatable
   (truncate-to [o u]
-    (.truncatedTo o (get-unit-checked u))))
+    (.truncatedTo o (get-unit-checked u)))
+
+  jt.c/HasZone
+  (with-zone [o z]
+    (.withZoneSameLocal o (zone-id z))))
+
+(defn with-zone-same-instant
+  "Sets the zone to the specified value ensuring that the result has the same instant, e.g.:
+
+    (zoned-date-time 2015)
+    => #<java.time.ZonedDateTime 2015-01-01T00:00+00:00[Europe/London]>
+    (with-zone-same-instant *1 \"America/New_York\")
+    => #<java.time.ZonedDateTime 2014-12-31T18:00-05:00[America/New_York]>"
+  [^ZonedDateTime zdt, z]
+  (.withZoneSameInstant zdt (zone-id z)))
 
 ;;;;; Clock
 
