@@ -344,10 +344,6 @@
   (fn [^Number m]
     (Instant/ofEpochMilli (long m))))
 
-(conversion! [Number Number] Instant
-  (fn [^Number s, ^Number m]
-    (Instant/ofEpochSecond (long s) (long m))))
-
 (conversion! [DateTimeFormatter CharSequence] Instant
   #(Instant/from (jt.f/parse %1 %2)))
 
@@ -362,8 +358,7 @@
       + string representation
       + millis from epoch
     * two arguments
-      + formatter (format) and a string
-      + seconds from epoch and a nano adjustment"
+      + formatter (format) and a string"
   :returns Instant
   :implicit-arities [1 2]
   ([] (jt.clock/make #(Instant/now %))))

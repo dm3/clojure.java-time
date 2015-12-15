@@ -283,8 +283,7 @@
    (testing "instant"
      (is (= (j/instant clock)
             (j/instant "2015-11-26T10:20:30.000000040Z")
-            (j/instant "yyyy/MM/dd'T'HH:mm:ss-SSSSSSSSS'['X']'" "2015/11/26T10:20:30-000000040[Z]")
-            (j/instant 1448533230 40)))
+            (j/instant "yyyy/MM/dd'T'HH:mm:ss-SSSSSSSSS'['X']'" "2015/11/26T10:20:30-000000040[Z]")))
 
      (is (= (j/truncate-to (j/instant clock) :millis)
             ;; (.toEpochMilli instant)
