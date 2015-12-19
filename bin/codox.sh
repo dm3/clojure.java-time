@@ -22,7 +22,7 @@ lein codox
 cd target/doc
 git add .
 git commit -am "update docs"
-git push -u origin gh-pages
+git push -fu origin gh-pages
 cd -
 
 echo "Switching `pwd` back to master..."
