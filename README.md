@@ -106,10 +106,10 @@ year due to DST or governmental regulations.
 (offset-time 10)
 => #<java.time.OffsetTime 10:00+01:00>
 
-(offset-date-time 10)
+(offset-date-time 2015 10)
 => #<java.time.OffsetDateTime 2015-10-01T10:00+01:00>
 
-(zoned-date-time 10)
+(zoned-date-time 2015 10)
 => #<java.time.ZonedDateTime 2015-10-01T10:00+01:00[Europe/London]>
 ```
 
@@ -154,6 +154,22 @@ They are fixed containers of years, months and days. You can use them to
 represent any period of time with a granularity larger or equal to a single day.
 Duration, on the other hand, represents a standard duration less than or equal
 to a single standard (24-hour) day.
+
+### Caution
+
+The current incarnation of the library is quite slow while calling the 2-3
+arity `zoned-date-time/offset-time/offset-date-time` constructors. If you need
+predictable latency on the first call, please warm the constructors you are
+going to use by using them in a 'warm-up phase', e.g.:
+
+```clj
+(defn warm-up []
+  (zoned-date-time 2015 1 1)
+  (zoned-date-time 2015 1)
+  (zoned-date-time 2015))
+```
+
+Only the types of the arguments matter, not the values!
 
 ### An appetizer
 
