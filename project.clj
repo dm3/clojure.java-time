@@ -13,7 +13,7 @@
                                   [joda-time/joda-time "2.9"]
                                   [org.threeten/threeten-extra "0.9"]]
                    :plugins [[lein-codox "0.9.0"]]
-                   :codox {:namespaces [java-time]}
+                   :codox {:namespaces [java-time java-time.repl]}
                    :source-paths ["dev"]
                    :global-vars {*warn-on-reflection* true}}
              :1.7 {:dependencies [[org.clojure/clojure "1.7.0"]]}
