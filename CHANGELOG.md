@@ -1,3 +1,9 @@
+## 0.3.0
+
+### Fixed
+
+* [#2](https://github.com/dm3/clojure.java-time/issues/2): `Ordered` implementation for `java.time.Instant`
+
 ## 0.2.0
 
 ### Breaking changes

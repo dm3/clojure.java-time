@@ -417,7 +417,10 @@
     (is (j/before? (j/offset-date-time clock) (j/plus (j/offset-date-time clock) (j/minutes 5))))
 
     (is (j/after? (j/offset-time clock) (j/minus (j/offset-time clock) (j/minutes 5))))
-    (is (j/before? (j/offset-time clock) (j/plus (j/offset-time clock) (j/minutes 5)))))
+    (is (j/before? (j/offset-time clock) (j/plus (j/offset-time clock) (j/minutes 5))))
+
+    (is (j/after? (j/instant clock) (j/minus (j/instant clock) (j/minutes 5))))
+    (is (j/before? (j/instant clock) (j/plus (j/instant clock) (j/minutes 5)))))
 
   (testing "clocks"
     (is (j/after? (j/fixed-clock 1000) (j/fixed-clock 0)))

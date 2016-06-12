@@ -366,4 +366,10 @@
 (extend-type Instant
   jt.c/Truncatable
   (truncate-to [o u]
-    (.truncatedTo o (jt.p/get-unit-checked u))))
+    (.truncatedTo o (jt.p/get-unit-checked u)))
+
+  jt.c/Ordered
+  (single-after? [d o]
+    (.isAfter d o))
+  (single-before? [d o]
+    (.isBefore d o)))
