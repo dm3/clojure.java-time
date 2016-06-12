@@ -1,7 +1,8 @@
-## 0.3.0
+## 0.2.1
 
 ### Fixed
 
+* [#1](https://github.com/dm3/clojure.java-time/issues/1): Reflection warnings in two-field time entity constructors
 * [#2](https://github.com/dm3/clojure.java-time/issues/2): `Ordered` implementation for `java.time.Instant`
 
 ## 0.2.0

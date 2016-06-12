@@ -72,7 +72,8 @@
 
     (is (= (j/month-day 1)
            (j/month-day (j/month 1))
-           (j/month-day 1 1)))
+           (j/month-day 1 1)
+           (j/month-day 1 (j/day-of-week 1))))
 
     (is (j/month-day? (j/month-day 1 1)))
 
@@ -82,7 +83,8 @@
 
     (is (= (j/year-month 1)
            (j/year-month (j/year 1))
-           (j/year-month 1 1)))
+           (j/year-month 1 1)
+           (j/year-month 1 (j/month 1))))
 
     (is (j/year-month? (j/year-month 1 1))))
 

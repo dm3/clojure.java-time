@@ -118,8 +118,12 @@
 
 (defmacro two-field-entity [tp doc & {:keys [major-field-types major-field-ctor
                                              minor-field-ctor minor-field-default]}]
-  (let [fname (with-meta (symbol (jt.u/dashize (str tp))) {:tag tp})
-        arg (gensym)]
+  (let [[major-field-ctor major-field-type] major-field-ctor
+        [minor-field-ctor minor-field-type] minor-field-ctor
+        fname (with-meta (symbol (jt.u/dashize (str tp))) {:tag tp})
+        arg (gensym)
+        tmp-major (with-meta (gensym) {:tag major-field-type})
+        tmp-minor (with-meta (gensym) {:tag minor-field-type})]
     `(do
        (defn ^{:doc ~(str "True if `" tp "`.") } ~(symbol (str fname "?"))
          [o#]
@@ -128,7 +132,8 @@
        (defn ~fname ~doc
          ([] (. ~tp from (jt.z/zoned-date-time)))
          ([~arg] (cond (some (fn [x#] (instance? x# ~arg)) ~major-field-types)
-                       (. ~tp of (~major-field-ctor ~arg) ~minor-field-default)
+                       (let [~tmp-major (~major-field-ctor ~arg)]
+                         (. ~tp of ~tmp-major ~minor-field-default))
 
                        (instance? TemporalAccessor ~arg)
                        (. ~tp from ~arg)
@@ -144,11 +149,14 @@
                             (catch java.time.format.DateTimeParseException _#
                               (. ~tp now (jt.z/zone-id ~arg))))
 
-                       :else (. ~tp of (~major-field-ctor ~arg) ~minor-field-default)))
+                       :else (let [~tmp-major (~major-field-ctor ~arg)]
+                               (. ~tp of ~tmp-major ~minor-field-default))))
          ([a# b#]
           (if (and (or (instance? DateTimeFormatter a#) (string? a#)) (string? b#))
             (~fname (jt.f/parse a# b#))
-            (. ~tp of (~major-field-ctor a#) (~minor-field-ctor b#)))))
+            (let [~tmp-major (~major-field-ctor a#)
+                  ~tmp-minor (~minor-field-ctor b#)]
+              (. ~tp of ~tmp-major ~tmp-minor)))))
 
        (extend-type ~tp
          jt.c/Ordered
@@ -175,17 +183,17 @@
 (two-field-entity MonthDay
   "Returns the `MonthDay` for the given entity, string, clock, zone or
   month/day combination. Current month-day if no arguments given."
-  :major-field-ctor month
+  :major-field-ctor [month Month]
   :major-field-types [Month Number]
-  :minor-field-ctor (comp int jt.c/value)
+  :minor-field-ctor [(comp int jt.c/value) int]
   :minor-field-default 1)
 
 (two-field-entity YearMonth
   "Returns the `YearMonth` for the given entity, string, clock, zone or
   month/day combination. Current year-month if no arguments given."
-  :major-field-ctor (comp int jt.c/value)
+  :major-field-ctor [(comp int jt.c/value) int]
   :major-field-types [Year Number]
-  :minor-field-ctor month
+  :minor-field-ctor [month Month]
   :minor-field-default 1)
 
 ;;;;;;;;;; Threeten Extra
@@ -218,7 +226,7 @@
   (two-field-entity YearQuarter
     "Returns the `YearQuarter` for the given entity, clock, zone or year with quarter.
     Current year quarter if no arguments given."
-    :major-field-ctor year-to-int
+    :major-field-ctor [year-to-int int]
     :major-field-types [Year Number]
-    :minor-field-ctor quarter
+    :minor-field-ctor [quarter Quarter]
     :minor-field-default 1))
