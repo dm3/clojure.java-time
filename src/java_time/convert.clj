@@ -90,9 +90,9 @@
   [o]
   (java.sql.Timestamp/from (jt.t/instant o)))
 
-(defn ^long to-millis-from-epoch
+(defn to-millis-from-epoch
   "Converts a date entity to a `long` representing the number of milliseconds
   from epoch."
-  [o]
+  ^long [o]
   (if (number? o) (long o)
     (.toEpochMilli (jt.t/instant o))))

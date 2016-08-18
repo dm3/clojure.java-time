@@ -10,7 +10,7 @@
            [java.time.format DateTimeFormatter]
            [java.time Clock Year Month YearMonth MonthDay DayOfWeek ZoneId Instant]))
 
-(defn- ^long get-only-unit-value [^TemporalAmount a, ^TemporalUnit u]
+(defn- get-only-unit-value ^long [^TemporalAmount a, ^TemporalUnit u]
   (let [non-zero-units
         (->> (.getUnits a)
              (map (fn [^TemporalUnit tu] (vector tu (.get a tu))))
