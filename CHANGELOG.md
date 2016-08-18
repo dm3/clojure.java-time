@@ -1,3 +1,11 @@
+## 0.2.2
+
+### Fixed
+
+* Wrong primitive type annotation on `to-millis-from-epoch`, see
+  [Eastwood](https://github.com/jonase/eastwood/blob/master/doc/README-warn-about-bad-tags.txt)
+  docs for the explanation.
+
 ## 0.2.1
 
 ### Fixed
