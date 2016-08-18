@@ -50,7 +50,7 @@ You can also take a look at a [comprehensive comparison](http://time4j.net/tutor
 Add the following dependency to your `project.clj` or `build.boot`:
 
 ```clj
-[clojure.java-time "0.2.1"]
+[clojure.java-time "0.2.2"]
 ```
 
 The [API](http://dm3.github.io/clojure.java-time/) of the Clojure.Java-Time
