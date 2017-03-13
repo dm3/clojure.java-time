@@ -626,7 +626,10 @@
            (j/interval (j/offset-date-time 1970 1 1 0 0 0 0 +0)
                        (j/offset-date-time 1970 1 1 0 0 1 0 +0))))
 
-    (is (= 1 (j/as (j/interval (j/instant 0) (j/instant 1)) :millis))))
+    (is (= 1 (j/as (j/interval (j/instant 0) (j/instant 1)) :millis)))
+
+    (is (thrown-with-msg? IllegalArgumentException #"Cannot convert between.*"
+          (j/as (j/interval (j/instant 0) (j/instant 1)) :months))))
 
   (testing "operations"
     (is (= (j/interval 5000 10000)

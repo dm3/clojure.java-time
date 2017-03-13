@@ -66,13 +66,20 @@
         ^TemporalUnit to-unit (jt.p/unit to-unit)]
     (if (= from-unit to-unit)
       {:whole amount, :remainder 0}
-      (if (and (precise? from-unit) (precise? to-unit))
-        (convert-unit (long amount)
-                      (-> from-unit .getDuration .toNanos)
-                      (-> to-unit .getDuration .toNanos))
-        (convert-unit (long amount)
-                      (month-month-factor (jt.p/unit-key from-unit))
-                      (month-month-factor (jt.p/unit-key to-unit)))))))
+      (cond (and (precise? from-unit) (precise? to-unit))
+            (convert-unit (long amount)
+                          (-> from-unit .getDuration .toNanos)
+                          (-> to-unit .getDuration .toNanos))
+
+            (and (not (precise? from-unit)) (not (precise? to-unit)))
+            (convert-unit (long amount)
+                          (month-month-factor (jt.p/unit-key from-unit))
+                          (month-month-factor (jt.p/unit-key to-unit)))
+
+            :else (-> (format "Cannot convert between precise (nanos up to weeks) and imprecise units, got: %s to %s!"
+                              from-unit to-unit)
+                      (IllegalArgumentException.)
+                      (throw))))))
 
 (defn ^Date to-java-date
   "Converts a date entity to a `java.util.Date`."
