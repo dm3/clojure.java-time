@@ -21,7 +21,7 @@
                                                  [org.threeten/threeten-extra "0.9"]
                                                  [joda-time/joda-time "2.9.4"]]}
              :1.9 {:dependencies [[org.clojure/clojure "1.9.0-alpha10"]]}
-             :1.9-three-ten-joda {:dependencies [[org.clojure/clojure "1.9.0-alpha10"]
+             :1.9-three-ten-joda {:dependencies [[org.clojure/clojure "1.9.0-alpha14"]
                                                  [org.threeten/threeten-extra "1.0"]
                                                  [joda-time/joda-time "2.9.4"]]}}
   :aliases {"test-all" ["do"
