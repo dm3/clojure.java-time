@@ -34,6 +34,8 @@
                 ;; currently we just incur a 0.5*number of types dropped penalty
                 (+ cost (* 0.5 (- (count xs) (count combo)))))))))
 
+(def ^:dynamic *fail-on-duplicate-conversion?* true)
+
 (defn conversion!
   ([from to f] (conversion! from to f 1))
   ([from-type-vec to-type-vec f cost]
@@ -43,8 +45,9 @@
        (swap! graph
               (fn [g]
                 (if-let [existing (g/get-conversion g from to)]
-                  (throw (ex-info (format "Conversion %s -> %s already exists: %s!" from to existing)
-                                  {:from from, :to to, :existing existing}))
+                  (when *fail-on-duplicate-conversion?*
+                    (throw (ex-info (format "Conversion %s -> %s already exists: %s!" from to existing)
+                                    {:from from, :to to, :existing existing})))
                   (let [f (wrap-validation from to f)]
                     (g/assoc-conversion g from to f cost)))))))))
 
