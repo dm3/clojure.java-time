@@ -4,6 +4,8 @@
 
 A Clojure wrapper for Java 8 Date-Time API.
 
+## Rationale
+
 Main goals:
 
 * Provide a consistent API for common operations with
