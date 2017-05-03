@@ -83,7 +83,12 @@
                       (throw))))))
 
 (defn ^Date to-java-date
-  "Converts a date entity to a `java.util.Date`."
+  "Converts a date entity to a `java.util.Date`.
+
+  *Deprecated*:
+  This function only has a single arity and works for entities directly
+  convertible to `java.time.Instant`. Please consider using `java-date`
+  instead."
   [o]
   (if (instance? Date o) o
     (Date/from (jt.t/instant o))))
@@ -91,15 +96,21 @@
 (defn ^java.sql.Date to-sql-date
   "Converts a local date entity to a `java.sql.Date`.
 
+  *Deprecated*:
   This function only has a single arity and works for entities directly
   convertible to `java.time.LocalDate`. Please consider using `sql-date`
   instead."
   [o] (java.sql.Date/valueOf (jt.l/local-date o)))
 
 (defn ^java.sql.Timestamp to-sql-timestamp
-  "Converts a date entity to a `java.sql.Timestamp`."
+  "Converts a date entity to a `java.sql.Timestamp`.
+
+  *Deprecated*:
+  This function only has a single arity and works for entities directly
+  convertible to `java.time.Instant`. Please consider using `sql-timestamp`
+  instead."
   [o]
-  (java.sql.Timestamp/from (jt.t/instant o)))
+  (java.sql.Timestamp/valueOf (jt.l/local-date-time o)))
 
 (defn to-millis-from-epoch
   "Converts a date entity to a `long` representing the number of milliseconds
