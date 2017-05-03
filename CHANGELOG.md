@@ -1,3 +1,10 @@
+## 0.3.0
+
+### Fixed
+
+* *Breaking*: `to-sql-date` converts anything convertible to `LocalDate` into a `java.sql.Date`.
+  Previously `to-sql-date` worked the same as `to-java-date`.
+
 ## 0.2.2
 
 ### Fixed

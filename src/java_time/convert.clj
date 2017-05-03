@@ -1,6 +1,7 @@
 (ns java-time.convert
   (:require [java-time.core :as jt.c]
             [java-time.util :as jt.u]
+            [java-time.local :as jt.l]
             [java-time.properties :as jt.p]
             [java-time.temporal :as jt.t])
   (:import [java.time.temporal TemporalUnit ChronoUnit]
@@ -88,9 +89,12 @@
     (Date/from (jt.t/instant o))))
 
 (defn ^java.sql.Date to-sql-date
-  "Converts a date entity to a `java.sql.Date`."
-  [o]
-  (java.sql.Date/from (jt.t/instant o)))
+  "Converts a local date entity to a `java.sql.Date`.
+
+  This function only has a single arity and works for entities directly
+  convertible to `java.time.LocalDate`. Please consider using `sql-date`
+  instead."
+  [o] (java.sql.Date/valueOf (jt.l/local-date o)))
 
 (defn ^java.sql.Timestamp to-sql-timestamp
   "Converts a date entity to a `java.sql.Timestamp`."

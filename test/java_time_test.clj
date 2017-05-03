@@ -605,12 +605,16 @@
   (testing "converts through instant"
     (is (= (j/instant 1000) (j/instant (java.util.Date. 1000))))
     (is (= (java.util.Date. 1000) (j/to-java-date 1000)))
-    (is (= (java.sql.Date. 1000) (j/to-sql-date 1000)))
+    (is (= (java.sql.Date/valueOf (j/local-date 1000)) (j/to-sql-date 1000)))
     (is (= (java.sql.Timestamp. 1000) (j/to-sql-timestamp 1000)))
     (is (= 1000
            (j/to-millis-from-epoch 1000)
            (j/to-millis-from-epoch (java.util.Date. 1000))
            (j/to-millis-from-epoch (j/offset-date-time (j/instant 1000) +0)))))
+
+  (testing "converts to java.util/sql Dates"
+    (is (= (java.util.Date. 1000) (j/to-java-date (j/instant 1000))))
+    (is (= (java.sql.Date/valueOf (j/local-date 2016)) (j/to-sql-date (j/local-date 2016)))))
 
   (testing "from java.util Date types"
     (is (= (j/zone-id "UTC") (j/zone-id (java.util.TimeZone/getTimeZone "UTC"))))))
