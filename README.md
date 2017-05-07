@@ -55,7 +55,7 @@ Add the following dependency to your `project.clj` or `build.boot`:
 [clojure.java-time "0.3.0"]
 ```
 
-The [API](http://dm3.github.io/clojure.java-time/) of the Clojure.Java-Time
+The [API](https://dm3.github.io/clojure.java-time/) of the Clojure.Java-Time
 consists of one namespace, namely `java-time`.  For the purposes of this guide,
 we will `use` the main namespace:
 

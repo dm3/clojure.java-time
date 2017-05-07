@@ -14,7 +14,7 @@
                                   [org.threeten/threeten-extra "1.0"]]
                    :plugins [[lein-codox "0.10.3"]]
                    :codox {:namespaces [java-time java-time.repl]
-                           :doc-files ["README.md"]}
+                           :doc-files ["README.md" "CHANGELOG.md"]}
                    :source-paths ["dev"]
                    :global-vars {*warn-on-reflection* true}}
              :1.7 {:dependencies [[org.clojure/clojure "1.7.0"]]}
