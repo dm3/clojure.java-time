@@ -9,8 +9,10 @@ fi
 
 rm -rf ./doc
 
+git checkout $1
 lein with-profile -user codox
-
 cp -r ./target/doc ./doc
+
+git checkout master
 git add .
 git commit -am "docs: updated for v.$1"
