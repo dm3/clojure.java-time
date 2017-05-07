@@ -12,16 +12,17 @@
                                   [org.clojure/tools.namespace "0.2.11"]
                                   [joda-time/joda-time "2.9.4"]
                                   [org.threeten/threeten-extra "1.0"]]
-                   :plugins [[lein-codox "0.9.0"]]
-                   :codox {:namespaces [java-time java-time.repl]}
+                   :plugins [[lein-codox "0.10.3"]]
+                   :codox {:namespaces [java-time java-time.repl]
+                           :doc-files ["README.md"]}
                    :source-paths ["dev"]
                    :global-vars {*warn-on-reflection* true}}
              :1.7 {:dependencies [[org.clojure/clojure "1.7.0"]]}
              :1.7-three-ten-joda {:dependencies [[org.clojure/clojure "1.7.0"]
                                                  [org.threeten/threeten-extra "0.9"]
                                                  [joda-time/joda-time "2.9.4"]]}
-             :1.9 {:dependencies [[org.clojure/clojure "1.9.0-alpha10"]]}
-             :1.9-three-ten-joda {:dependencies [[org.clojure/clojure "1.9.0-alpha14"]
+             :1.9 {:dependencies [[org.clojure/clojure "1.9.0-alpha16"]]}
+             :1.9-three-ten-joda {:dependencies [[org.clojure/clojure "1.9.0-alpha16"]
                                                  [org.threeten/threeten-extra "1.0"]
                                                  [joda-time/joda-time "2.9.4"]]}}
   :aliases {"test-all" ["do"

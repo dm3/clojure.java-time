@@ -7,23 +7,10 @@ if [[ -z $1 ]]; then
     exit 1;
 fi
 
-rm -rf target/doc
-git clone git@github.com:dm3/clojure.java-time.git target/doc
-cd target/doc
-git symbolic-ref HEAD refs/heads/gh-pages
-rm .git/index
-git clean -fdx 
-cd -
+rm -rf ./doc
 
-echo "Running codox on $1 in `pwd`..."
-git checkout "$1"
-lein codox
+lein with-profile -user codox
 
-cd target/doc
+cp -r ./target/doc ./doc
 git add .
-git commit -am "update docs"
-git push -fu origin gh-pages
-cd -
-
-echo "Switching `pwd` back to master..."
-git checkout master
+git commit -am "docs: updated for v.$1"
