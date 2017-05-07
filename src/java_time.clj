@@ -3,7 +3,7 @@
   (:require [java-time.potemkin.namespaces :as potemkin]
             [java-time.util :as jt.u]
             [java-time core properties temporal amount zone single-field local chrono
-             convert sugar seqs adjuster interval format joda clock]))
+             convert sugar seqs adjuster interval format joda clock pre-java8]))
 
 (potemkin/import-vars
   [java-time.clock
@@ -59,6 +59,9 @@
 
   [java-time.format
    format formatter]
+
+  [java-time.pre-java8
+   java-date sql-date sql-timestamp sql-time]
 
   [java-time.interval
    move-start-to move-end-to move-start-by move-end-by

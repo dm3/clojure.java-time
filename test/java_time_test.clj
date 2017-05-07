@@ -617,6 +617,24 @@
       (is (= (java.util.Date. 1000) (j/to-java-date (j/instant 1000))))
       (is (= (java.sql.Date/valueOf (j/local-date 2016)) (j/to-sql-date (j/local-date 2016))))))
 
+  (testing "pre-java8"
+    (is (= (j/java-date (j/instant 1000))
+           (java.util.Date. 1000)
+           (j/java-date 1000)))
+    (is (= (java.sql.Date/valueOf (j/local-date 2000 10 5))
+           (j/sql-date 2000 10 5)
+           (j/sql-date (j/local-date 2000 10 5))))
+    (is (= (java.sql.Timestamp/valueOf (j/local-date-time 2000 10 5 20 30 40))
+           (j/sql-timestamp 2000 10 5 20 30 40)
+           (j/sql-timestamp (j/local-date-time 2000 10 5 20 30 40))))
+    (is (= (java.sql.Time/valueOf (j/local-time 20 30 40))
+           (j/sql-time 20 30 40)
+           (j/sql-time (j/local-time 20 30 40))))
+
+    (is (= (j/local-date 2000 10 5) (j/local-date (j/sql-date 2000 10 5))))
+    (is (= (j/local-date-time 2000 10 5 20 30 40 1000)
+           (j/local-date-time (j/sql-timestamp 2000 10 5 20 30 40 1000))))
+    (is (= (j/local-time 20 30 40) (j/local-time (j/sql-time 20 30 40)))))
 
   (testing "from java.util Date types"
     (is (= (j/zone-id "UTC") (j/zone-id (java.util.TimeZone/getTimeZone "UTC"))))))

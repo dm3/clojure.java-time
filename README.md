@@ -312,18 +312,59 @@ less information, e.g. (assuming we're in UTC timezone):
 => #object[java.time.LocalTime 0x3a3cd6d5 "01:00"]
 ```
 
-Any date which can be converted to an instant, can also be converted to pre-Java
-8 date types:
+#### Legacy Date-Time Types
 
-```clj
-(to-java-date (zoned-date-time 2015 9 28))
+Any date which can be converted to an instant, can also be converted to a
+`java.util.Date`:
+
+```clojure
+(java-date (zoned-date-time 2015 9 28))
 => #inst "2015-09-27T22:00:00.000-00:00"
 
-(to-sql-date (zoned-date-time 2015 9 28))
+(java-date 50000)
+=> #inst "1970-01-01T00:00:50.000-00:00"
+```
+
+An instance of `java.util.Date` serves the same purpose as the new
+`java.time.Instant`. It's a machine timestamp which isn't aware of the
+timezone. Please, do not get confused by the way it is printed by the Clojure
+printer - the UTC timezone is applied during formatting.
+
+Sometimes you'll have to work with the legacy `java.sql.Date/Time/Timestamp`
+types. The correspondence between the legacy types and the new Date-Time
+entities is as follows:
+
+  * `java.time.LocalDate` - `java.sql.Date`
+  * `java.time.LocalDateTime` - `java.sql.Timestamp`
+  * `java.time.LocalTime` - `java.sql.Time`
+
+```clojure
+(sql-date 2015 9 28)
 => #inst "2015-09-27T22:00:00.000-00:00"
 
-(to-sql-timestamp (zoned-date-time 2015 9 28))
-=> #inst "2015-09-27T22:00:00.000000000-00:00"
+(sql-timestamp 2015 9 28 10 20 30 4000000)
+=> #inst "2015-09-28T09:20:30.004-00:00"
+
+(sql-time 10 20 30)
+=> #inst "1970-01-01T09:20:30.000-00:00"
+```
+
+The results of the above calls get printed as `#inst` because all of the
+`java.sql.Date/Time/Timestamp` are subtypes of `java.util.Date`.
+Coincidentally, this makes it impossible to plug the `java.sql.*` types into
+the Clojure.Java-Time conversion graph.
+
+Conversions to the legacy types also go the other way around:
+
+```clojure
+(j/local-date (j/sql-date 2015 9 28))
+#object[java.time.LocalDate "2015-09-28"]
+
+(j/local-date-time (j/sql-timestamp 2015 9 28 10 20 30 4000000))
+#object[java.time.LocalDateTime "2015-09-28T10:20:30.004"]
+
+(j/local-time (j/sql-time 10 20 30))
+#object[java.time.LocalTime "10:20:30"]
 ```
 
 #### Three-Ten Extra
@@ -335,7 +376,7 @@ project, you will get an `Interval`, `AmPm`, `DayOfMonth`, `DayOfYear`,
 An interval can be constructed from two entities that can be converted to
 instants:
 
-```clj
+```clojure
 (interval (offset-date-time 2015 1 1) (zoned-date-time 2016 1 1))
 => #<org.threeten.extra.Interval 2015-01-01T00:00:00Z/2016-01-01T00:00:00Z>
 
@@ -354,7 +395,7 @@ instants:
 Bonus! if you have Joda Time on the classpath (either directly, or via
 `clj-time`), you can seamlessly convert from Joda Time to Java Time types:
 
-```clj
+```clojure
 (java-time.repl/show-path org.joda.time.DateTime java.time.OffsetTime)
 => {:cost 2.0,
     :path [[#<java_time.graph.Types@15e43c24 [org.joda.time.DateTime]>
@@ -374,7 +415,7 @@ you to influence the date-times create using default constructors ala Joda's
 `DateTimeUtils/setCurrentMillisSystem`. Clojure.Java-Time tries to fix that with
 the `with-clock` macro and the corresponding `with-clock-fn` function:
 
-```clj
+```clojure
 (zone-id)
 => #<java.time.ZoneRegion Europe/London>
 
@@ -391,7 +432,7 @@ Date-Time entities are composed of date fields, while Duration entities are
 composed of time units. You can see all of the predefined fields and units
 via the `java-time.repl` ns:
 
-```clj
+```clojure
 (java-time.repl/show-fields)
 => (:aligned-day-of-week-in-month
     :aligned-day-of-week-in-year
@@ -402,7 +443,7 @@ via the `java-time.repl` ns:
     ...)
 ```
 
-```clj
+```clojure
 (java-time.repl/show-units)
 => (:centuries
     :days
@@ -415,7 +456,7 @@ via the `java-time.repl` ns:
 
 You can obtain any field/unit like this:
 
-```clj
+```clojure
 (field :year)
 => #object[java.time.temporal.ChronoField "Year"]
 
@@ -428,7 +469,7 @@ You can obtain any field/unit like this:
 
 You can obtain all of the fields/units of the temporal entity:
 
-```clj
+```clojure
 (fields (local-date))
 => {:proleptic-month #object[java.time.temporal.ChronoField ...}
 
@@ -441,7 +482,7 @@ By themselves the fields and units aren't very interesting. You can get the
 range of valid values for a field and a duration between two dates, but that's
 about it:
 
-```clj
+```clojure
 (range (field :year))
 => #object[java.time.temporal.ValueRange "-999999999 - 999999999"]
 
@@ -458,7 +499,7 @@ are reasons for that which I feel are only valid in a statically-typed API like
 Java's. In Clojure, properties allow expressing time entity modifications and
 queries uniformly across all of the entity types.
 
-```clj
+```clojure
 (def prop (property (local-date 2015 2 28) :day-of-month))
 => #java_time.temporal.TemporalFieldProperty{...}
 
@@ -496,7 +537,7 @@ Hopefully, the performance issue will be resolved in the future...
 
 You can play with the conversion graph using the following helpers:
 
-```clj
+```clojure
 (java-time.repl/show-path org.joda.time.DateTime java.time.OffsetTime)
 => {:cost 2.0,
     :path [[#<java_time.graph.Types@15e43c24 [org.joda.time.DateTime]>
