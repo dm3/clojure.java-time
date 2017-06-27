@@ -6,6 +6,9 @@
 
 * `to-sql-date` converts anything convertible to `LocalDate` into a `java.sql.Date`.
   Previously `to-sql-date` returned a `java.util.Date` (bug).
+* [#10](https://github.com/dm3/clojure.java-time/issues/10) `to-sql-timestamp` 
+  stopped accepting an instant and starting accepting local date time. I
+  mistakenly assumed that `java.sql.Timestamp/from(Instant)` was deprecated.
 
 ### New Features
 
