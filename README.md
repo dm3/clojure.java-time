@@ -158,11 +158,11 @@ Duration, on the other hand, represents a standard duration less than or equal
 to a single standard (24-hour) day.
 
 ### Caution
-
-The current incarnation of the library is quite slow while calling the 2-3
-arity `zoned-date-time/offset-time/offset-date-time` constructors. If you need
-predictable latency on the first call, please warm the constructors you are
-going to use by using them in a 'warm-up phase', e.g.:
+The current incarnation of the library is relatively slow while calling the 2-3
+arity `zoned-date-time/offset-time/offset-date-time` constructors for the
+*first time* in a given Clojure runtime. If you need predictable latency at the
+time of the first call in your business logic, please warm the
+constructors you are going to use up by calling them beforehand, e.g.:
 
 ```clj
 (defn warm-up []
@@ -171,7 +171,9 @@ going to use by using them in a 'warm-up phase', e.g.:
   (zoned-date-time 2015))
 ```
 
-Only the types of the arguments matter, not the values!
+The "constructor" here refers to an arity of a function together with its type
+signature. For example, a `(zoned-date-time 2015)` and `(zoned-date-time (system-clock))`
+are different constructors.
 
 ### An appetizer
 
