@@ -20,10 +20,10 @@
              :1.7 {:dependencies [[org.clojure/clojure "1.7.0"]]}
              :1.7-three-ten-joda {:dependencies [[org.clojure/clojure "1.7.0"]
                                                  [org.threeten/threeten-extra "0.9"]
-                                                 [joda-time/joda-time "2.9.4"]]}
-             :1.9 {:dependencies [[org.clojure/clojure "1.9.0-alpha16"]]}
-             :1.9-three-ten-joda {:dependencies [[org.clojure/clojure "1.9.0-alpha16"]
+                                                 [joda-time/joda-time "2.9.9"]]}
+             :1.9 {:dependencies [[org.clojure/clojure "1.9.0-alpha17"]]}
+             :1.9-three-ten-joda {:dependencies [[org.clojure/clojure "1.9.0-alpha17"]
                                                  [org.threeten/threeten-extra "1.0"]
-                                                 [joda-time/joda-time "2.9.4"]]}}
+                                                 [joda-time/joda-time "2.9.9"]]}}
   :aliases {"test-all" ["do"
                         ["with-profile" "1.7:1.9:1.7-three-ten-joda:1.9-three-ten-joda" "test"]]})
