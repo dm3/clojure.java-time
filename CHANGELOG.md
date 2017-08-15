@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.3.1
+
+### New Features
+
+* `clock?` predicate
+* `mock-clock` - returns a mocked instance of `java.time.Clock`.
+
 ## 0.3.0
 
 ### Breaking changes

@@ -408,6 +408,10 @@
   ([d] (Clock/tick (system-clock) (jt.a/duration d)))
   ([^Clock c, d] (Clock/tick c (jt.a/duration d))))
 
+(defn clock?
+  "Returns true if `x` is an instance of `java.time.Clock`."
+  [x] (instance? Clock x))
+
 (extend-type Clock
   jt.c/ReadableProperty
   (value [c] (.millis c))

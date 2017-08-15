@@ -426,6 +426,25 @@ the `with-clock` macro and the corresponding `with-clock-fn` function:
 => #<java.time.ZoneRegion UTC>
 ```
 
+In addition to the built-in `java.time` clocks, we provide a Mock clock which
+can be very handy in testing:
+
+```clojure
+(def clock (mock-clock 0 "UTC"))
+=> #'user/clock
+
+(with-clock clock
+  (j/instant))
+=> #object[java.time.Instant "1970-01-01T00:00:00Z"]
+
+(advance-clock! clock (plus (hours 5) (minutes 20)))
+=> nil
+
+(with-clock clock
+  (j/instant))
+=> #object[java.time.Instant "1970-01-01T05:20:00Z"]
+```
+
 Clock overrides works for all of the date-time types.
 
 #### Fields, Units and Properties

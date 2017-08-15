@@ -441,6 +441,44 @@
     (is (j/after? (j/month-day 5 1) (j/month-day 4 1)))
     (is (j/before? (j/month-day 1 1) (j/month-day 4 1)))))
 
+(deftest mock-clock
+  (testing "constructors"
+    (is (= (j/mock-clock)
+           (j/mock-clock 0)
+           (j/mock-clock 0 (j/zone-id)))))
+
+  (let [utc-clock #(j/mock-clock % "UTC")]
+    (testing "accessors"
+      (let [clock (utc-clock 0)]
+        (is (= 0 (j/value clock)))
+        (is (= (j/zone-id "UTC") (j/zone-id clock)))))
+
+    (testing "equality"
+      (is (= (utc-clock 0) (utc-clock 0)))
+      (is (= (hash (utc-clock 0)) (hash (utc-clock 0))))
+      (is (not= (utc-clock 0) (utc-clock 1)))
+      (is (not= (utc-clock 0) (j/mock-clock 0 "GMT"))))
+
+    (testing "advance"
+      (let [clock (utc-clock 0)]
+        (testing "by positive amount"
+          (j/advance-clock! clock (j/millis 1))
+          (is (= 1 (j/value clock))))
+
+        (testing "by negative amount"
+          (j/advance-clock! clock (j/millis -1))
+          (is (= 0 (j/value clock))))
+
+        (testing "clone with a different zone"
+          (let [cloned-clock (j/with-zone clock "GMT")]
+            (is (not (identical? clock cloned-clock)))
+            (is (= (j/zone-id "GMT") (j/zone-id cloned-clock)))
+            (is (= (j/value cloned-clock) (j/value clock)))
+
+            (j/advance-clock! cloned-clock (j/seconds 1))
+            (is (= 1000 (j/value cloned-clock)))
+            (is (not= (j/value cloned-clock) (j/value clock)))))))))
+
 (deftest properties
   (testing "units"
     (is (= (j/unit :seconds)
