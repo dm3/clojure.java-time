@@ -443,6 +443,13 @@ can be very handy in testing:
 (with-clock clock
   (j/instant))
 => #object[java.time.Instant "1970-01-01T05:20:00Z"]
+
+(set-clock! clock 0)
+=> nil
+
+(with-clock clock
+  (j/instant))
+=> #object[java.time.Instant "1970-01-01T00:00:00Z"]
 ```
 
 Clock overrides works for all of the date-time types.

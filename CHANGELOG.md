@@ -4,6 +4,13 @@
 
 ### New Features
 
+* `zone-id?` predicate
+* `set-clock!` - sets the mocked clock value to the supplied instant
+
+## 0.3.1
+
+### New Features
+
 * `clock?` predicate
 * `mock-clock` - returns a mocked instance of `java.time.Clock`.
 

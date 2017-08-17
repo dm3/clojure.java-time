@@ -1,5 +1,6 @@
 (ns java-time.mock
   (:require [java-time
+             [amount :as amount]
              [core :as core]
              [temporal :as temporal]
              [zone :as zone]])
@@ -55,3 +56,13 @@
   This mutates the mock clock."
   [^IMockClock clock amount]
   (.advanceClock clock amount))
+
+(defn set-clock!
+  "Sets the `clock` to the given `time`.
+
+  This mutates the mock clock."
+  [^Clock clock time]
+  (let [current (.instant clock)]
+    (->> (core/time-between :millis current (temporal/instant time))
+         (amount/millis)
+         (advance-clock! clock))))

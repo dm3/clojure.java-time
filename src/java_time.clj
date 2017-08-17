@@ -44,7 +44,7 @@
    with-zone-same-instant with-offset with-offset-same-instant]
 
   [java-time.mock
-   mock-clock advance-clock!]
+   mock-clock advance-clock! set-clock!]
 
   [java-time.convert
    as-map convert-amount to-java-date to-sql-date to-sql-timestamp

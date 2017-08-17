@@ -467,17 +467,28 @@
 
         (testing "by negative amount"
           (j/advance-clock! clock (j/millis -1))
-          (is (= 0 (j/value clock))))
+          (is (= 0 (j/value clock))))))
 
-        (testing "clone with a different zone"
-          (let [cloned-clock (j/with-zone clock "GMT")]
-            (is (not (identical? clock cloned-clock)))
-            (is (= (j/zone-id "GMT") (j/zone-id cloned-clock)))
-            (is (= (j/value cloned-clock) (j/value clock)))
+    (testing "clone with a different zone"
+      (let [clock (utc-clock 0)
+            cloned-clock (j/with-zone clock "GMT")]
+        (is (not (identical? clock cloned-clock)))
+        (is (= (j/zone-id "GMT") (j/zone-id cloned-clock)))
+        (is (= (j/value cloned-clock) (j/value clock)))
 
-            (j/advance-clock! cloned-clock (j/seconds 1))
-            (is (= 1000 (j/value cloned-clock)))
-            (is (not= (j/value cloned-clock) (j/value clock)))))))))
+        (j/advance-clock! cloned-clock (j/seconds 1))
+        (is (= 1000 (j/value cloned-clock)))
+        (is (not= (j/value cloned-clock) (j/value clock)))))
+
+    (testing "set"
+      (let [clock (utc-clock 0)]
+        (testing "into future"
+          (j/set-clock! clock 100)
+          (is (= 100 (j/value clock))))
+
+        (testing "into past"
+          (j/set-clock! clock 0)
+          (is (= 0 (j/value clock))))))))
 
 (deftest properties
   (testing "units"
