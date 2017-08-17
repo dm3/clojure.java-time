@@ -40,7 +40,7 @@
    available-zone-ids zone-id zone-offset
    offset-date-time offset-time zoned-date-time
    system-clock fixed-clock offset-clock tick-clock clock?
-   zoned-date-time? offset-date-time? offset-time?
+   zone-id? zoned-date-time? offset-date-time? offset-time?
    with-zone-same-instant with-offset with-offset-same-instant]
 
   [java-time.mock
