@@ -200,10 +200,10 @@ The previous day?
 => #object[java.time.LocalDate "2015-09-28"]
 ```
 
-Three next days?
+Three days starting at `now`?
 
 ```clj
-(take 3 (iterate plus now (days 1)))
+(take 3 (iterate plus now (days 1))) ;; note `java-time/iterate`
 => (#object[java.time.LocalDate "2015-09-28"]
     #object[java.time.LocalDate "2015-09-29"]
     #object[java.time.LocalDate "2015-09-30"])
