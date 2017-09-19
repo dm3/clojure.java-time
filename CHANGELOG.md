@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.3.1
+## 0.3.2
 
 ### New Features
 
@@ -30,7 +30,7 @@ Please see a new section within README - [Legacy Date-Time
 Types](https://github.com/dm3/clojure.java-time#legacy-date-time-types)
 
 * `java-date`, `sql-date`, `sql-timestamp`, `sql-time` - functions which
-  product the `java.util.*` date-time objects.
+  produce the `java.util.*` date-time objects.
 * [#5](https://github.com/dm3/clojure.java-time/issues/5) automatic conversions:
     - `java.sql.Date` -> `java.time.LocalDate`
     - `java.sql.Timestamp` -> `java.time.LocalDateTime`
