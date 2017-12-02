@@ -371,7 +371,7 @@ Conversions to the legacy types also go the other way around:
 
 #### Three-Ten Extra
 
-If you add an optional `[org.threeten/threeten-extra "0.9"]` dependency to the
+If you add an optional `[org.threeten/threeten-extra "1.2"]` dependency to the
 project, you will get an `Interval`, `AmPm`, `DayOfMonth`, `DayOfYear`,
 `Quarter` and `YearQuarter` data types as well as a couple more adjusters.
 
