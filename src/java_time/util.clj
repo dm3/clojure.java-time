@@ -16,16 +16,21 @@
 
 (defmacro if-threeten-extra [then-body else-body]
   (if (try (Class/forName "org.threeten.extra.Temporals")
-             (catch Throwable e))
+           (catch Throwable e))
     `(do ~then-body)
     `(do ~else-body)))
 
 (defmacro when-threeten-extra [& body]
   (if (try (Class/forName "org.threeten.extra.Temporals")
-             (catch Throwable e))
+           (catch Throwable e))
     `(do ~@body)))
 
-(defmacro when-joda [& body]
+(defmacro when-joda-time-loaded
+  "Execute the `body` when Joda-Time classes are found on the classpath.
+
+  Take care - when AOT-compiling code using this macro, the Joda-Time classes
+  must be on the classpath at compile time!"
+  [& body]
   (if (try (Class/forName "org.joda.time.DateTime")
            (catch Throwable e))
     `(do ~@body)))

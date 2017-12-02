@@ -749,7 +749,7 @@
     (is (not (j/after? (j/interval 1000 5000) (j/instant 2000))))
     (is (j/after? (j/interval 1000 5000) (j/interval 100 999)))))
 
-(jt.u/when-joda
+(jt.u/when-joda-time-loaded
 
   (def joda-clock (j/fixed-clock "2015-11-26T10:20:30.040Z" "UTC"))
 

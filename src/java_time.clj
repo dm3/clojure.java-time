@@ -68,7 +68,10 @@
 
   [java-time.interval
    move-start-to move-end-to move-start-by move-end-by
-   start end contains? overlaps? abuts? overlap gap])
+   start end contains? overlaps? abuts? overlap gap]
+
+  [java-time.util
+   when-joda-time-loaded])
 
 (jt.u/when-threeten-extra
   (potemkin/import-vars

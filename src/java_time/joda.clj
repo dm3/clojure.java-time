@@ -7,7 +7,7 @@
   (:import [java.time LocalDate LocalTime LocalDateTime ZoneId Instant
             ZonedDateTime OffsetDateTime OffsetTime]))
 
-(jt.u/when-joda
+(jt.u/when-joda-time-loaded
   (defn joda-fields [o fields]
     (mapv (fn [[^org.joda.time.DateTimeFieldType f mul]]
             (* mul (if (instance? org.joda.time.ReadableInstant o)

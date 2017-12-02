@@ -108,7 +108,7 @@
   :implicit-arities [1 2 3]
   ([] (Period/of 0 0 0)))
 
-(jt.u/when-joda
+(jt.u/when-joda-time-loaded
   (defn ^Period joda-period->period [^org.joda.time.Period p]
     (if-not (zero? (+ (.getMillis p) (.getSeconds p) (.getMinutes p) (.getHours p)))
       (throw (ex-info "Cannot convert a Joda Period containing non year/month/days to a Java-Time Period!"

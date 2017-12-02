@@ -409,6 +409,21 @@ Bonus! if you have Joda Time on the classpath (either directly, or via
 => #<java.time.OffsetTime 22:00:00.000000000-00:00>
 ```
 
+Clojure 1.9 added an [Inst](https://clojuredocs.org/clojure.core/inst_q)
+protocol which is implemented for `java.util.Date` and `java.time.Instant` by
+default. If you're stuck on Joda-Time, you can extend the
+`org.joda.time.ReadableInstant`, which includes both `Instant` and `DateTime`
+using the following:
+
+```clojure
+(java-time/when-joda-time-loaded
+  (extend-type org.joda.time.ReadableInstant
+    Inst (inst-ms* [inst] (.getMillis inst))))
+```
+
+This snippet isn't included in the Clojure.Java-Time code by default as both
+the `Inst` protocol and the Joda-Time types are external to the library.
+
 #### Clocks
 
 Java Time introduced a concept of `Clock` - a time entity which can seed the
