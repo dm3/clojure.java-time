@@ -676,6 +676,10 @@
     (is (= (java.sql.Timestamp/valueOf (j/local-date-time 2000 10 5 20 30 40))
            (j/sql-timestamp 2000 10 5 20 30 40)
            (j/sql-timestamp (j/local-date-time 2000 10 5 20 30 40))))
+    (is (= (java.sql.Timestamp/from (j/instant 1))
+           (java.sql.Timestamp. 1)
+           (j/instant->sql-timestamp (j/instant 1))
+           (j/instant->sql-timestamp 1)))
     (is (= (java.sql.Time/valueOf (j/local-time 20 30 40))
            (j/sql-time 20 30 40)
            (j/sql-time (j/local-time 20 30 40))))
@@ -683,6 +687,7 @@
     (is (= (j/local-date 2000 10 5) (j/local-date (j/sql-date 2000 10 5))))
     (is (= (j/local-date-time 2000 10 5 20 30 40 1000)
            (j/local-date-time (j/sql-timestamp 2000 10 5 20 30 40 1000))))
+    (is (= (j/instant 1) (j/instant (j/instant->sql-timestamp 1))))
     (is (= (j/local-time 20 30 40) (j/local-time (j/sql-time 20 30 40)))))
 
   (testing "from java.util Date types"

@@ -1,5 +1,6 @@
 (ns java-time.pre-java8
   (:require [java-time
+             [convert :as jt.c]
              [local :as jt.l]
              [temporal :as jt.t]
              [defconversion :refer [conversion!]]]))
@@ -40,7 +41,7 @@
 
 (defsqldate java.sql.Date sql-date jt.l/local-date 3
   "Creates a `java.sql.Date` out of any combination of arguments valid for
-  `java-time/local-date` or the LocalDate itself.
+  `java-time/local-date` or the `LocalDate` itself.
 
   Please consider using the JSR-310 Java Time types instead of `java.sql.Date`
   if your drivers support them.
@@ -50,8 +51,13 @@
   conversion from/to native JDBC driver DATE types.")
 
 (defsqldate java.sql.Timestamp sql-timestamp jt.l/local-date-time 7
-  "Creates a `java.sql.Timestamp` out of any combination of arguments valid for
-  `java-time/local-date-time` or the LocalDateTime itself.
+  "Creates a `java.sql.Timestamp` in the local timezone out of any combination
+  of arguments valid for `java-time/local-date-time` or the `LocalDateTime`
+  itself.
+
+  The `sql-timestamp` constructor function does not support `Timestamp`
+  construction from an `Instant` or a long millis value. Please use
+  `instant->sql-timestamp` for this purpose.
 
   Please consider using the JSR-310 Java Time types instead of
   `java.sql.Timestamp` if your drivers support them.
@@ -60,9 +66,24 @@
   as a local date-time (no timezone) for the purposes of conversion from/to native
   JDBC driver TIMESTAMP types.")
 
+(defn instant->sql-timestamp
+  "Creates a `java.sql.Timestamp` from the provided `instant-or-millis` - a
+  millisecond numeric time value or something convertible to an `Instant`.
+
+  Please consider using the JSR-310 Java Time types instead of
+  `java.sql.Timestamp` if your drivers support them.
+
+  `java.sql.Timestamp` is a version of a `java.util.Date` supposed to be used
+  as a local date-time (no timezone) for the purposes of conversion from/to native
+  JDBC driver TIMESTAMP types."
+  [instant-or-millis]
+  (if (number? instant-or-millis)
+    (java.sql.Timestamp. (long instant-or-millis))
+    (java.sql.Timestamp/from (jt.t/instant instant-or-millis))))
+
 (defsqldate java.sql.Time sql-time jt.l/local-time 3
   "Creates a `java.sql.Time` out of any combination of arguments valid for
-  `java-time/local-time` (except the nanos constructor) or the LocalTime
+  `java-time/local-time` (except the nanos constructor) or the `LocalTime`
   itself.
 
   Please consider using the JSR-310 Java Time types instead of `java.sql.Time`

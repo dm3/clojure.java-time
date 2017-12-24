@@ -7,6 +7,7 @@
 * `zone-id?` predicate
 * `set-clock!` - sets the mocked clock value to the supplied instant
 * `when-joda-time-loaded` - macro which runs code when Joda-Time is on the classpath
+* `instant->sql-timestamp` - produce a `java.sql.Timestamp` from an Instant-like object
 
 ## 0.3.1
 

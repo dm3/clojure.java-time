@@ -64,7 +64,7 @@
    format formatter]
 
   [java-time.pre-java8
-   java-date sql-date sql-timestamp sql-time]
+   java-date sql-date sql-timestamp instant->sql-timestamp sql-time]
 
   [java-time.interval
    move-start-to move-end-to move-start-by move-end-by
