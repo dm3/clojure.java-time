@@ -644,6 +644,16 @@
       (is (= 1 (j/as (j/local-date 2015 1 1) :day-of-month)))
       (is (= 2015 (j/as (j/local-date 2015 1 1) :year))))
 
+    (testing "temporal-accessor"
+      (let [month-day-under-test (j/month-day 3 31)]
+       (is (= 3 (j/as month-day-under-test :month-of-year)))
+       (is (= 31 (j/as month-day-under-test :day-of-month)))
+       (is (thrown? Exception (j/as month-day-under-test :year))))
+      (let [year-month-under-test (j/year-month 2018 3)]
+       (is (= 2018 (j/as year-month-under-test :year)))
+       (is (= 3 (j/as year-month-under-test :month-of-year)))
+       (is (thrown? Exception (j/as year-month-under-test :day-of-month)))))
+
     (testing "multiple"
       (is (= [2015 1 1] (j/as (j/local-date 2015 1 1) :year :month-of-year :day-of-month))))
 

@@ -163,7 +163,10 @@
          (single-after? [d# o#]
            (.isAfter d# o#))
          (single-before? [d# o#]
-           (.isBefore d# o#))))))
+           (.isBefore d# o#))
+         jt.c/As
+         (as* [o# k#]
+            (jt.c/value (jt.c/property o# k#)))))))
 
 (enumerated-entity DayOfWeek
   "Returns the `DayOfWeek` for the given day keyword name (e.g. `:monday`),
