@@ -11,6 +11,7 @@
                                   [com.taoensso/timbre "4.1.4"]
                                   [org.clojure/tools.namespace "0.2.11"]
                                   [joda-time/joda-time "2.9.4"]
+                                  [org.clojure/java.jdbc "0.7.8"]
                                   [org.threeten/threeten-extra "1.2"]]
                    :plugins [[lein-codox "0.10.3"]]
                    :codox {:namespaces [java-time java-time.repl]
