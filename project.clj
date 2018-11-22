@@ -18,12 +18,16 @@
                            :doc-files ["README.md" "CHANGELOG.md"]}
                    :source-paths ["dev"]
                    :global-vars {*warn-on-reflection* true}}
-             :1.7 {:dependencies [[org.clojure/clojure "1.7.0"]]}
-             :1.7-three-ten-joda {:dependencies [[org.clojure/clojure "1.7.0"]
+             :1.7 {:dependencies [[org.clojure/java.jdbc "0.7.8"]
+                                  [org.clojure/clojure "1.7.0"]]}
+             :1.7-three-ten-joda {:dependencies [[org.clojure/java.jdbc "0.7.8"]
+                                                 [org.clojure/clojure "1.7.0"]
                                                  [org.threeten/threeten-extra "1.2"]
                                                  [joda-time/joda-time "2.9.9"]]}
-             :1.9 {:dependencies [[org.clojure/clojure "1.9.0-alpha17"]]}
-             :1.9-three-ten-joda {:dependencies [[org.clojure/clojure "1.9.0-RC2"]
+             :1.9 {:dependencies [[org.clojure/java.jdbc "0.7.8"]
+                                  [org.clojure/clojure "1.9.0-alpha17"]]}
+             :1.9-three-ten-joda {:dependencies [[org.clojure/java.jdbc "0.7.8"]
+                                                 [org.clojure/clojure "1.9.0-RC2"]
                                                  [org.threeten/threeten-extra "1.2"]
                                                  [joda-time/joda-time "2.9.9"]]}}
   :aliases {"test-all" ["do"
