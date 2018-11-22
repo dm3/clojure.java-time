@@ -369,6 +369,21 @@ Conversions to the legacy types also go the other way around:
 #object[java.time.LocalTime "10:20:30"]
 ```
 
+#### java-time.jdbc
+java-time.jdbc registers protocol extensions, you don't care about legacy
+date-time types.
+
+From repl
+```clj
+(require 'java-time.jdbc)
+```
+In your project
+```clj
+(ns my.neat.project
+  (:require [java-time.jdbc]))
+; They're registered and ready to use.
+```
+
 #### Three-Ten Extra
 
 If you add an optional `[org.threeten/threeten-extra "1.2"]` dependency to the
