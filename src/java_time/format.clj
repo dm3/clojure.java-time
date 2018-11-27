@@ -23,7 +23,7 @@
   "Constructs a DateTimeFormatter out of a
 
   * format string - \"YYYY/mm/DD\", \"YYY HH:MM\", etc.
-  * formatter name - :date, :time-no-millis, etc.
+  * formatter name - :iso-date, :iso-time, etc.
 
   Accepts a map of options as an optional second argument:
 
