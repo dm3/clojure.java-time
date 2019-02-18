@@ -17,13 +17,17 @@
                            :doc-files ["README.md" "CHANGELOG.md"]}
                    :source-paths ["dev"]
                    :global-vars {*warn-on-reflection* true}}
-             :1.7 {:dependencies [[org.clojure/clojure "1.7.0"]]}
-             :1.7-three-ten-joda {:dependencies [[org.clojure/clojure "1.7.0"]
-                                                 [org.threeten/threeten-extra "1.2"]
-                                                 [joda-time/joda-time "2.9.9"]]}
-             :1.9 {:dependencies [[org.clojure/clojure "1.9.0-alpha17"]]}
-             :1.9-three-ten-joda {:dependencies [[org.clojure/clojure "1.9.0-RC2"]
-                                                 [org.threeten/threeten-extra "1.2"]
-                                                 [joda-time/joda-time "2.9.9"]]}}
+             :1.8 {:dependencies [[org.clojure/clojure "1.8.0"]]}
+             :1.8-three-ten-joda {:dependencies [[org.clojure/clojure "1.8.0"]
+                                                 [org.threeten/threeten-extra "1.4"]
+                                                 [joda-time/joda-time "2.10.1"]]}
+             :1.9 {:dependencies [[org.clojure/clojure "1.9.0"]]}
+             :1.9-three-ten-joda {:dependencies [[org.clojure/clojure "1.9.0"]
+                                                 [org.threeten/threeten-extra "1.4"]
+                                                 [joda-time/joda-time "2.10.1"]]}
+             :1.10 {:dependencies [[org.clojure/clojure "1.10.0"]]}
+             :1.10-three-ten-joda {:dependencies [[org.clojure/clojure "1.10.0"]
+                                                  [org.threeten/threeten-extra "1.4"]
+                                                  [joda-time/joda-time "2.10.1"]]}}
   :aliases {"test-all" ["do"
-                        ["with-profile" "1.7:1.9:1.7-three-ten-joda:1.9-three-ten-joda" "test"]]})
+                        ["with-profile" "1.8:1.9:1.10:1.8-three-ten-joda:1.9-three-ten-joda:1.10-three-ten-joda" "test"]]})
