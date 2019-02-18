@@ -45,9 +45,10 @@
        (swap! graph
               (fn [g]
                 (if-let [existing (g/get-conversion g from to)]
-                  (when *fail-on-duplicate-conversion?*
+                  (if *fail-on-duplicate-conversion?*
                     (throw (ex-info (format "Conversion %s -> %s already exists: %s!" from to existing)
-                                    {:from from, :to to, :existing existing})))
+                                    {:from from, :to to, :existing existing}))
+                    g)
                   (let [f (wrap-validation from to f)]
                     (g/assoc-conversion g from to f cost)))))))))
 
