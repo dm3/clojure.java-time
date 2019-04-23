@@ -6,7 +6,7 @@
   :scm {:name "git"
         :url "http://github.com/dm3/clojure.java-time"}
   :dependencies [[clj-tuple "0.2.2"]]
-  :profiles {:dev {:dependencies [[org.clojure/clojure "1.8.0"]
+  :profiles {:dev {:dependencies [[org.clojure/clojure "1.10.0"]
                                   [criterium "0.4.4"]
                                   [com.taoensso/timbre "4.1.4"]
                                   [org.clojure/tools.namespace "0.2.11"]
@@ -17,6 +17,9 @@
                            :doc-files ["README.md" "CHANGELOG.md"]}
                    :source-paths ["dev"]
                    :global-vars {*warn-on-reflection* true}}
+             :async-profiler
+             {:jvm-opts ["-Djdk.attach.allowAttachSelf" "-XX:+UnlockDiagnosticVMOptions" "-XX:+DebugNonSafepoints"]
+              :dependencies [[com.clojure-goes-fast/clj-async-profiler "0.3.1"]]}
              :1.8 {:dependencies [[org.clojure/clojure "1.8.0"]]}
              :1.8-three-ten-joda {:dependencies [[org.clojure/clojure "1.8.0"]
                                                  [org.threeten/threeten-extra "1.4"]
