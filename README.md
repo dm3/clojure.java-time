@@ -27,6 +27,15 @@ Java 8 Date-Time API to the Clojure world. It's very similar to
 Clojure.Joda-Time in its design goals and overall feeling, so if you ever used
 that you will feel at home!
 
+Why use Clojure.Java-Time over [cljc.java-time](https://github.com/henryw374/cljc.java-time) with [tick](https://github.com/juxt/tick)?
+
+* You only plan on running on the JVM
+* You prefer a single `require` over multiple ones
+
+I don't see any reasons except for aesthetical pleasure and existing knowledge to choose one 
+over the other. However, I have neither used or benchmarked Cljc.Java-Time and Tick so my endorsement 
+is purely on the merits of a broader feature set.
+
 ## Documentation
 
 * [API](http://dm3.github.io/clojure.java-time/)
