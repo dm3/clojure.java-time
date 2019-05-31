@@ -152,7 +152,7 @@
   (first (sort (cons o os))))
 
 (defn before?
-  "Returns non-nil if time entities are ordered from the earliest to the latest
+  "Returns non-nil if time entities are ordered from the latest to the earliest
   (same semantics as `<`):
 
     (before? (local-date 2009) (local-date 2010) (local-date 2011))
