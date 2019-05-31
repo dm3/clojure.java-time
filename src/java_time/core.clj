@@ -152,8 +152,8 @@
   (first (sort (cons o os))))
 
 (defn before?
-  "Returns non-nil if time entities are ordered from the earliest to the latest
-  (same semantics as `<`):
+  "Returns a truthy value if time entities are ordered from the earliest to the
+  latest (same semantics as `<`):
 
     (before? (local-date 2009) (local-date 2010) (local-date 2011))
     => truthy...
@@ -171,8 +171,8 @@
      false)))
 
 (defn after?
-  "Returns non-nil if time entities are ordered from the latest to the earliest
-  (same semantics as `>`):
+  "Returns a truthy value if time entities are ordered from the latest to the
+  earliest (same semantics as `>`):
 
     (after? (local-date 2011) (local-date 2010) (local-date 2009))
     => truthy...
