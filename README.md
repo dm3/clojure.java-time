@@ -39,6 +39,7 @@ is purely on the merits of a broader feature set.
 ## Documentation
 
 * [API](http://dm3.github.io/clojure.java-time/)
+* [![cljdoc badge](https://cljdoc.org/badge/clojure.java-time/clojure.java-time)](https://cljdoc.org/d/clojure.java-time/clojure.java-time/CURRENT)
 
 ## What's different in Java Time API?
 
