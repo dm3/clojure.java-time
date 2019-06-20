@@ -81,7 +81,9 @@
   :implicit-arities [1 2]
   ([] (jt.clock/make (fn [^Clock c] (.getZone c)))))
 
-(defn available-zone-ids []
+(defn available-zone-ids
+  "Returns a set of string identifiers for all available ZoneIds."
+  []
   (ZoneId/getAvailableZoneIds))
 
 ;; offset date/time
