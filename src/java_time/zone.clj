@@ -94,6 +94,7 @@
     * no arguments - current date-time with the default offset
     * one argument
       + clock
+      + zone offset
       + another temporal entity
       + string representation
       + year
