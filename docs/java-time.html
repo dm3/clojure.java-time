@@ -97,7 +97,8 @@ Accepts something that can be converted to a `DateTimeFormatter` as a first
 argument. Given one argument uses the default format.</pre></div></div><div class="public anchor" id="var-formatter"><h3>formatter</h3><div class="usage"><code>(formatter fmt)</code><code>(formatter fmt {:keys [resolver-style]})</code></div><div class="doc"><pre class="plaintext">Constructs a DateTimeFormatter out of a
 
 * format string - "YYYY/mm/DD", "YYY HH:MM", etc.
-* formatter name - :date, :time-no-millis, etc.
+* formatter name - :iso-date, :iso-time, etc.
+   - More examples can be found <a href="https://docs.oracle.com/javase/8/docs/api/java/time/format/DateTimeFormatter.html">here</a>
 
 Accepts a map of options as an optional second argument:
 
