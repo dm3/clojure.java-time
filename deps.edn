@@ -1,0 +1,2 @@
+{:deps
+ {clj-tuple {:mvn/version "0.2.2"}}}
