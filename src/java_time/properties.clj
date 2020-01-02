@@ -1,11 +1,9 @@
 (ns java-time.properties
   (:require [java-time.core :as jt.c]
-            [java-time.util :as jt.u]
-            [java-time.fields :as jt.f]
-            [java-time.units :as jt.units])
+            [java-time.util :as jt.u])
   (:import [java.time.temporal
-            TemporalField TemporalUnit TemporalAccessor Temporal]
-           (clojure.lang Keyword)))
+            TemporalField IsoFields ChronoField JulianFields
+            TemporalUnit ChronoUnit]))
 
 (defn- property->key [p]
   (keyword (jt.u/dashize (str p))))
@@ -32,11 +30,11 @@
 
 ;;;;;;;;; UNIT
 
-(defonce iso-units
-  (vals jt.units/iso))
+(def iso-units
+  (vals (jt.u/get-static-fields-of-type IsoFields TemporalUnit)))
 
-(defonce chrono-units
-  (vals jt.units/chrono))
+(def chrono-units
+  (vals (jt.u/get-static-fields-of-type ChronoUnit TemporalUnit)))
 
 (def predefined-units
   (concat iso-units chrono-units))
@@ -81,11 +79,16 @@
 
 ;;;;;;;;; FIELD
 
-(defonce iso-fields    (vals jt.f/iso))
-(defonce julian-fields (vals jt.f/julian))
-(defonce chrono-fields (vals jt.f/chrono))
+(def iso-fields
+  (vals (jt.u/get-static-fields-of-type IsoFields TemporalField)))
 
-(defonce predefined-fields
+(def julian-fields
+  (vals (jt.u/get-static-fields-of-type JulianFields TemporalField)))
+
+(def chrono-fields
+  (vals (jt.u/get-static-fields-of-type ChronoField TemporalField)))
+
+(def predefined-fields
   (concat iso-fields chrono-fields julian-fields))
 
 ;; There is another implementation of fields - WeekFields, which is dynamic
@@ -148,7 +151,7 @@
   ([k] (get-field k))
   ([entity k] (jt.c/field* entity k)))
 
-(extend-type Keyword
+(extend-type clojure.lang.Keyword
   jt.c/KnowsTimeBetween
   (time-between [k t1 t2]
     (jt.c/time-between (or (get-field k) (get-unit k)) t1 t2))
@@ -157,7 +160,7 @@
   (supports? [k t]
     (jt.c/supports? (or (get-field k) (get-unit k)) t)))
 
-(extend Keyword
+(extend clojure.lang.Keyword
   jt.c/ReadableRangeProperty
   (assoc jt.c/readable-range-property-fns
          :range (fn [k] (jt.c/range (get-field k)))))

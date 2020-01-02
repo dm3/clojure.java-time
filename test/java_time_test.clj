@@ -61,7 +61,7 @@
     (is (= (j/day-of-week 4)
            (j/day-of-week :thursday)
            (j/day-of-week (j/local-date clock))
-           (j/day-of-week "ee" "04")))
+           (j/day-of-week "ee" "05")))
 
     (is (j/day-of-week? (j/day-of-week 4))))
 
