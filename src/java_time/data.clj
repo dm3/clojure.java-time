@@ -105,14 +105,25 @@
 (comment
   ;; example invocation
   (d/datafy (ZonedDateTime/now))
-  ;; =>
-  {:day {:hour 19},
-   :hour {:minute 54},
+  ;;=>
+  {:day {:hour 20},
+   :hour {:minute 9},
    :week {:day {:name "WEDNESDAY", :value 3}},
-   :second {:nano 516337000, :milli 516, :micro 516337},
+   :second {:nano 11914000, :milli 11, :micro 11914},
    :offset {:id "Z", :hours 0, :seconds 0},
    :zone {:id "Europe/London"},
+   :iso {:local-time "20:09:34.011914",
+         :local-date "2020-01-08",
+         :offset-datetime "2020-01-08T20:09:34.011914Z",
+         :zoned-datetime "2020-01-08T20:09:34.011914Z[Europe/London]"},
    :year {:month {:name "JANUARY", :value 1, :length 31, :day 8}, :length 366, :leap? true, :value 2020, :day 8},
-   :minute {:second 43},
-   :local-iso-time "19:54:43.516337"}
+   :minute {:second 34}}
+
+  (d/datafy (Instant/now))
+  ;;=>
+   {:epoch {:second 1578514227,
+            :milli 1578514227681,
+            :micro 1578514227681499,
+            :nano 1.57851422768149888E18}}
+
   )
