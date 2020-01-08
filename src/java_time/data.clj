@@ -47,17 +47,14 @@
           ym      (YearMonth/of (.getYear ld)
                                 (.getMonth ld))]
       (merge (d/datafy weekday)
-             (assoc-in (d/datafy ym) [:year :week]
-                       (.get ld IsoFields/WEEK_OF_WEEK_BASED_YEAR))
+             (assoc-in (d/datafy ym) [:year :week] (.get ld IsoFields/WEEK_OF_WEEK_BASED_YEAR))
              {:iso {:local-date (.format DateTimeFormatter/ISO_DATE ld)}})))
 
   LocalDateTime
   (datafy [ldt]
     (let [lt (.toLocalTime ldt)
           d  (.toLocalDate ldt)]
-      (-> (merge-with merge
-                      (d/datafy lt)
-                      (d/datafy d))
+      (-> (merge-with merge (d/datafy lt) (d/datafy d))
           (assoc-in [:year :day] (.getDayOfYear  ldt))
           (assoc-in [:year :month :day] (.getDayOfMonth ldt)))))
 
