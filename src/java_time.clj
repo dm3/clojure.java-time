@@ -3,7 +3,7 @@
   (:require [java-time.potemkin.namespaces :as potemkin]
             [java-time.util :as jt.u]
             [java-time core properties temporal amount zone single-field local chrono
-             convert sugar seqs adjuster interval format joda clock pre-java8 mock]))
+             convert sugar seqs adjuster interval format joda clock pre-java8 mock data]))
 
 (potemkin/import-vars
   [java-time.clock
