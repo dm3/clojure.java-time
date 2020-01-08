@@ -5,7 +5,8 @@
   (:import (java.time YearMonth Month DayOfWeek Instant
                       LocalTime LocalDateTime
                       ZonedDateTime OffsetDateTime LocalDate)
-           (java.time.format DateTimeFormatter)))
+           (java.time.format DateTimeFormatter)
+           (java.time.temporal IsoFields)))
 
 (extend-protocol p/Datafiable
 
@@ -45,9 +46,9 @@
     (let [weekday (.getDayOfWeek  ld)
           ym      (YearMonth/of (.getYear ld)
                                 (.getMonth ld))]
-
       (merge (d/datafy weekday)
-             (d/datafy ym)
+             (assoc-in (d/datafy ym) [:year :week]
+                       (.get ld IsoFields/WEEK_OF_WEEK_BASED_YEAR))
              {:iso {:local-date (.format DateTimeFormatter/ISO_DATE ld)}})))
 
   LocalDateTime
@@ -106,17 +107,30 @@
   ;; example invocation
   (d/datafy (ZonedDateTime/now))
   ;;=>
-  {:day {:hour 20},
+  {:day  {:hour 20},
    :hour {:minute 9},
-   :week {:day {:name "WEDNESDAY", :value 3}},
-   :second {:nano 11914000, :milli 11, :micro 11914},
-   :offset {:id "Z", :hours 0, :seconds 0},
+   :week {:day {:name "WEDNESDAY",
+                :value 3}},
+   :second {:nano 11914000,
+            :milli 11,
+            :micro 11914},
+   :offset {:id "Z",
+            :hours 0,
+            :seconds 0},
    :zone {:id "Europe/London"},
    :iso {:local-time "20:09:34.011914",
          :local-date "2020-01-08",
          :offset-datetime "2020-01-08T20:09:34.011914Z",
          :zoned-datetime "2020-01-08T20:09:34.011914Z[Europe/London]"},
-   :year {:month {:name "JANUARY", :value 1, :length 31, :day 8}, :length 366, :leap? true, :value 2020, :day 8},
+   :year {:month {:name "JANUARY",
+                  :value 1,
+                  :length 31,
+                  :day 8},
+          :length 366,
+          :leap? true,
+          :value 2020,
+          :day 8
+          :week 2},
    :minute {:second 34}}
 
   (d/datafy (Instant/now))
