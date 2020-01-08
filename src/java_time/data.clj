@@ -1,71 +1,83 @@
 (ns java-time.data
   "A pure-data view of all the important/data-holding java.time objects."
-  (:require [clojure.core.protocols :as p])
+  (:require [clojure.core.protocols :as p]
+            [clojure.datafy :as d])
   (:import (java.time YearMonth Month DayOfWeek Instant
                       LocalTime LocalDateTime
-                      ZonedDateTime OffsetDateTime)))
+                      ZonedDateTime OffsetDateTime LocalDate)
+           (java.time.format DateTimeFormatter)))
 
 (extend-protocol p/Datafiable
 
   Month
   (datafy [m]
-    {:month-name (.name m)})
+    {:month {:name   (.name m)
+             :value  (.getValue m)
+             ;; ignoring leap-year precision on plain Month objects
+             :length (.length m false)}}) 
 
   DayOfWeek
   (datafy [d]
-    {:day-name (.name d)})
+    {:week {:day {:name  (.name d)
+                  :value (.getValue d)}}})
 
   YearMonth
   (datafy [ym]
-    (merge
-      {:year         (.getYear       ym)
-       :year-length  (.lengthOfYear  ym) ;; 365 or 366 depending on `.isLeapYear()`
-       :leap-year?   (.isLeapYear    ym)
-       :month        (.getMonthValue ym)
-       :month-length (.lengthOfMonth ym)}
-      (p/datafy (.getMonth ym))))
+    {:year (-> (d/datafy (.getMonth ym))
+               (assoc-in [:month :length] (.lengthOfMonth ym)) ;; correct the length here
+               (merge {:length (.lengthOfYear ym)              ;; 365 or 366 depending on `.isLeapYear()`
+                       :leap?  (.isLeapYear ym)
+                       :value  (.getYear ym)}))})
 
   LocalTime
   (datafy [lt]
     (let [nanos (.getNano lt)]
-      {:hour-of-day      (.getHour   lt)
-       :minute-of-hour   (.getMinute lt)
-       :second-of-minute (.getSecond lt)
-       :milli-of-second  (long (/ nanos 1000000))
-       :micro-of-second  (long (/ nanos 1000))
-       :nano-of-second   nanos}))
+      {:iso    {:local-time (.format DateTimeFormatter/ISO_TIME lt)}
+       :day    {:hour   (.getHour   lt)}
+       :hour   {:minute (.getMinute lt)}
+       :minute {:second (.getSecond lt)}
+       :second {:nano nanos
+                :milli (long (/ nanos 1e6))
+                :micro (long (/ nanos 1e3))}}))
+
+  LocalDate
+  (datafy [ld]
+    (let [weekday (.getDayOfWeek  ld)
+          ym      (YearMonth/of (.getYear ld)
+                                (.getMonth ld))]
+
+      (merge (d/datafy weekday)
+             (d/datafy ym)
+             {:iso {:local-date (.format DateTimeFormatter/ISO_DATE ld)}})))
 
   LocalDateTime
   (datafy [ldt]
-    (let [lt      (.toLocalTime ldt)
-          weekday (.getDayOfWeek  ldt)
-          ym (YearMonth/of (.getYear  ldt)
-                           (.getMonth ldt))]
-      (merge
-        {:day-of-month (.getDayOfMonth ldt)
-         :day-of-year  (.getDayOfYear  ldt)
-         :day-of-week  (.getValue weekday)}
-        (p/datafy ym)
-        (p/datafy weekday)
-        (p/datafy lt))))
+    (let [lt (.toLocalTime ldt)
+          d  (.toLocalDate ldt)]
+      (-> (merge-with merge
+                      (d/datafy lt)
+                      (d/datafy d))
+          (assoc-in [:year :day] (.getDayOfYear  ldt))
+          (assoc-in [:year :month :day] (.getDayOfMonth ldt)))))
 
   OffsetDateTime
   (datafy [odt]
     (let [ldt         (.toLocalDateTime odt)
           offset      (.getOffset odt)
           off-seconds (.getTotalSeconds offset)]
-      (merge
-        {:offset-id      (.getId offset)
-         :offset-hours   (/ off-seconds 60)
-         :offset-seconds off-seconds}
-        (p/datafy ldt))))
+      (-> (d/datafy ldt)
+          (assoc-in [:iso :offset-datetime] (.format DateTimeFormatter/ISO_OFFSET_DATE_TIME odt))
+          (assoc :offset {:id    (.getId offset)
+                          :hours (/ off-seconds 60)
+                          :seconds off-seconds}))))
 
   ZonedDateTime
   (datafy [zdt]
-    (let [odt (.toOffsetDateTime zdt)]
-      (merge
-        {:zone-id (.getId (.getZone zdt))}
-        (p/datafy odt))))
+    (let [odt  (.toOffsetDateTime zdt)
+          zone (.getZone zdt)]
+      (-> (d/datafy odt)
+          (assoc-in [:iso :zoned-datetime] (.format DateTimeFormatter/ISO_ZONED_DATE_TIME zdt))
+          (assoc-in [:zone :id] (.getId zone)))))
 
   Instant
   ;; a count of nanoseconds since the epoch of the first moment of 1970 in UTC
@@ -73,52 +85,34 @@
     (let [epoch-second (.getEpochSecond inst) ;; total seconds *until* <inst>
           nanos        (.getNano inst)        ;; total nanoseconds *since* <inst>
           epoch-nano   (-> epoch-second
-                           (* 1000000000)
+                           (* 1e9)
                            (+ nanos))         ;; total nanoseconds *until* <inst>
-          epoch-milli (long (/ epoch-nano 1000000))
-          epoch-micro (long (/ epoch-nano 1000))]
-      {:epoch-second epoch-second
-       :epoch-milli  epoch-milli
-       :epoch-micro  epoch-micro
-       :epoch-nano   epoch-nano}))
+          epoch-milli (long (/ epoch-nano 1e6))
+          epoch-micro (long (/ epoch-nano 1e3))]
+      {:epoch {:second epoch-second
+               :milli  epoch-milli
+               :micro  epoch-micro
+               :nano   epoch-nano}}))
   )
 
-(defn datafy
-  "Main entry point for turning certain java.time Objects
-   into plain Clojure maps. See `datafy+` if you want to remember
-   the object <o> (e.g. for formatting etc)."
-  [o]
-  (p/datafy o))
-
 (defn datafy+
-  "Calls `datafy`, and attaches Object <o>  in the
+  "Calls `d/datafy`, and attaches Object <o>  in the
    metadata of the result (under the `:object` key)."
   [o]
-  (some-> (datafy o)
+  (some-> (d/datafy o)
           (with-meta {:object o})))
 
 (comment
   ;; example invocation
-  (datafy (ZonedDateTime/now))
+  (d/datafy (ZonedDateTime/now))
   ;; =>
-  {:leap-year? true,
-   :month-name "JANUARY",
-   :nano-of-second 288112000,
-   :offset-seconds 0,
-   :day-of-week 4,
-   :hour-of-day 10,
-   :month 1,
-   :offset-id "Z",
-   :milli-of-second 288,
-   :month-length 31,
-   :micro-of-second 288112,
-   :day-of-month 2,
-   :day-name "THURSDAY",
-   :year 2020,
-   :day-of-year 2,
-   :zone-id "Europe/London",
-   :second-of-minute 11,
-   :offset-hours 0,
-   :minute-of-hour 10,
-   :year-length 366}
+  {:day {:hour 19},
+   :hour {:minute 54},
+   :week {:day {:name "WEDNESDAY", :value 3}},
+   :second {:nano 516337000, :milli 516, :micro 516337},
+   :offset {:id "Z", :hours 0, :seconds 0},
+   :zone {:id "Europe/London"},
+   :year {:month {:name "JANUARY", :value 1, :length 31, :day 8}, :length 366, :leap? true, :value 2020, :day 8},
+   :minute {:second 43},
+   :local-iso-time "19:54:43.516337"}
   )
