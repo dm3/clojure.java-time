@@ -97,8 +97,8 @@
   )
 
 (defn datafy+
-  "Calls `d/datafy`, and attaches Object <o>  in the
-   metadata of the result (under the `:object` key)."
+  "Calls `(d/datafy o)`, and attaches Object <o>  in
+   the metadata of the result (under the `:object` key)."
   [o]
   (some-> (d/datafy o)
           (with-meta {:object o})))
