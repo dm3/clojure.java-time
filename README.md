@@ -48,7 +48,7 @@ they do better?". After all, Joda-Time already provides a pretty comprehensive
 set of tools for dealing with time-related concepts. Turns out, it's a tad more
 complicated than it has to be. Also, a few concepts have faulty designs which
 lead to hard to fix bugs and misuse. You can see the birds-eye view of changes
-and some of the rationale on the authors' (Stephen Colebourne) blog:
+and some of the rationale on the author's (Stephen Colebourne) blog:
 
 * [what's wrong with Joda-Time](http://blog.joda.org/2009/11/why-jsr-310-isn-joda-time_4941.html),
 * [when you should use Java-Time](http://blog.joda.org/2014/07/threeten-backport-vs-joda-time.html)
@@ -438,7 +438,7 @@ the `Inst` protocol and the Joda-Time types are external to the library.
 
 Java Time introduced a concept of `Clock` - a time entity which can seed the
 dates, times and zones. However, there's no built-in facility which would allow
-you to influence the date-times create using default constructors ala Joda's
+you to influence the date-times created using default constructors ala Joda's
 `DateTimeUtils/setCurrentMillisSystem`. Clojure.Java-Time tries to fix that with
 the `with-clock` macro and the corresponding `with-clock-fn` function:
 
