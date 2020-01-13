@@ -24,11 +24,13 @@
 
   YearMonth
   (datafy [ym]
-    {:year (-> (d/datafy (.getMonth ym))
-               (assoc-in [:month :length] (.lengthOfMonth ym)) ;; correct the length here
-               (merge {:length (.lengthOfYear ym)              ;; 365 or 366 depending on `.isLeapYear()`
-                       :leap?  (.isLeapYear ym)
-                       :value  (.getYear ym)}))})
+    (let [month (-> (d/datafy (.getMonth ym))
+                    ;; correct the length here
+                    (assoc-in [:month :length] (.lengthOfMonth ym)))]
+      {:year (merge month
+                    {:length (.lengthOfYear ym) ;; 365 or 366 depending on `.isLeapYear()`
+                     :leap?  (.isLeapYear ym)
+                     :value  (.getYear ym)})}))
 
   LocalTime
   (datafy [lt]
@@ -55,7 +57,7 @@
     (let [lt (.toLocalTime ldt)
           d  (.toLocalDate ldt)]
       (-> (merge-with merge (d/datafy lt) (d/datafy d))
-          (assoc-in [:year :day] (.getDayOfYear  ldt))
+          (assoc-in [:year :day]        (.getDayOfYear  ldt))
           (assoc-in [:year :month :day] (.getDayOfMonth ldt)))))
 
   OffsetDateTime
