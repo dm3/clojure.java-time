@@ -35,6 +35,10 @@
     :rata-die     (.get o JulianFields/RATA_DIE)
     nil))
 
+(defn- original-object
+  [d]  ;; `d/datafy` adds the original object in the metadata
+  (-> d meta ::d/obj))
+
 (defonce ^:private system-zone
   (delay (ZoneId/systemDefault)))
 
@@ -68,8 +72,8 @@
 
         {`p/nav (fn [_ k v]
                   (case k
-                    :before? (.isBefore ym (-> v meta ::d/obj))
-                    :after?  (.isAfter  ym (-> v meta ::d/obj))
+                    :before? (.isBefore ym (original-object v))
+                    :after?  (.isAfter  ym (original-object v))
                     :instant (-> (.atDay ym 1)
                                  (.atStartOfDay)
                                  (.toInstant (or (zone-offset v) @system-offset)))
@@ -89,15 +93,15 @@
 
         {`p/nav  (fn [_ k v]
                    (case k
-                     :before?    (.isBefore lt (-> v meta ::d/obj))
-                     :after?     (.isAfter  lt (-> v meta ::d/obj))
+                     :before?    (.isBefore lt (original-object v))
+                     :after?     (.isAfter  lt (original-object v))
                      :iso-format (.format DateTimeFormatter/ISO_TIME lt)
                      :format     (.format (dt-formatter v) lt)
                      nil))})))
 
   LocalDate
   (datafy [ld]
-    (let [weekday (.getDayOfWeek  ld)
+    (let [weekday (.getDayOfWeek ld)
           ym      (YearMonth/of (.getYear ld)
                                 (.getMonth ld))]
       (with-meta
@@ -107,8 +111,8 @@
 
         {`p/nav (fn [_ k v]
                   (case k
-                    :before?    (.isBefore ld (-> v meta ::d/obj))
-                    :after?     (.isAfter  ld (-> v meta ::d/obj))
+                    :before?    (.isBefore ld (original-object v))
+                    :after?     (.isAfter  ld (original-object v))
                     :iso-format (.format DateTimeFormatter/ISO_DATE ld)
                     :format     (.format (dt-formatter v) ld)
                     :julian     (julian-field ld v)
@@ -130,8 +134,8 @@
 
         {`p/nav (fn [_ k v]
                   (case k
-                    :before?    (.isBefore ldt (-> v meta ::d/obj))
-                    :after?     (.isAfter  ldt (-> v meta ::d/obj))
+                    :before?    (.isBefore ldt (original-object v))
+                    :after?     (.isAfter  ldt (original-object v))
                     :iso-format (.format DateTimeFormatter/ISO_LOCAL_DATE_TIME ldt)
                     :format     (.format (dt-formatter v) ldt)
                     :instant    (.toInstant ldt (or (zone-offset v) @system-offset))
@@ -153,8 +157,8 @@
 
         {`p/nav (fn [_ k v]
                   (case k
-                    :before?    (.isBefore odt (-> v meta ::d/obj))
-                    :after?     (.isAfter  odt (-> v meta ::d/obj))
+                    :before?    (.isBefore odt (original-object v))
+                    :after?     (.isAfter  odt (original-object v))
                     :iso-format (.format DateTimeFormatter/ISO_OFFSET_DATE_TIME odt)
                     :format     (.format (dt-formatter v) ldt)
                     :instant    (.toInstant odt)
@@ -172,8 +176,8 @@
 
         {`p/nav (fn [_ k v]
                   (case k
-                    :before?    (.isBefore zdt (-> v meta ::d/obj))
-                    :after?     (.isAfter  zdt (-> v meta ::d/obj))
+                    :before?    (.isBefore zdt (original-object v))
+                    :after?     (.isAfter  zdt (original-object v))
                     :iso-format (.format DateTimeFormatter/ISO_ZONED_DATE_TIME zdt)
                     :format     (.format (dt-formatter v) zdt)
                     :instant    (.toInstant zdt)
@@ -198,8 +202,8 @@
                  :nano   epoch-nano}}
         {`p/nav (fn [_ k v]
                   (case k
-                    :before?         (.isBefore inst (-> v meta ::d/obj))
-                    :after?          (.isAfter  inst (-> v meta ::d/obj))
+                    :before?         (.isBefore inst (original-object v))
+                    :after?          (.isAfter  inst (original-object v))
                     :iso-format      (.format DateTimeFormatter/ISO_INSTANT inst)
                     :format          (.format ^DateTimeFormatter v inst)
                     :local-time      (LocalTime/ofInstant      inst  (or (zone-id v) @system-zone))
