@@ -22,7 +22,7 @@
           (ZoneId/of)))
 
 (defn- zone-offset
-  ^ZoneId [x]
+  ^ZoneOffset [x]
   (cond-> x
           (string? x)
           (ZoneOffset/of)))
