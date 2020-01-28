@@ -10,15 +10,15 @@
 
 (defn- dt-formatter
   ^DateTimeFormatter [x]
-  (if (string? x)
-    (DateTimeFormatter/ofPattern x)
-    x))
+  (cond-> x
+          (string? x)
+          (DateTimeFormatter/ofPattern)))
 
 (defn- zone-id
   ^ZoneId [x]
-  (if (string? x)
-    (ZoneId/of x)
-    x))
+  (cond-> x
+          (string? x)
+          (ZoneId/of)))
 
 (defn- julian-field
   [^TemporalAccessor o x]
