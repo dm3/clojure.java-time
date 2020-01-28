@@ -68,7 +68,7 @@
 
         {`p/nav (fn [_ k v]
                   (case k
-                    :instant (-> (.atEndOfMonth ym)
+                    :instant (-> (.atDay ym 1)
                                  (.atStartOfDay)
                                  (.toInstant (or (zone-offset v) @system-offset)))
                     :format (.format (dt-formatter (or v "yyyy-MM")) ym)
