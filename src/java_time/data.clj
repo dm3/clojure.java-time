@@ -89,8 +89,8 @@
 
         {`p/nav  (fn [_ k v]
                    (case k
-                     :before? (.isBefore lt v)
-                     :after?  (.isAfter  lt v)
+                     :before?    (.isBefore lt v)
+                     :after?     (.isAfter  lt v)
                      :iso-format (.format DateTimeFormatter/ISO_TIME lt)
                      :format     (.format (dt-formatter v) lt)
                      nil))})))
@@ -112,8 +112,8 @@
                     :iso-format (.format DateTimeFormatter/ISO_DATE ld)
                     :format     (.format (dt-formatter v) ld)
                     :julian     (julian-field ld v)
-                    :instant  (-> (.atStartOfDay ld)
-                                  (.toInstant (or (zone-offset v) @system-offset)))
+                    :instant    (-> (.atStartOfDay ld)
+                                    (.toInstant (or (zone-offset v) @system-offset)))
                     :weekday    weekday
                     :year-month ym
                     nil))})))
@@ -198,10 +198,10 @@
                  :nano   epoch-nano}}
         {`p/nav (fn [_ k v]
                   (case k
-                    :before?    (.isBefore inst v)
-                    :after?     (.isAfter  inst v)
-                    :iso-format (.format DateTimeFormatter/ISO_INSTANT inst)
-                    :format     (.format ^DateTimeFormatter v inst)
+                    :before?         (.isBefore inst v)
+                    :after?          (.isAfter  inst v)
+                    :iso-format      (.format DateTimeFormatter/ISO_INSTANT inst)
+                    :format          (.format ^DateTimeFormatter v inst)
                     :local-time      (LocalTime/ofInstant      inst  (or (zone-id v) @system-zone))
                     :local-date      (LocalDate/ofInstant      inst  (or (zone-id v) @system-zone))
                     :local-datetime  (LocalDateTime/ofInstant  inst  (or (zone-id v) @system-zone))
