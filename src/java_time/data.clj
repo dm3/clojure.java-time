@@ -3,8 +3,9 @@
   (:require [clojure.core.protocols :as p]
             [clojure.datafy :as d])
   (:import (java.time YearMonth Month DayOfWeek Instant
-                      LocalTime LocalDateTime
-                      ZonedDateTime OffsetDateTime LocalDate ZoneOffset ZoneId)
+                      LocalTime LocalDate LocalDateTime
+                      ZonedDateTime OffsetDateTime
+                      ZoneOffset ZoneId)
            (java.time.format DateTimeFormatter)
            (java.time.temporal IsoFields JulianFields TemporalAccessor)))
 
@@ -20,6 +21,12 @@
           (string? x)
           (ZoneId/of)))
 
+(defn- zone-offset
+  ^ZoneId [x]
+  (cond-> x
+          (string? x)
+          (ZoneOffset/of)))
+
 (defn- julian-field
   [^TemporalAccessor o x]
   (case x
@@ -30,6 +37,9 @@
 
 (defonce ^:private system-zone
   (delay (ZoneId/systemDefault)))
+
+(defonce ^:private system-offset
+  (delay (ZoneOffset/systemDefault)))
 
 (extend-protocol p/Datafiable
 
@@ -58,6 +68,9 @@
 
         {`p/nav (fn [_ k v]
                   (case k
+                    :instant (-> (.atEndOfMonth ym)
+                                 (.atStartOfDay)
+                                 (.toInstant (or (zone-offset v) @system-offset)))
                     :format (.format (dt-formatter (or v "yyyy-MM")) ym)
                     nil))})))
 
@@ -93,6 +106,8 @@
                     :iso-format (.format DateTimeFormatter/ISO_DATE ld)
                     :format     (.format (dt-formatter v) ld)
                     :julian     (julian-field ld v)
+                    :instant  (-> (.atStartOfDay ld)
+                                  (.toInstant (or (zone-offset v) @system-offset)))
                     :weekday    weekday
                     :year-month ym
                     nil))})))
@@ -111,7 +126,7 @@
                   (case k
                     :iso-format (.format DateTimeFormatter/ISO_LOCAL_DATE_TIME ldt)
                     :format     (.format (dt-formatter v) ldt)
-                    :instant    (.toInstant ldt ^ZoneOffset (or (zone-id v) @system-zone))
+                    :instant    (.toInstant ldt (or (zone-offset v) @system-offset))
                     :julian     (julian-field ldt v)
                     :local-time lt
                     :local-date d
