@@ -68,8 +68,8 @@
 
         {`p/nav (fn [_ k v]
                   (case k
-                    :before? (.isBefore ym v)
-                    :after?  (.isAfter  ym v)
+                    :before? (.isBefore ym (-> v meta ::d/obj))
+                    :after?  (.isAfter  ym (-> v meta ::d/obj))
                     :instant (-> (.atDay ym 1)
                                  (.atStartOfDay)
                                  (.toInstant (or (zone-offset v) @system-offset)))
@@ -89,8 +89,8 @@
 
         {`p/nav  (fn [_ k v]
                    (case k
-                     :before?    (.isBefore lt v)
-                     :after?     (.isAfter  lt v)
+                     :before?    (.isBefore lt (-> v meta ::d/obj))
+                     :after?     (.isAfter  lt (-> v meta ::d/obj))
                      :iso-format (.format DateTimeFormatter/ISO_TIME lt)
                      :format     (.format (dt-formatter v) lt)
                      nil))})))
@@ -107,8 +107,8 @@
 
         {`p/nav (fn [_ k v]
                   (case k
-                    :before?    (.isBefore ld v)
-                    :after?     (.isAfter  ld v)
+                    :before?    (.isBefore ld (-> v meta ::d/obj))
+                    :after?     (.isAfter  ld (-> v meta ::d/obj))
                     :iso-format (.format DateTimeFormatter/ISO_DATE ld)
                     :format     (.format (dt-formatter v) ld)
                     :julian     (julian-field ld v)
@@ -130,8 +130,8 @@
 
         {`p/nav (fn [_ k v]
                   (case k
-                    :before?    (.isBefore ldt v)
-                    :after?     (.isAfter  ldt v)
+                    :before?    (.isBefore ldt (-> v meta ::d/obj))
+                    :after?     (.isAfter  ldt (-> v meta ::d/obj))
                     :iso-format (.format DateTimeFormatter/ISO_LOCAL_DATE_TIME ldt)
                     :format     (.format (dt-formatter v) ldt)
                     :instant    (.toInstant ldt (or (zone-offset v) @system-offset))
@@ -153,8 +153,8 @@
 
         {`p/nav (fn [_ k v]
                   (case k
-                    :before?    (.isBefore odt v)
-                    :after?     (.isAfter  odt v)
+                    :before?    (.isBefore odt (-> v meta ::d/obj))
+                    :after?     (.isAfter  odt (-> v meta ::d/obj))
                     :iso-format (.format DateTimeFormatter/ISO_OFFSET_DATE_TIME odt)
                     :format     (.format (dt-formatter v) ldt)
                     :instant    (.toInstant odt)
@@ -172,8 +172,8 @@
 
         {`p/nav (fn [_ k v]
                   (case k
-                    :before?    (.isBefore zdt v)
-                    :after?     (.isAfter  zdt v)
+                    :before?    (.isBefore zdt (-> v meta ::d/obj))
+                    :after?     (.isAfter  zdt (-> v meta ::d/obj))
                     :iso-format (.format DateTimeFormatter/ISO_ZONED_DATE_TIME zdt)
                     :format     (.format (dt-formatter v) zdt)
                     :instant    (.toInstant zdt)
@@ -198,8 +198,8 @@
                  :nano   epoch-nano}}
         {`p/nav (fn [_ k v]
                   (case k
-                    :before?         (.isBefore inst v)
-                    :after?          (.isAfter  inst v)
+                    :before?         (.isBefore inst (-> v meta ::d/obj))
+                    :after?          (.isAfter  inst (-> v meta ::d/obj))
                     :iso-format      (.format DateTimeFormatter/ISO_INSTANT inst)
                     :format          (.format ^DateTimeFormatter v inst)
                     :local-time      (LocalTime/ofInstant      inst  (or (zone-id v) @system-zone))
