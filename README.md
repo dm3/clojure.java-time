@@ -207,7 +207,7 @@ The previous day?
 
 ```clj
 (minus now (days 1))
-=> #object[java.time.LocalDate "2015-09-28"]
+=> #object[java.time.LocalDate "2015-09-26"]
 ```
 
 Three days starting at `now`?
