@@ -4,13 +4,14 @@
             [java-time.core :as jt.c]
             [java-time.util :as jt.u])
   (:import [java.time.temporal TemporalAccessor]
-           [java.time.format DateTimeFormatter DateTimeFormatterBuilder ResolverStyle]))
+           [java.time.format DateTimeFormatter DateTimeFormatterBuilder ResolverStyle]
+           java.util.Locale))
 
 (def predefined-formatters
   (->> (jt.u/get-static-fields-of-type DateTimeFormatter DateTimeFormatter)
        (jt.u/map-kv
-         (fn [^String n fmt]
-           [(string/lower-case (.replace n \_ \-)) fmt]))))
+        (fn [^String n fmt]
+          [(.. (.replace n \_ \-) toString (toLowerCase (Locale/US))) fmt]))))
 
 (defn- get-resolver-style [s]
   (if (instance? ResolverStyle s) s
