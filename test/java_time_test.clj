@@ -1,7 +1,8 @@
 (ns java-time-test
   (:require [clojure.test :refer :all]
             [java-time.util :as jt.u]
-            [java-time :as j]))
+            [java-time :as j])
+  (:import java.util.Locale))
 
 (def clock (j/fixed-clock "2015-11-26T10:20:30.000000040Z" "UTC"))
 
@@ -846,3 +847,14 @@
       (is (= (j/offset-time joda-clock)
              (j/offset-time (DateTime. 2015 11 26 10 20 30 40 (DateTimeZone/forID "UTC"))))))))
 
+(deftest locale-test
+  (let [current-locale (Locale/getDefault)
+        test-langs ["en" "tr" "cn"]]
+    (testing "locale specific rules for lower-case can cause formatters to not be found"
+      (doseq [lang test-langs]
+       (testing lang
+         (try
+           (Locale/setDefault (Locale/forLanguageTag lang))
+           (is (some? (j/formatter :rfc-1123-date-time)))
+           (finally
+             (Locale/setDefault current-locale))))))))
