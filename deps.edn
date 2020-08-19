@@ -1,2 +1,2 @@
 {:deps
- {clj-tuple {:mvn/version "0.2.2"}}}
+ {clj-tuple/clj-tuple {:mvn/version "0.2.2"}}}
