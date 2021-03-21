@@ -59,8 +59,15 @@
 (defn format
   "Formats the given time entity as a string.
 
-  Accepts something that can be converted to a `DateTimeFormatter` as a first
-  argument. Given one argument uses the default format."
+  Accepts something that can be converted to a `DateTimeFormatter` or a
+  formatter key, e.g. `:iso-offset-time`, as a first argument. Given one
+  argument uses the default format.
+
+    (format (zoned-date-time))
+    \"2015-03-21T09:22:46.677800+01:00[Europe/London]\"
+
+    (format :iso-date (zoned-date-time))
+    \"2015-03-21+01:00\""
   ([o] (str o))
   ([fmt o]
    (.format (formatter fmt) o)))
