@@ -1,5 +1,29 @@
 # Changelog
 
+## 0.3.3
+
+### New Features
+
+* #40(davidneu)/#61(puredanger): added/fixed deps.edn
+
+### Fixed
+
+* #29(danieldroit): conversion graph construction edge case
+* #60(robdaemon): locales can mess up predefined-formatters
+* #51(jimpil): remove reflection during load - improves load time
+
+### Docs
+
+* #27(emlin)
+* #35(thobbs)
+* #36(holyjak)
+* #38(ProjectFrank)
+* #39(sashary)
+* #48(bpringe)
+* #56,#57(green-coder)
+* #63(vandr0iy)
+* #54,#31,#24
+
 ## 0.3.2
 
 ### New Features
@@ -23,7 +47,7 @@
 
 * `to-sql-date` converts anything convertible to `LocalDate` into a `java.sql.Date`.
   Previously `to-sql-date` returned a `java.util.Date` (bug).
-* [#10](https://github.com/dm3/clojure.java-time/issues/10) `to-sql-timestamp` 
+* [#10](https://github.com/dm3/clojure.java-time/issues/10) `to-sql-timestamp`
   stopped accepting an instant and starting accepting local date time. I
   mistakenly assumed that `java.sql.Timestamp/from(Instant)` was deprecated.
 
