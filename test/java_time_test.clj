@@ -857,3 +857,24 @@
            (is (some? (j/formatter :rfc-1123-date-time)))
            (finally
              (Locale/setDefault current-locale))))))))
+
+(deftest formatter-test
+  (testing "case-insensitive formatter"
+    (let [fmt (java-time/formatter "hh:mma" {:case :insensitive})]
+      (is (= (j/local-time 0 34 0 0)
+             (j/local-time fmt "00:34am")
+             (j/local-time fmt "00:34AM")))))
+
+  (let [java-version (System/getProperty "java.version")]
+    (if (and (not= java-version "11") (re-matches #"\d+" java-version))
+      (testing "Java 13 and above treats AM as invalid"
+          (let [fmt (java-time/formatter "hh:mma" {:case :sensitive})]
+            (is (= (j/local-time 0 34 0 0)
+                   (j/local-time fmt "12:34am")))
+            (is (thrown? Exception (j/local-time fmt "12:34AM")))))
+
+      (testing "Java 13 and above treats AM as invalid"
+        (let [fmt (java-time/formatter "hh:mma" {:case :sensitive})]
+          (is (= (j/local-time 0 34 0 0)
+                 (j/local-time fmt "12:34AM")))
+          (is (thrown? Exception (j/local-time fmt "12:34am"))))))))

@@ -35,6 +35,13 @@
       :smart ResolverStyle/SMART
       :lenient ResolverStyle/LENIENT)))
 
+(defn- ^DateTimeFormatterBuilder get-case-formatter [c]
+  (let [fmt-builder (DateTimeFormatterBuilder.)]
+    (if (= c :sensitive)
+      (.parseCaseSensitive fmt-builder)
+      (.parseCaseInsensitive fmt-builder))
+    fmt-builder))
+
 (defn ^DateTimeFormatter formatter
   "Constructs a DateTimeFormatter out of a
 
@@ -43,13 +50,16 @@
 
   Accepts a map of options as an optional second argument:
 
-  * `resolver-style` - either `:strict`, `:smart `or `:lenient`"
+  * `resolver-style` - either `:strict`, `:smart `or `:lenient`
+  * `case` - either `:insensitive` or `:sensitive` (defaults to :sensitive)"
   ([fmt]
    (formatter fmt {}))
-  ([fmt {:keys [resolver-style]}]
+  ([fmt {:keys [resolver-style case] :or {case :sensitive}}]
    (let [^DateTimeFormatter fmt
          (cond (instance? DateTimeFormatter fmt) fmt
-               (string? fmt) (DateTimeFormatter/ofPattern fmt)
+               (string? fmt) (.. (get-case-formatter case)
+                                 (appendPattern fmt)
+                                 toFormatter)
                :else (get predefined-formatters (name fmt)))
          fmt (if resolver-style
                (.withResolverStyle fmt (get-resolver-style resolver-style))
