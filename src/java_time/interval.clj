@@ -61,7 +61,9 @@
     => #<Interval 1970-01-01T00:01:40Z/1970-01-01T00:16:40Z>
 
     (j/interval (j/instant 100000) (j/duration 15 :minutes))
-    => #<Interval 1970-01-01T00:01:40Z/1970-01-01T00:16:40Z>"
+    => #<Interval 1970-01-01T00:01:40Z/1970-01-01T00:16:40Z>
+
+    Requires the optional `threeten-extra` dependency."
     ([^String o] (Interval/parse o))
     ([a b]
      (cond (and (jt.t/instant? a) (jt.t/instant? b))
