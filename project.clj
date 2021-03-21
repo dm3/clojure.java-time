@@ -7,8 +7,7 @@
         :url "http://github.com/dm3/clojure.java-time"}
   :dependencies [[org.clojure/clojure "1.10.1" :scope "provided"]
                  [clj-tuple "0.2.2"]]
-  :profiles {:dev {:dependencies [;[org.clojure/clojure "1.10.0"]
-                                  [criterium "0.4.4"]
+  :profiles {:dev {:dependencies [[criterium "0.4.4"]
                                   [com.taoensso/timbre "4.1.4"]
                                   [org.clojure/tools.namespace "0.2.11"]
                                   [joda-time/joda-time "2.9.4"]
