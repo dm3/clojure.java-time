@@ -190,7 +190,9 @@
      false)))
 
 (defn plus
-  "Adds all of the `os` to the time entity `o`
+  "Adds all of the `os` to the time entity `o`. `plus` is not commutative, the
+  first argument is always the entity which will accumulate the rest of the
+  arguments.
 
     (j/plus (j/local-date 2015) (j/years 1))
     => <java.time.LocalDate \"2016-01-01\">"
