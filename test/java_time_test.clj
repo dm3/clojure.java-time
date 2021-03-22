@@ -865,26 +865,27 @@
              (j/local-time fmt "00:34am")
              (j/local-time fmt "00:34AM")))))
 
-  ;; Java version detection:
-  ;; java.lang.Runtime.Version class exists from Java 9 onwards, hence
-  ;; the need to detect the Java version from the java.version string returned
-  ;; by System/getProperty. In versions before 9, java.version has the format
-  ;; 1.x.y, e.g., 1.8.0_255, but from version 9 onwards, the initial 1 element
-  ;; is dropped.
-  ;; Refer to JEP 223 for information on the change.
-  ;; https://openjdk.java.net/jeps/223
-  (let [java-version (->> (System/getProperty "java.version")
-                          (re-find #"^\d+")
-                          Integer/parseInt)]
-    (if (> java-version 11)
-      (testing "Java 13 and above treats AM as invalid"
+  (testing "case-sensitive formatter"
+    ;; Java version detection:
+    ;; java.lang.Runtime.Version class exists from Java 9 onwards, hence
+    ;; the need to detect the Java version from the java.version string returned
+    ;; by System/getProperty. In versions before 9, java.version has the format
+    ;; 1.x.y, e.g., 1.8.0_255, but from version 9 onwards, the initial 1 element
+    ;; is dropped.
+    ;; Refer to JEP 223 for information on the change.
+    ;; https://openjdk.java.net/jeps/223
+    (let [java-version (->> (System/getProperty "java.version")
+                            (re-find #"^\d+")
+                            Integer/parseInt)]
+      (if (> java-version 11)
+        (testing "Java 13 and above treats AM as invalid"
           (let [fmt (java-time/formatter "hh:mma" {:case :sensitive})]
             (is (= (j/local-time 0 34 0 0)
                    (j/local-time fmt "12:34am")))
             (is (thrown? Exception (j/local-time fmt "12:34AM")))))
 
-      (testing "Java 8 and 11 treats am as invalid"
-        (let [fmt (java-time/formatter "hh:mma" {:case :sensitive})]
-          (is (= (j/local-time 0 34 0 0)
-                 (j/local-time fmt "12:34AM")))
-          (is (thrown? Exception (j/local-time fmt "12:34am"))))))))
+        (testing "Java 8 and 11 treats am as invalid"
+          (let [fmt (java-time/formatter "hh:mma" {:case :sensitive})]
+            (is (= (j/local-time 0 34 0 0)
+                   (j/local-time fmt "12:34AM")))
+            (is (thrown? Exception (j/local-time fmt "12:34am")))))))))
