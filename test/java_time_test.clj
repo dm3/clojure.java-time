@@ -883,7 +883,7 @@
                    (j/local-time fmt "12:34am")))
             (is (thrown? Exception (j/local-time fmt "12:34AM")))))
 
-      (testing "Java 8 and 11 treats AM as invalid"
+      (testing "Java 8 and 11 treats am as invalid"
         (let [fmt (java-time/formatter "hh:mma" {:case :sensitive})]
           (is (= (j/local-time 0 34 0 0)
                  (j/local-time fmt "12:34AM")))
