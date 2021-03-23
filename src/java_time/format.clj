@@ -38,7 +38,7 @@
 (defn ^DateTimeFormatter formatter
   "Constructs a DateTimeFormatter out of a
 
-  * format string - \"YYYY/MM/DD\", \"YYY HH:mm\", etc.
+  * format string - \"yyyy/MM/dd\", \"HH:mm\", etc.
   * formatter name - :iso-date, :iso-time, etc.
 
   Accepts a map of options as an optional second argument:
