@@ -112,11 +112,11 @@
 
     jt.c/Ordered
     (single-before? [i o] (if (jt.t/instant? o)
-                            (.isBefore (.getEnd i) o)
-                            (.isBefore (.getEnd i) (.getStart ^Interval o))))
+                            (.isBefore i ^Instant o)
+                            (.isBefore i ^Interval o)))
     (single-after? [i o] (if (jt.t/instant? o)
-                           (.isAfter (.getStart i) o)
-                           (.isAfter (.getStart i) (.getEnd ^Interval o))))
+                           (.isAfter i ^Instant o)
+                           (.isAfter i ^Interval o)))
 
     jt.c/As
     (as* [o k]

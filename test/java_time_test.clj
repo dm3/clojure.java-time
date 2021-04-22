@@ -872,12 +872,18 @@
       (is (= (j/instant 1000) (j/end (j/interval 0 1000))))
 
       (testing "contains"
+        (is (j/contains? (j/interval 0 1000) 0)
+            "inclusive start")
         (is (j/contains? (j/interval 0 1000) 500))
+        (is (not (j/contains? (j/interval 0 1000) 1000))
+            "exclusive end")
         (is (not (j/contains? (j/interval 0 1000) 1500)))
         (is (j/contains? (j/interval 0 1000) (j/interval 100 900)))
         (is (j/contains? (j/interval 0 1000) (j/interval 0 900)))
         (is (j/contains? (j/interval 0 1000) (j/interval 0 1000)))
         (is (j/contains? (j/interval 0 1000) (j/interval 1000 1000)))
+        (is (j/contains? (j/interval 1000 1000) (j/interval 1000 1000))
+            "an empty interval encloses itself (via .encloses)")
         (is (not (j/contains? (j/interval 0 1000) (j/interval 1000 1001)))))
 
       (testing "overlaps"
@@ -923,15 +929,30 @@
         (is (not (j/not-after? interval-3-4 interval-1-2)))
         (is (j/not-after? interval-1-2 instant-1))
         (is (j/not-after? interval-1-2 instant-3))
-        (is (not (j/not-after? interval-3-4 instant-1)))))))
+        (is (not (j/not-after? interval-3-4 instant-1))))
+      (is (j/before? (j/interval 1000 2000) (j/instant 5000)))
+      (is (j/before? (j/interval 1000 5000) (j/instant 5000))
+          "exclusive end")
+      (is (j/before? (j/interval 1000 5000) (j/interval 5000 6000))
+          "exclusive end")
+      (is (j/before? (j/interval 1000 5000) (j/interval 5001 6000)))
+
+      (is (j/after? (j/interval 1000 5000) (j/instant 100)))
+      (is (j/after? (j/interval 1000 5000) (j/instant 999)))
+      (is (not (j/after? (j/interval 1000 5000) (j/instant 1000)))
+          "inclusive start")
+      (is (not (j/after? (j/interval 1000 5000) (j/instant 2000))))
+      (is (j/after? (j/interval 1000 5000) (j/interval 100 999)))
+      (is (j/after? (j/interval 1000 5000) (j/interval 100 1000))
+          "exclusive end"))))
 
 (jt.u/when-joda-time-loaded
 
   (def joda-clock (j/fixed-clock "2015-11-26T10:20:30.040Z" "UTC"))
 
-  (import '[org.joda.time Duration Period DateTimeZone
-            LocalDate LocalTime LocalDateTime DateTime Instant])
-  (deftest joda-test
+  (import [org.joda.time Duration Period DateTimeZone
+           LocalDate LocalTime LocalDateTime DateTime Instant])
+  (deftest joda
     (testing "duration from duration and period"
       (is (= (j/duration 1 :millis)
             (j/duration (Duration/millis 1))
