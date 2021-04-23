@@ -370,6 +370,17 @@
 
   jt.c/Ordered
   (single-after? [d o]
-    (.isAfter d o))
+    (if (jt.u/when-threeten-extra
+          (instance? org.threeten.extra.Interval o))
+      (jt.u/when-threeten-extra
+        ;; end is exclusive
+        ;; d >= (end o)
+        (>= (.compareTo d (.getEnd ^org.threeten.extra.Interval o))
+            0))
+      (.isAfter d o)))
   (single-before? [d o]
-    (.isBefore d o)))
+    (if (jt.u/when-threeten-extra
+          (instance? org.threeten.extra.Interval o))
+      (jt.u/when-threeten-extra
+        (.isBefore d (.getStart ^org.threeten.extra.Interval o)))
+      (.isBefore d o))))
