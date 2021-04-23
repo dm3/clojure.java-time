@@ -2,6 +2,10 @@
 
 ## 0.3.4
 
+### New Features
+
+* Previously, Intervals were only allowed to the left of Instants in {before,after}?. Now they can be freely intermixed.
+
 ### Fixed
 
 * #78(liquidz): Add missing chrono fields (v0.3.3 has breaking changes)
