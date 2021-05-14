@@ -522,9 +522,20 @@
       (is (j/not-before? saturday saturday))
       (is (j/not-before? sunday saturday))
       (is (not (j/not-before? saturday sunday))))
-
-    (is (j/after? (j/month :february) :january))
-    (is (j/before? (j/month :february) :march))
+    
+    (let [january (j/month :january)
+          february (j/month :february)
+          march (j/month :march)]
+      (is (j/after? february january))
+      (is (not (j/after? january february)))
+      (is (j/before? february march))
+      (is (not (j/before? march february)))
+      (is (j/not-after? january january))
+      (is (j/not-after? february march))
+      (is (not (j/not-after? march february)))
+      (is (j/not-before? january january))
+      (is (j/not-before? february january))
+      (is (not (j/not-before? january february))))
 
     (is (j/after? (j/year 2010) 2009))
     (is (j/before? (j/year 2010) 2011))
