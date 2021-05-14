@@ -59,7 +59,12 @@ You can also take a look at a [comprehensive comparison](http://time4j.net/tutor
 
 ## Usage
 
-Add the following dependency to your `project.clj` or `build.boot`:
+Add the following dependency to your `deps.edn`
+```clj
+clojure.java-time/clojure.java-time {:mvn/version "0.3.2"}
+```
+
+or to your `project.clj` or `build.boot`:
 
 ```clj
 [clojure.java-time "0.3.2"]
