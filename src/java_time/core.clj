@@ -170,9 +170,9 @@
        (before? y (first more)))
      false)))
 
-(def not-before? 
+(def not-after? 
   ""
-  (complement before?))
+  (complement after?))
 
 (defn after?
   "Returns a truthy value if time entities are ordered from the latest to the
@@ -193,9 +193,9 @@
        (after? y (first more)))
      false)))
 
-(def not-after?
+(def not-before?
   ""
-  (complement after?))
+  (complement before?))
 
 (defn plus
   "Adds all of the `os` to the time entity `o`. `plus` is not commutative, the
