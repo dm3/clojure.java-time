@@ -404,10 +404,9 @@
 
   (testing "times"
     (let [dt (j/local-date-time clock)
-          dt-5 (j/minus dt (j/days 5))
           dt+5 (j/plus dt (j/days 5))]
-      (is (j/after? dt dt-5))
-      (is (not (j/after? dt-5 dt)))
+      (is (j/after? dt+5 dt))
+      (is (not (j/after? dt dt+5)))
       (is (j/before? dt dt+5))
       (is (not (j/before? dt+5 dt)))
       (is (j/not-after? dt dt))
