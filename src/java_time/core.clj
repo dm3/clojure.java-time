@@ -171,7 +171,7 @@
      false)))
 
 (def not-after? 
-  "Similar to `before?`, but also returns truthy if the inputs are equal."
+  "Similar to [[before?]], but also returns truthy if the inputs are equal."
   (complement after?))
 
 (defn after?
@@ -194,7 +194,7 @@
      false)))
 
 (def not-before?
-  "Similar to `after?`, but also returns truthy if the inputs are equal."
+  "Similar to [[after?]], but also returns truthy if the inputs are equal."
   (complement before?))
 
 (defn plus
