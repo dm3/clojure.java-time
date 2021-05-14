@@ -550,8 +550,18 @@
       (is (j/not-before? year-2010 year-2009))
       (is (not (j/not-before? year-2009 year-2010))))
 
-    (is (j/after? (j/month-day 5 1) (j/month-day 4 1)))
-    (is (j/before? (j/month-day 1 1) (j/month-day 4 1)))))
+    (let [jan-1 (j/month-day 1 1)
+          apr-1 (j/month-day 4 1)]
+      (is (j/after? apr-1 jan-1))
+      (is (not (j/after? jan-1 apr-1)))
+      (is (j/before? jan-1 apr-1))
+      (is (not (j/before? apr-1 jan-1)))
+      (is (j/not-after? jan-1 jan-1))
+      (is (j/not-after? jan-1 apr-1))
+      (is (not (j/not-after? apr-1 jan-1)))
+      (is (j/not-before? jan-1 jan-1))
+      (is (j/not-before? apr-1 jan-1))
+      (is (not (j/not-before? jan-1 apr-1))))))
 
 (deftest mock-clock
   (testing "constructors"
