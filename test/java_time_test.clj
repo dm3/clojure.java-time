@@ -495,8 +495,18 @@
       (is (not (j/not-before? i i+5)))))
 
   (testing "clocks"
-    (is (j/after? (j/fixed-clock 1000) (j/fixed-clock 0)))
-    (is (j/before? (j/fixed-clock 1000) (j/fixed-clock 5000))))
+    (let [fc (j/fixed-clock 0)
+          fc+1000 (j/fixed-clock 1000)]
+      (is (j/after? fc+1000 fc))
+      (is (not (j/after? fc fc+1000)))
+      (is (j/before? fc fc+1000))
+      (is (not (j/before? fc+1000 fc)))
+      (is (j/not-after? fc fc))
+      (is (j/not-after? fc fc+1000))
+      (is (not (j/not-after? fc+1000 fc)))
+      (is (j/not-before? fc fc))
+      (is (j/not-before? fc+1000 fc))
+      (is (not (j/not-before? fc fc+1000)))))
 
   (testing "fields"
     (is (j/after? (j/day-of-week :saturday) :thursday))
