@@ -878,13 +878,33 @@
       (is (nil? (j/gap (j/interval 0 1000) (j/interval 500 1500))))))
 
   (testing "ordering"
-    (is (j/before? (j/interval 1000 2000) (j/instant 5000)))
-    (is (not (j/before? (j/interval 1000 5000) (j/instant 5000))))
-    (is (j/before? (j/interval 1000 5000) (j/interval 5001 6000)))
+    (let [interval-1-2 (j/interval 1 2)
+          interval-3-4 (j/interval 3 4)
+          instant-1 (j/instant 1)
+          instant-3 (j/instant 3)]
+      (is (j/before? interval-1-2 interval-3-4))
+      (is (not (j/before? interval-3-4 interval-1-2)))
+      (is (j/before? interval-1-2 instant-3))
+      (is (not (j/before? interval-3-4 instant-1)))
 
-    (is (j/after? (j/interval 1000 5000) (j/instant 100)))
-    (is (not (j/after? (j/interval 1000 5000) (j/instant 2000))))
-    (is (j/after? (j/interval 1000 5000) (j/interval 100 999)))))
+      (is (j/after? interval-3-4 interval-1-2))
+      (is (not (j/after? interval-1-2 interval-3-4)))
+      (is (j/after? interval-3-4 instant-1))
+      (is (not (j/after? interval-1-2 instant-3)))
+
+      (is (j/not-before? interval-3-4 interval-3-4))
+      (is (j/not-before? interval-1-2 interval-3-4))
+      (is (not (j/not-before? interval-1-2 interval-3-4)))
+      (is (j/not-before? interval-3-4 instant-3))
+      (is (j/not-before? interval-3-4 instant-1))
+      (is (not (j/not-before? interval-1-2 instant-3)))
+
+      (is (j/not-after? interval-1-2 interval-1-2))
+      (is (j/not-after? interval-1-2 interval-3-4))
+      (is (not (j/not-after? interval-3-4 interval-1-2)))
+      (is (j/not-after? interval-1-2 instant-1))
+      (is (j/not-after? interval-1-2 instant-3))
+      (is (not (j/not-after? interval-3-4 instant-1)))))
 
 (jt.u/when-joda-time-loaded
 
