@@ -509,8 +509,19 @@
       (is (not (j/not-before? fc fc+1000)))))
 
   (testing "fields"
-    (is (j/after? (j/day-of-week :saturday) :thursday))
-    (is (j/before? (j/day-of-week :saturday) :sunday))
+    (let [thursday (j/day-of-week :thursday)
+          saturday (j/day-of-week :saturday)
+          sunday (j/day-of-week :sunday)]
+      (is (j/after? saturday thursday))
+      (is (not (j/after? thursday saturday)))
+      (is (j/before? saturday sunday))
+      (is (not (j/before? sunday saturday)))
+      (is (j/not-after? saturday saturday))
+      (is (j/not-after? saturday sunday))
+      (is (not (j/not-after? sunday saturday)))
+      (is (j/not-before? saturday saturday))
+      (is (j/not-before? sunday saturday))
+      (is (not (j/not-before? saturday sunday))))
 
     (is (j/after? (j/month :february) :january))
     (is (j/before? (j/month :february) :march))
