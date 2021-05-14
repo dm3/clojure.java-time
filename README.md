@@ -307,6 +307,26 @@ last argument. Offsets can be specified as float values:
 => #<java.time.ZoneOffset -01:30>
 ```
 
+Compare dates:
+
+```clj
+(before? (year 2020) (year 2021))
+=> true
+
+(after? (year 2021) (year 2021))
+=> false
+
+(let [expiration-date (year 2010)
+      purchase-date (year 2010)]
+  (not-before? expiration-date purchase-date))
+=> true
+
+(let [start-date (year 2011)
+      cutoff-date (year 2010)]
+  (not-after? start-date cutoff-date))
+=> false
+```
+
 #### Conversions
 
 Time entities can be converted to other time entities if the target contains
