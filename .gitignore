@@ -15,6 +15,5 @@ pom.xml.asc
 .hgignore
 .hg/
 
-
 # Calva
 .lsp/
