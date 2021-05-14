@@ -403,8 +403,19 @@
 (deftest ordering
 
   (testing "times"
-    (is (j/after? (j/local-date-time clock) (j/minus (j/local-date-time clock) (j/days 5))))
-    (is (j/before? (j/local-date-time clock) (j/plus (j/local-date-time clock) (j/days 5))))
+    (let [dt (j/local-date-time clock)
+          dt-5 (j/minus dt (j/days 5))
+          dt+5 (j/plus dt (j/days 5))]
+      (is (j/after? dt dt-5))
+      (is (not (j/after? dt-5 dt)))
+      (is (j/before? dt dt+5))
+      (is (not (j/before? dt+5 dt)))
+      (is (j/not-after? dt dt))
+      (is (j/not-after? dt dt+5))
+      (is (not (j/not-after? dt+5 dt)))
+      (is (j/not-before? dt dt))
+      (is (j/not-before? dt+5 dt))
+      (is (not (j/not-before? dt dt+5))))
 
     (is (j/after? (j/local-date clock) (j/minus (j/local-date clock) (j/days 5))))
     (is (j/before? (j/local-date clock) (j/plus (j/local-date clock) (j/days 5))))
@@ -877,14 +888,14 @@
     (let [java-version (->> (System/getProperty "java.version")
                             (re-find #"^\d+")
                             Integer/parseInt)]
-      (if (> java-version 11)
-        (testing "Java 13 and above treats AM as invalid"
+      (if (= java-version 13)
+        (testing "Java 13 treats AM as invalid"
           (let [fmt (java-time/formatter "hh:mma" {:case :sensitive})]
             (is (= (j/local-time 0 34 0 0)
                    (j/local-time fmt "12:34am")))
             (is (thrown? Exception (j/local-time fmt "12:34AM")))))
 
-        (testing "Java 8 and 11 treats am as invalid"
+        (testing "Java 8, 11, and 15 treats am as invalid"
           (let [fmt (java-time/formatter "hh:mma" {:case :sensitive})]
             (is (= (j/local-time 0 34 0 0)
                    (j/local-time fmt "12:34AM")))

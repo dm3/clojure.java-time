@@ -10,7 +10,8 @@
    with-clock with-clock-fn]
 
   [java-time.core
-   zero? negative? negate abs max min before? after?
+   zero? negative? negate abs max min 
+   before? not-before? after? not-after?
    supports? chronology fields units properties property
    as value range min-value max-value largest-min-value smallest-max-value
    with-value with-min-value with-max-value with-largest-min-value with-smallest-max-value
