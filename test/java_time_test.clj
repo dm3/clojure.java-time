@@ -537,8 +537,18 @@
       (is (j/not-before? february january))
       (is (not (j/not-before? january february))))
 
-    (is (j/after? (j/year 2010) 2009))
-    (is (j/before? (j/year 2010) 2011))
+    (let [:2009 (j/year 2009)
+          :2010 (j/year 2010)]
+      (is (j/after? :2010 2009))
+      (is (not (j/after? :2009 2010)))
+      (is (j/before? :2009 2010))
+      (is (not (j/before? :2010 2009)))
+      (is (j/not-after? :2009 :2009))
+      (is (j/not-after? :2009 :2010))
+      (is (not (j/not-after? :2010 :2009)))
+      (is (j/not-before? :2010 :20010))
+      (is (j/not-before? :2010 :2009))
+      (is (not (j/not-before? :2009 :2010))))
 
     (is (j/after? (j/month-day 5 1) (j/month-day 4 1)))
     (is (j/before? (j/month-day 1 1) (j/month-day 4 1)))))
