@@ -7,5 +7,14 @@ pom.xml.asc
 *.class
 .lein-*
 /.nrepl-port
+
+# deps.edn
+.cpcache/
+
+# Mercurial
 .hgignore
 .hg/
+
+# Calva
+.lsp/
+.calva/
