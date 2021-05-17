@@ -4,6 +4,7 @@
 
 ### New Features
 
+* #71(brettrowberry): not-after? and not-before?
 * #40(davidneu)/#61(puredanger): added/fixed deps.edn
 
 ### Fixed
