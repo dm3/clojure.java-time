@@ -904,7 +904,7 @@
       (is (not (j/not-after? interval-3-4 interval-1-2)))
       (is (j/not-after? interval-1-2 instant-1))
       (is (j/not-after? interval-1-2 instant-3))
-      (is (not (j/not-after? interval-3-4 instant-1)))))
+      (is (not (j/not-after? interval-3-4 instant-1))))))
 
 (jt.u/when-joda-time-loaded
 
