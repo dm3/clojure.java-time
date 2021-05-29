@@ -170,7 +170,7 @@
        (before? y (first more)))
      false)))
 
-(def not-after? 
+(def not-after?
   "Similar to [[before?]], but also returns truthy if the inputs are equal."
   (complement after?))
 
