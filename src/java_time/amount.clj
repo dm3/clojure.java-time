@@ -70,24 +70,38 @@
   [micros]
   (Duration/ofNanos (Math/multiplyExact (long micros) 1000)))
 
-(doseq [[fn-name method-name] [['standard-days 'days]
-                               ['hours 'hours]
-                               ['minutes 'minutes]
-                               ['millis 'millis]
-                               ['seconds 'seconds]
-                               ['nanos 'nanos]]]
-  (let [fn-name (with-meta fn-name {:tag Duration})]
-    (eval
-      `(defn ~fn-name
-         ~(str "Duration of a specified number of " method-name ".")
-         [v#]
-         (. Duration ~(symbol (str 'of (string/capitalize (str method-name)))) (long v#))))))
+(defmacro gen-duration-methods
+  []
+  (conj (map (fn [[fn-name method-name]]
+               (let [fn-name (with-meta fn-name {:tag Duration})]
+                 `(defn ~fn-name
+                    ~(str "Duration of a specified number of " method-name ".")
+                    [v#]
+                    (. Duration ~(symbol (str 'of (string/capitalize (str method-name)))) (long v#)))))
+             [['standard-days 'days]
+              ['hours 'hours]
+              ['minutes 'minutes]
+              ['millis 'millis]
+              ['seconds 'seconds]
+              ['nanos 'nanos]])
+        'do))
 
-(doseq [t ['years 'months 'days 'weeks]]
-  (let [fn-name (with-meta t {:tag Period})]
-    (eval
-      `(defn ~fn-name [v#]
-         (. Period ~(symbol (str 'of (string/capitalize (str t)))) (int v#))))))
+(gen-duration-methods)
+
+(defmacro gen-period-methods
+  []
+  (conj (map (fn [fn-name]
+               (let [fn-name (with-meta fn-name {:tag Period})]
+                 `(defn ~fn-name
+                    [v#]
+                    (. Period ~(symbol (str 'of (string/capitalize (str fn-name)))) (int v#)))))
+             ['years
+              'months
+              'days
+              'weeks])
+        'do))
+
+(gen-period-methods)
 
 (deffactory period
   "Creates a period - a temporal entity consisting of years, months and days.
