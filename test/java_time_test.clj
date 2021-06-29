@@ -522,7 +522,7 @@
       (is (j/not-before? saturday saturday))
       (is (j/not-before? sunday saturday))
       (is (not (j/not-before? saturday sunday))))
-    
+
     (let [january (j/month :january)
           february (j/month :february)
           march (j/month :march)]
@@ -893,7 +893,6 @@
       (is (not (j/after? interval-1-2 instant-3)))
 
       (is (j/not-before? interval-3-4 interval-3-4))
-      (is (j/not-before? interval-1-2 interval-3-4))
       (is (not (j/not-before? interval-1-2 interval-3-4)))
       (is (j/not-before? interval-3-4 instant-3))
       (is (j/not-before? interval-3-4 instant-1))
