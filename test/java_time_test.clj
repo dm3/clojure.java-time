@@ -1019,11 +1019,11 @@
                             (re-find #"^\d+")
                             Integer/parseInt)]
       (if (> java-version 11)
-        (testing "Java 13 and above treats AM as invalid"
+        (testing "Java 12 and above treats AM as invalid"
           (let [fmt (java-time/formatter "hh:mma" {:case :sensitive})]
             (is (= (j/local-time 0 34 0 0)
-                   (j/local-time fmt "12:34am")))
-            (is (thrown? Exception (j/local-time fmt "12:34AM")))))
+                   (j/local-time fmt "12:34AM")))
+            (is (thrown? Exception (j/local-time fmt "12:34am")))))
 
         (testing "Java 8 and 11 treats am as invalid"
           (let [fmt (java-time/formatter "hh:mma" {:case :sensitive})]
