@@ -9,6 +9,7 @@
 
 ### Fixed
 
+* #72(FieryCode): working with GraalVM
 * #29(danieldroit): conversion graph construction edge case
 * #60(robdaemon): locales can mess up predefined-formatters
 * #51(jimpil): remove reflection during load - improves load time
