@@ -61,7 +61,7 @@ You can also take a look at a [comprehensive comparison](http://time4j.net/tutor
 
 Add the following dependency to your `deps.edn`
 ```clj
-clojure.java-time/clojure.java-time {:mvn/version "0.3.2"}
+clojure.java-time/clojure.java-time {:mvn/version "0.3.3"}
 ```
 
 or to your `project.clj` or `build.boot`:
