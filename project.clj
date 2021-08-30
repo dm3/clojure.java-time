@@ -1,4 +1,4 @@
-(defproject clojure.java-time "0.3.3"
+(defproject clojure.java-time "0.3.4-SNAPSHOT"
   :description "Clojure wrapper for Java 8 Time API"
   :url "http://github.com/dm3/clojure.java-time"
   :license {:name "MIT License"
