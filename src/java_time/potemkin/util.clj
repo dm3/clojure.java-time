@@ -15,8 +15,6 @@
 ; Partly Copied from https://github.com/ztellman/potemkin/blob/master/src/potemkin/util.clj
 ; to avoid having a dependency
 (ns java-time.potemkin.util
-  (:refer-clojure :exclude (vector))
-  (:require [clj-tuple :refer (vector)])
   (:import [java.util.concurrent ConcurrentHashMap]))
 
 ;;; fast-memoize

@@ -1,9 +1,6 @@
 (ns java-time.graph
-  (:refer-clojure :exclude (vector))
   (:require [clojure.set :as sets]
             [clojure.string :as string]
-            ;; ~10-15% faster with clj-tuple
-            [clj-tuple :refer (vector)]
             [java-time.potemkin.util :as u]
             [java-time.util :as jt.u])
   (:import [java.util PriorityQueue Queue]))
