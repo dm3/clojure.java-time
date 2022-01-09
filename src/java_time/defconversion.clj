@@ -1,7 +1,5 @@
 (ns java-time.defconversion
-  (:refer-clojure :exclude (vector))
-  (:require [java-time.graph :as g]
-            [clj-tuple :refer (vector)]))
+  (:require [java-time.graph :as g]))
 
 (def graph (atom (g/conversion-graph)))
 

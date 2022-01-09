@@ -5,8 +5,7 @@
             :url "http://opensource.org/licenses/MIT"}
   :scm {:name "git"
         :url "http://github.com/dm3/clojure.java-time"}
-  :dependencies [[org.clojure/clojure "1.10.1" :scope "provided"]
-                 [clj-tuple "0.2.2"]]
+  :dependencies [[org.clojure/clojure "1.10.3" :scope "provided"]]
   :profiles {:dev {:dependencies [[criterium "0.4.4"]
                                   [com.taoensso/timbre "4.1.4"]
                                   [org.clojure/tools.namespace "0.2.11"]
