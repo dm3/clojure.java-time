@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.3.4
+
+### Fixed
+
+* #78(liquidz): Add missing chrono fields (v0.3.3 has breaking changes)
+* #81(terop): Remove clj-tuple - no advantages over Clojure vector anymore
+
 ## 0.3.3
 
 ### New Features
