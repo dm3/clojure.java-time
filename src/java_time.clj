@@ -1,5 +1,5 @@
 (ns java-time
-  (:refer-clojure :exclude (zero? range iterate max min contains? format))
+  (:refer-clojure :exclude (zero? range iterate max min contains? format abs))
   (:require [java-time.potemkin.namespaces :as potemkin]
             [java-time.util :as jt.u]
             [java-time core properties temporal amount zone single-field local chrono

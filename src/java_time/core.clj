@@ -1,5 +1,5 @@
 (ns java-time.core
-  (:refer-clojure :exclude (zero? range max min))
+  (:refer-clojure :exclude (zero? range max min abs))
   (:import [java.time.temporal ValueRange]
            [java.time.chrono Chronology]))
 
