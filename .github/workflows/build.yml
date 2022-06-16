@@ -100,6 +100,8 @@ jobs:
           distribution: 'temurin'
           java-version: 17
       - name: Setup Babashka
-        run: bash < <(curl -s https://raw.githubusercontent.com/babashka/babashka/master/install)
+        uses: turtlequeue/setup-babashka@v1.3.0
+        with:
+          babashka-version: 0.8.156
       - name: Run Babashka tests
         run: ./bin/bb-test-runner.sh
