@@ -53,7 +53,8 @@
   (g/types (map type xs)))
 
 (defn- call-conversion [nm tp args]
-  {:pre [(simple-symbol? tp)]}
+  {:pre [(symbol? tp)
+         (not (namespace tp))]}
   `(if-let [[path# fn#] (g/conversion-fn
                           @graph
                           (types-of ~args)
