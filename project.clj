@@ -10,16 +10,22 @@
   :scm {:name "git"
         :url "http://github.com/dm3/clojure.java-time"}
   :dependencies [[org.clojure/clojure "1.11.1" :scope "provided"]]
+  :plugins []
   :profiles {:dev {:dependencies [[criterium "0.4.4"]
                                   [com.taoensso/timbre "4.1.4"]
                                   [org.clojure/tools.namespace "0.2.11"]
                                   [joda-time/joda-time ~joda-time-version]
                                   [org.threeten/threeten-extra ~threeten-extra-version]]
-                   :plugins [[lein-codox "0.10.3"]]
+                   :plugins [[lein-codox "0.10.3"]
+                             [jonase/eastwood "1.2.3"]]
                    :codox {:namespaces [java-time java-time.repl]
                            :doc-files ["README.md" "CHANGELOG.md"]}
                    :source-paths ["dev"]
-                   :global-vars {*warn-on-reflection* true}}
+                   :global-vars {*warn-on-reflection* true}
+                   :eastwood {:exclude-namespaces [java-time
+                                                   ;;FIXME
+                                                   java-time-test]
+                              :exclude-linters []}}
              :async-profiler
              {:jvm-opts ["-Djdk.attach.allowAttachSelf" "-XX:+UnlockDiagnosticVMOptions" "-XX:+DebugNonSafepoints"]
               :dependencies [[com.clojure-goes-fast/clj-async-profiler "0.3.1"]]}

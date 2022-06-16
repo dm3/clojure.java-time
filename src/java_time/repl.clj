@@ -4,7 +4,9 @@
             [java-time.format :as jt.f]
             [java-time.zone :as jt.z]
             [java-time.defconversion :as jt.dc]
-            [clojure.pprint :as pprint]))
+            java-time.graph
+            [clojure.pprint :as pprint])
+  (:import [java_time.graph ConversionGraph]))
 
 (defn show-adjusters []
   (pprint/pprint (sort (keys j.adj/predefined-adjusters))))
@@ -22,7 +24,8 @@
   (pprint/pprint (sort (jt.z/available-zone-ids))))
 
 (defn show-graph []
-  (pprint/pprint (.m-by-arity @jt.dc/graph)))
+  (let [^ConversionGraph g @jt.dc/graph]
+    (pprint/pprint (.m-by-arity g))))
 
 (defn show-path [from to]
   (jt.dc/get-path from to))

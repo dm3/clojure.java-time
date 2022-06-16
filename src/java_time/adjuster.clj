@@ -1,7 +1,7 @@
 (ns java-time.adjuster
   (:require [java-time.util :as jt.u]
             [java-time.single-field :as jt.sf])
-  (:import [java.time.temporal TemporalAdjusters TemporalAdjuster]))
+  (:import [java.time.temporal Temporal TemporalAdjusters TemporalAdjuster]))
 
 (def base-adjusters {:first-day-of-month [(TemporalAdjusters/firstDayOfMonth) 0]
                      :last-day-of-month [(TemporalAdjusters/lastDayOfMonth) 0]
