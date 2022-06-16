@@ -6,10 +6,9 @@
             [java-time.format :as jt.f]
             [java-time.clock :as jt.clock]
             [java-time.defconversion :refer (deffactory conversion!)])
-  (:import [java.time.temporal Temporal TemporalAccessor ValueRange
-            TemporalField TemporalUnit TemporalAmount ChronoField IsoFields]
+  (:import [java.time.temporal Temporal TemporalAccessor #?@(:bb [] :default [ValueRange])
+            TemporalField #?@(:bb [] :default [TemporalUnit]) TemporalAmount ChronoField IsoFields]
            [java.time.format DateTimeFormatter]
-           [java.time.chrono Chronology]
            [java.time DateTimeException Clock
             Period Duration MonthDay DayOfWeek Month Year
             ZoneOffset Instant]))
@@ -195,6 +194,7 @@
 
 ;;;;;;;;; RANGE
 
+#?(:bb nil :default (do
 (defn ^ValueRange value-range
   "Creates a `ValueRange` given the `min` and `max` amounts or a map of
   `:min-smallest`, `:max-smallest`, `:min-largest` and `:max-largest`."
@@ -203,9 +203,11 @@
                  :min-largest min, :max-largest max}))
   ([{:keys [min-smallest min-largest max-smallest max-largest]}]
    (ValueRange/of min-smallest min-largest max-smallest max-largest)))
+))
 
 ;;;;;;;;; AMOUNT
 
+#?(:bb nil :default (do
 (defrecord TemporalAmountUnitProperty [^TemporalAmount ta, ^TemporalUnit unit]
   jt.c/ReadableProperty
   (value [_]
@@ -213,6 +215,7 @@
 
 (alter-meta! #'->TemporalAmountUnitProperty assoc :private true)
 (alter-meta! #'map->TemporalAmountUnitProperty assoc :private true)
+))
 
 (defrecord PeriodUnitProperty [^Period p, unit-key]
   jt.c/ReadableProperty
@@ -261,7 +264,7 @@
 (extend-type TemporalAmount
   jt.c/Supporting
   (supports? [o k]
-    (not (nil? (jt.c/unit* o (jt.p/get-unit k)))))
+    (some? (jt.c/unit* o (jt.p/get-unit k))))
 
   jt.c/HasUnits
   (unit* [o k]
