@@ -1,14 +1,17 @@
 (ns java-time.util
   (:require [clojure.string :as string])
-  (:import [java.lang.reflect Field]))
+  #?@(:bb []
+      :default [(:import [java.lang.reflect Field])]))
 
 (defn get-static-fields-of-type [^Class klass, ^Class of-type]
-  (->> (seq (.getFields klass))
-       (map (fn [^Field f]
-              (when (.isAssignableFrom of-type (.getType f))
-                [(.getName f) (.get f nil)])) )
-       (keep identity)
-       (into {})))
+  #?(:bb (throw (ex-info (str "TODO get-static-fields-of-type " klass " " of-type)
+                         {}))
+     :default (->> (seq (.getFields klass))
+                   (map (fn [^Field f]
+                          (when (.isAssignableFrom of-type (.getType f))
+                            [(.getName f) (.get f nil)])) )
+                   (keep identity)
+                   (into {}))))
 
 (defn dashize [camelcase]
   (let [words (re-seq #"([^A-Z]+|[A-Z]+[^A-Z]*)" camelcase)]
