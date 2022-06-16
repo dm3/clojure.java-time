@@ -1,6 +1,6 @@
 # Clojure.Java-Time
 
-[![Build Status](https://travis-ci.org/dm3/clojure.java-time.png?branch=master)](https://travis-ci.org/dm3/clojure.java-time)
+[![Clojars Project](https://img.shields.io/clojars/v/clojure.java-time.svg)](https://clojars.org/clojure.java-time)
 
 A Clojure wrapper for Java 8 Date-Time API.
 
