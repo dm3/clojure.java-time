@@ -24,9 +24,7 @@
     `(do ~else-body)))
 
 (defmacro when-threeten-extra [& body]
-  (if (try (Class/forName "org.threeten.extra.Temporals")
-           (catch Throwable e))
-    `(do ~@body)))
+  `(if-threeten-extra (do ~@body) nil))
 
 (defmacro when-joda-time-loaded
   "Execute the `body` when Joda-Time classes are found on the classpath.
