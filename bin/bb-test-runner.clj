@@ -1,4 +1,4 @@
-#!/usr/bin/env bb --debug
+#!/usr/bin/env bb
 (ns bb-test-runner
   (:require [clojure.test :as t]
             [babashka.classpath :as cp]))
