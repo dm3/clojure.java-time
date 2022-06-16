@@ -79,9 +79,11 @@
                      (int h) (int mm) (int ss) (int n))))
 
 (extend-type LocalTime
+  #?@(:bb [] :default [
   jt.c/Truncatable
   (truncate-to [o u]
     (.truncatedTo o (jt.p/get-unit-checked u)))
+  ])
 
   jt.c/Ordered
   (single-after? [t o]
@@ -89,10 +91,12 @@
   (single-before? [t o]
     (.isBefore t o)))
 
+#?(:bb nil :default (do
 (extend-type LocalDateTime
   jt.c/Truncatable
   (truncate-to [o u]
     (.truncatedTo o (jt.p/get-unit-checked u))))
+))
 
 (conversion! Clock LocalDate
   (fn [^Clock c]

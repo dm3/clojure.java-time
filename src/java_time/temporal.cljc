@@ -257,10 +257,12 @@
       (condp instance? e
         Period (PeriodUnitProperty. e unit-key)
         Duration (DurationUnitProperty. e unit-key)
-        TemporalAmount (TemporalAmountUnitProperty. e unit)))))
+        #?@(:bb [] 
+            :default [TemporalAmount (TemporalAmountUnitProperty. e unit)])))))
 
 (def ^:dynamic *unit-property-factory* default-unit-property-factory)
 
+#?(:bb nil :default (do
 (extend-type TemporalAmount
   jt.c/Supporting
   (supports? [o k]
@@ -290,9 +292,11 @@
       (if-let [u (jt.c/unit* o k)]
         (mk-property *unit-property-factory* o u-k u)
         (throw (DateTimeException. (str "Property " k " doesn't exist in [" o "]!")))))))
+))
 
 ;;;;;;;;; TEMPORAL
 
+#?(:bb nil :default (do
 (defn ^Temporal t-plus [^Temporal acc, ^TemporalAmount o]
   (.plus acc o))
 
@@ -323,6 +327,7 @@
   jt.c/As
   (as* [o k]
     (jt.c/value (jt.c/property o k))))
+))
 
 ;;;;;; Instant
 
@@ -334,9 +339,11 @@
   (fn [^java.util.Date dt]
     (.toInstant dt)))
 
+#?(:bb nil :default (do
 (conversion! java.util.Calendar Instant
   (fn [^java.util.Calendar c]
     (.toInstant c)))
+))
 
 (conversion! CharSequence Instant
   (fn [^CharSequence s]
@@ -367,9 +374,11 @@
   ([] (jt.clock/make #(Instant/now %))))
 
 (extend-type Instant
+  #?@(:bb [] :default [
   jt.c/Truncatable
   (truncate-to [o u]
     (.truncatedTo o (jt.p/get-unit-checked u)))
+  ])
 
   jt.c/Ordered
   (single-after? [d o]
