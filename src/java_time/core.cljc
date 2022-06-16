@@ -26,8 +26,8 @@
 #?(:bb nil :default (do
 (defprotocol HasChronology
   (^Chronology chronology [o]
-    "The `Chronology` of the entity")))
-)
+    "The `Chronology` of the entity"))
+))
 
 (defprotocol HasFields
   (fields [o]
