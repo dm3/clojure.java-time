@@ -1,7 +1,6 @@
 (ns java-time.interval
   (:refer-clojure :exclude [contains?])
-  (:require [clojure.string :as string]
-            [java-time.util :as jt.u]
+  (:require [java-time.util :as jt.u]
             [java-time.core :as jt.c]
             [java-time.temporal :as jt.t]
             [java-time.amount :as jt.a])
