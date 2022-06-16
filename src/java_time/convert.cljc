@@ -4,7 +4,7 @@
             [java-time.local :as jt.l]
             [java-time.properties :as jt.p]
             [java-time.temporal :as jt.t])
-  (:import [java.time.temporal TemporalUnit ChronoUnit]
+  (:import [java.time.temporal #?@(:bb [] :default [TemporalUnit]) ChronoUnit]
            [java.time Instant]
            [java.util Date]
            [java.lang Math]))
@@ -40,6 +40,7 @@
     :centuries 1200
     :millenia 12000))
 
+#?(:bb nil :default (do
 (defn- precise? [^TemporalUnit unit]
   (and (instance? ChronoUnit unit)
        (<= (.compareTo ^ChronoUnit unit ChronoUnit/WEEKS) 0)))
@@ -81,6 +82,7 @@
                               from-unit to-unit)
                       (IllegalArgumentException.)
                       (throw))))))
+))
 
 (defn ^Date to-java-date
   "Converts a date entity to a `java.util.Date`.
