@@ -17,7 +17,6 @@
 (ns java-time.potemkin.util
   #?@(:bb []
       :default [(:import [java.util.concurrent ConcurrentHashMap])]))
-
 ;;; fast-memoize
 
 #?(:bb nil :default (do
