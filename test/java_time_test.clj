@@ -775,8 +775,9 @@
        (is (= 2018 (j/as year-month-under-test :year)))
        (is (= 3 (j/as year-month-under-test :month-of-year)))
        (is (thrown? Exception (j/as year-month-under-test :day-of-month))))
-      (let [zoned-date-time-test (j/zoned-date-time 2018 3)]
-       (is (= 1519830000 (j/as zoned-date-time-test :instant-seconds)))))
+      (let [zoned-date-time-test (j/with-clock (j/system-clock "UTC")
+                                   (j/zoned-date-time 2018 3))]
+       (is (= 1519862400 (j/as zoned-date-time-test :instant-seconds)))))
 
     (testing "multiple"
       (is (= [2015 1 1] (j/as (j/local-date 2015 1 1) :year :month-of-year :day-of-month))))
