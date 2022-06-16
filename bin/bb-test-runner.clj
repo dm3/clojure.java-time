@@ -3,11 +3,12 @@
   (:require [clojure.test :as t]
             [babashka.classpath :as cp]))
 
+(def require-nsyms ['java-time.potemkin.util])
 ;;TODO
 (def test-nsyms [#_'java-time-test
                  #_'java-time.graph-test])
 
-(some->> (seq test-nsyms)
+(some->> (seq (concat require-nsyms test-nsyms))
          (apply require))
 
 (def test-results
