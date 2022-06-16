@@ -3,13 +3,15 @@
             [clojure.string :as string]
             [java-time.potemkin.util :as u]
             [java-time.util :as jt.u])
-  (:import [java.util PriorityQueue Queue]))
+  #?@(:bb []
+      :default [(:import [java.util PriorityQueue])]))
 
 ;; Concept heavily inspired by Zach Tellman's ByteStreams
 ;; https://github.com/ztellman/byte-streams/blob/master/src/byte_streams/graph.clj
 
 (deftype Conversion [f ^double cost]
   Object
+  #?@(:bb [] :default [
   (equals [_ x]
     (and
       (instance? Conversion x)
@@ -17,11 +19,13 @@
       (== cost (.cost ^Conversion x))))
   (hashCode [_]
     (bit-xor (System/identityHashCode f) (unchecked-int cost)))
+  ])
   (toString [_]
     (str "Cost:" cost)))
 
 (deftype Types [types ^int arity]
   Object
+  #?@(:bb [] :default [
   (equals [_ o]
     (and (instance? Types o)
          (and (= arity (.arity ^Types o))
@@ -33,6 +37,7 @@
                   false)))))
   (hashCode [o]
     (bit-xor (hash types) arity))
+  ])
   (toString [_]
     (pr-str types)))
 
@@ -164,12 +169,14 @@
     (zipmap (map inc (range max-arity)) (repeat {})) #{}))
 
 (defrecord ConversionPath [path fns visited? cost]
+  #?@(:bb [] :default [
   Comparable
   (compareTo [_ x]
     (let [cmp (compare cost (.cost ^ConversionPath x))]
       (if (zero? cmp)
         (compare (count path) (count (.path ^ConversionPath x)))
         cmp)))
+  ])
   Object
   (toString [_]
     (str path cost)))
@@ -186,10 +193,18 @@
     (let [path (ConversionPath. (vector) (vector) #{src} 0)]
       (if (assignable? src dst)
         path
-        (let [q (doto (PriorityQueue.) (.add path))
+        (let [q #?(:bb (atom ())
+                   :default (doto (PriorityQueue.) (.add path)))
+              add #?(:bb #(swap! q (fn [prev]
+                                     (sort-by (fn [^ConversionPath p]
+                                                [(.cost p) (count (.path p))])
+                                              (conj prev %))))
+                     :default #(.add q %))
+              poll #?(:bb #(-> (swap-vals! q next) first first)
+                      :default #(.poll q))
               dsts (equivalent-targets g dst)]
           (loop []
-            (when-let [^ConversionPath p (.poll q)]
+            (when-let [^ConversionPath p (poll)]
               (let [curr (or (-> p .path last second) src)]
                 (if (some #(assignable? curr %) dsts)
                   p
@@ -197,7 +212,7 @@
                     (u/doit [[[src dst] c] (possible-conversions g curr)]
                       (when (and (> max-path-length (count (.path p)))
                                  (not ((.visited? p) dst)))
-                        (.add q (conj-path p src dst c))))
+                        (add (conj-path p src dst c))))
                     (recur)))))))))))
 
 (defn- replace-range [v replacement idxs]

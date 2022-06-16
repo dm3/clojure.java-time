@@ -70,7 +70,7 @@
   [[x it] & body]
   (let [it-sym (gensym "iterable")]
     `(let [~it-sym ~it
-           it# (.iterator ~(with-meta it-sym {:tag "Iterable"}))]
+           it# (.iterator ~(with-meta it-sym {:tag 'java.lang.Iterable}))]
        (loop []
          (when (.hasNext it#)
            (let [~x (.next it#)]
