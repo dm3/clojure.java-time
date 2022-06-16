@@ -51,9 +51,8 @@
                 :get-value-fn-sym getTotalSeconds)
 
 (jt.u/when-threeten-extra
-  (import [org.threeten.extra AmPm DayOfMonth DayOfYear Quarter YearQuarter])
-  (value-property DayOfMonth ChronoField/DAY_OF_MONTH)
-  (value-property DayOfYear ChronoField/DAY_OF_YEAR))
+  (value-property org.threeten.extra.DayOfMonth ChronoField/DAY_OF_MONTH)
+  (value-property org.threeten.extra.DayOfYear ChronoField/DAY_OF_YEAR))
 
 ;;;;; FIELD PROPERTY
 

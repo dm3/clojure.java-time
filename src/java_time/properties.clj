@@ -67,9 +67,8 @@
         (jt.c/unit* *units* o)))
 
 (defn ^TemporalUnit get-unit-checked [o]
-  (if-let [u (get-unit o)]
-    u
-    (throw (NullPointerException. (str "No temporal unit found for " o "!")))))
+  (or (get-unit o)
+      (throw (NullPointerException. (str "No temporal unit found for " o "!")))))
 
 (defn unit-key [o]
   (cond (keyword? o)
