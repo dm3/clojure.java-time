@@ -63,8 +63,9 @@
                    (catch Exception e#
                      (throw
                        (ex-info "Conversion failed"
-                                {:path (:path path#), :arguments ~args, :to ~tp} e#))))]
-       (if (instance? clojure.lang.ISeq ~tp)
+                                {:path (:path path#), :arguments ~args, :to ~tp}
+                                e#))))]
+       (if (seq? ~tp)
          result#
          (first result#))
        (throw (ex-info
@@ -86,8 +87,13 @@
                 (g/types (to-seq to)))]
     (select-keys p [:path :cost])))
 
-(defmacro deffactory [nm docstring _ tp _ implicit-arities & fn-bodies]
-  (let [fn-name (with-meta nm {:tag tp})
+(defmacro deffactory [nm docstring returnskw tp implicit-arities-kw implicit-arities & fn-bodies]
+  (assert (= :returns returnskw))
+  (assert (= :implicit-arities implicit-arities-kw))
+  (let [tp (resolve tp)
+        _ (assert (class? tp) (str tp " is not resolvable"))
+        tp (-> ^Class tp .getName symbol)
+        fn-name (with-meta nm {:tag tp})
         explain-fn-name (symbol (str "path-to-" nm))
         predicate-name (symbol (str nm "?"))]
     `(do (defn ~fn-name ~docstring
