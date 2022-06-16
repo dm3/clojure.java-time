@@ -198,6 +198,7 @@
               add #?(:bb #(swap! q (fn [prev]
                                      (sort-by (fn [^ConversionPath p]
                                                 [(.cost p) (count (.path p))])
+                                              #(compare %2 %1)
                                               (conj prev %))))
                      :default #(.add q %))
               poll #?(:bb #(-> (swap-vals! q next) first first)
