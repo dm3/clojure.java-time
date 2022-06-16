@@ -829,84 +829,85 @@
     (is (= (j/zone-id "UTC") (j/zone-id (java.util.TimeZone/getTimeZone "UTC"))))))
 
 (jt.u/when-threeten-extra
-  (testing "adjusters"
-    (is (= (j/adjust (j/local-date 2015 1 1) :next-working-day)
-           (j/local-date 2015 1 2))))
+  (deftest threeten-extra-test
+    (testing "adjusters"
+      (is (= (j/adjust (j/local-date 2015 1 1) :next-working-day)
+             (j/local-date 2015 1 2))))
 
-  (testing "interval"
-    (is (= (j/interval "1970-01-01T00:00:00Z/1970-01-01T00:00:01Z")
-           (j/interval 0 1000)
-           (j/interval (j/offset-date-time 1970 1 1 0 0 0 0 +0)
-                       (j/offset-date-time 1970 1 1 0 0 1 0 +0))))
+    (testing "interval"
+      (is (= (j/interval "1970-01-01T00:00:00Z/1970-01-01T00:00:01Z")
+             (j/interval 0 1000)
+             (j/interval (j/offset-date-time 1970 1 1 0 0 0 0 +0)
+                         (j/offset-date-time 1970 1 1 0 0 1 0 +0))))
 
-    (is (= 1 (j/as (j/interval (j/instant 0) (j/instant 1)) :millis)))
+      (is (= 1 (j/as (j/interval (j/instant 0) (j/instant 1)) :millis)))
 
-    (is (thrown-with-msg? IllegalArgumentException #"Cannot convert between.*"
-          (j/as (j/interval (j/instant 0) (j/instant 1)) :months))))
+      (is (thrown-with-msg? IllegalArgumentException #"Cannot convert between.*"
+            (j/as (j/interval (j/instant 0) (j/instant 1)) :months))))
 
-  (testing "operations"
-    (is (= (j/interval 5000 10000)
-           (j/move-end-by (j/interval 5000 6000) (j/seconds 4))
-           (j/move-start-by (j/interval 0 10000) (j/seconds 5))
-           (j/move-end-to (j/interval 5000 6000) 10000)
-           (j/move-start-to (j/interval 0 10000) 5000)))
+    (testing "operations"
+      (is (= (j/interval 5000 10000)
+             (j/move-end-by (j/interval 5000 6000) (j/seconds 4))
+             (j/move-start-by (j/interval 0 10000) (j/seconds 5))
+             (j/move-end-to (j/interval 5000 6000) 10000)
+             (j/move-start-to (j/interval 0 10000) 5000)))
 
-    (is (= (j/instant 0) (j/start (j/interval 0 1000))))
-    (is (= (j/instant 1000) (j/end (j/interval 0 1000))))
+      (is (= (j/instant 0) (j/start (j/interval 0 1000))))
+      (is (= (j/instant 1000) (j/end (j/interval 0 1000))))
 
-    (testing "contains"
-      (is (j/contains? (j/interval 0 1000) 500))
-      (is (not (j/contains? (j/interval 0 1000) 1500)))
-      (is (j/contains? (j/interval 0 1000) (j/interval 100 900)))
-      (is (j/contains? (j/interval 0 1000) (j/interval 0 900)))
-      (is (j/contains? (j/interval 0 1000) (j/interval 0 1000)))
-      (is (j/contains? (j/interval 0 1000) (j/interval 1000 1000)))
-      (is (not (j/contains? (j/interval 0 1000) (j/interval 1000 1001)))))
+      (testing "contains"
+        (is (j/contains? (j/interval 0 1000) 500))
+        (is (not (j/contains? (j/interval 0 1000) 1500)))
+        (is (j/contains? (j/interval 0 1000) (j/interval 100 900)))
+        (is (j/contains? (j/interval 0 1000) (j/interval 0 900)))
+        (is (j/contains? (j/interval 0 1000) (j/interval 0 1000)))
+        (is (j/contains? (j/interval 0 1000) (j/interval 1000 1000)))
+        (is (not (j/contains? (j/interval 0 1000) (j/interval 1000 1001)))))
 
-    (testing "overlaps"
-      (is (j/overlaps? (j/interval 0 1000) (j/interval 0 500)))
-      (is (j/overlaps? (j/interval 0 1000) (j/interval 0 1500)))
-      (is (j/overlaps? (j/interval 500 1000) (j/interval 0 1500)))
-      (is (not (j/overlaps? (j/interval 0 1000) (j/interval 1500 2000))))
+      (testing "overlaps"
+        (is (j/overlaps? (j/interval 0 1000) (j/interval 0 500)))
+        (is (j/overlaps? (j/interval 0 1000) (j/interval 0 1500)))
+        (is (j/overlaps? (j/interval 500 1000) (j/interval 0 1500)))
+        (is (not (j/overlaps? (j/interval 0 1000) (j/interval 1500 2000))))
 
-      (is (= (j/interval 500 1000) (j/overlap (j/interval 500 1000) (j/interval 0 1500))))
-      (is (nil? (j/overlap (j/interval 0 1000) (j/interval 1500 2000)))))
+        (is (= (j/interval 500 1000) (j/overlap (j/interval 500 1000) (j/interval 0 1500))))
+        (is (nil? (j/overlap (j/interval 0 1000) (j/interval 1500 2000)))))
 
-    (testing "abuts"
-      (is (j/abuts? (j/interval 0 1000) (j/interval 1000 2000)))
-      (is (not (j/abuts? (j/interval 0 1000) (j/interval 900 2000)))))
+      (testing "abuts"
+        (is (j/abuts? (j/interval 0 1000) (j/interval 1000 2000)))
+        (is (not (j/abuts? (j/interval 0 1000) (j/interval 900 2000)))))
 
-    (testing "gap"
-      (is (= (j/interval 1000 2000) (j/gap (j/interval 0 1000) (j/interval 2000 3000))))
-      (is (nil? (j/gap (j/interval 0 1000) (j/interval 500 1500))))))
+      (testing "gap"
+        (is (= (j/interval 1000 2000) (j/gap (j/interval 0 1000) (j/interval 2000 3000))))
+        (is (nil? (j/gap (j/interval 0 1000) (j/interval 500 1500))))))
 
-  (testing "ordering"
-    (let [interval-1-2 (j/interval 1 2)
-          interval-3-4 (j/interval 3 4)
-          instant-1 (j/instant 1)
-          instant-3 (j/instant 3)]
-      (is (j/before? interval-1-2 interval-3-4))
-      (is (not (j/before? interval-3-4 interval-1-2)))
-      (is (j/before? interval-1-2 instant-3))
-      (is (not (j/before? interval-3-4 instant-1)))
+    (testing "ordering"
+      (let [interval-1-2 (j/interval 1 2)
+            interval-3-4 (j/interval 3 4)
+            instant-1 (j/instant 1)
+            instant-3 (j/instant 3)]
+        (is (j/before? interval-1-2 interval-3-4))
+        (is (not (j/before? interval-3-4 interval-1-2)))
+        (is (j/before? interval-1-2 instant-3))
+        (is (not (j/before? interval-3-4 instant-1)))
 
-      (is (j/after? interval-3-4 interval-1-2))
-      (is (not (j/after? interval-1-2 interval-3-4)))
-      (is (j/after? interval-3-4 instant-1))
-      (is (not (j/after? interval-1-2 instant-3)))
+        (is (j/after? interval-3-4 interval-1-2))
+        (is (not (j/after? interval-1-2 interval-3-4)))
+        (is (j/after? interval-3-4 instant-1))
+        (is (not (j/after? interval-1-2 instant-3)))
 
-      (is (j/not-before? interval-3-4 interval-3-4))
-      (is (not (j/not-before? interval-1-2 interval-3-4)))
-      (is (j/not-before? interval-3-4 instant-3))
-      (is (j/not-before? interval-3-4 instant-1))
-      (is (not (j/not-before? interval-1-2 instant-3)))
+        (is (j/not-before? interval-3-4 interval-3-4))
+        (is (not (j/not-before? interval-1-2 interval-3-4)))
+        (is (j/not-before? interval-3-4 instant-3))
+        (is (j/not-before? interval-3-4 instant-1))
+        (is (not (j/not-before? interval-1-2 instant-3)))
 
-      (is (j/not-after? interval-1-2 interval-1-2))
-      (is (j/not-after? interval-1-2 interval-3-4))
-      (is (not (j/not-after? interval-3-4 interval-1-2)))
-      (is (j/not-after? interval-1-2 instant-1))
-      (is (j/not-after? interval-1-2 instant-3))
-      (is (not (j/not-after? interval-3-4 instant-1))))))
+        (is (j/not-after? interval-1-2 interval-1-2))
+        (is (j/not-after? interval-1-2 interval-3-4))
+        (is (not (j/not-after? interval-3-4 interval-1-2)))
+        (is (j/not-after? interval-1-2 instant-1))
+        (is (j/not-after? interval-1-2 instant-3))
+        (is (not (j/not-after? interval-3-4 instant-1)))))))
 
 (jt.u/when-joda-time-loaded
 
