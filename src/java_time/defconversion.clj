@@ -53,25 +53,21 @@
   (g/types (map type xs)))
 
 (defn- call-conversion [nm tp args]
+  {:pre [(simple-symbol? tp)]}
   `(if-let [[path# fn#] (g/conversion-fn
                           @graph
                           (types-of ~args)
                           (g/types ~(to-seq tp)))]
-     (if-let [result#
-              (try (fn# ~args)
-                   (catch Exception e#
-                     (throw
-                       (ex-info "Conversion failed"
-                                {:path (:path path#), :arguments ~args, :to ~tp}
-                                e#))))]
-       (if (instance? clojure.lang.ISeq ~tp)
-         result#
-         (first result#))
-       (throw (ex-info
-                (format "Conversion from %s to %s returned nil!"
-                        ~args ~tp ~(str nm))
-                {:arguments ~args, :to ~tp, :constructor ~nm})))
-     (throw (ex-info (format "Could not convert %s to %s!" ~args ~tp ~(str nm))
+     (or (try (first (fn# ~args))
+              (catch Exception e#
+                (throw
+                  (ex-info "Conversion failed"
+                           {:path (:path path#), :arguments ~args, :to ~tp}
+                           e#))))
+         (throw (ex-info
+                  (format "Conversion from %s to %s returned nil!" ~args ~tp)
+                  {:arguments ~args, :to ~tp, :constructor ~nm})))
+     (throw (ex-info (format "Could not convert %s to %s!" ~args ~tp)
                      {:arguments ~args, :to ~tp, :constructor ~nm}))))
 
 (defn- gen-implicit-arities [nm tp arities]
