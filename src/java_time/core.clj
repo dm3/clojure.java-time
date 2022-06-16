@@ -1,8 +1,7 @@
 (ns java-time.core
   (:refer-clojure :exclude (zero? range max min abs))
-  #?@(:bb []
-      :default [(:import [java.time.temporal ValueRange]
-                         [java.time.chrono Chronology])]))
+  (:import [java.time.temporal ValueRange]
+           [java.time.chrono Chronology]))
 
 (defprotocol Amount
   (zero? [a]
@@ -22,12 +21,9 @@
   (supports? [o p]
     "True if the `o` entity supports the `p` property"))
 
-;; TODO Chronology not available in bb
-#?(:bb nil :default (do
 (defprotocol HasChronology
   (^Chronology chronology [o]
     "The `Chronology` of the entity"))
-))
 
 (defprotocol HasFields
   (fields [o]
@@ -256,8 +252,7 @@
   (with-value [_ v] v))
 
 (def readable-range-property-fns
-  #?(:bb {} ;; ValueRange not available
-     :default {:min-value (fn [p] (.getMinimum ^ValueRange (range p)))
-               :largest-min-value (fn [p] (.getLargestMinimum ^ValueRange (range p)))
-               :smallest-max-value (fn [p] (.getSmallestMaximum ^ValueRange (range p)))
-               :max-value (fn [p] (.getMaximum ^ValueRange (range p)))}))
+  {:min-value (fn [p] (.getMinimum ^ValueRange (range p)))
+   :largest-min-value (fn [p] (.getLargestMinimum ^ValueRange (range p)))
+   :smallest-max-value (fn [p] (.getSmallestMaximum ^ValueRange (range p)))
+   :max-value (fn [p] (.getMaximum ^ValueRange (range p)))})

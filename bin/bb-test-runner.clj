@@ -5,7 +5,7 @@
 
 (def require-nsyms ['java-time.potemkin.util
                     'java-time.potemkin.namespaces
-                    'java-time.joda
+                    ;'java-time.joda
                     ;'java-time
                     ])
 ;;TODO

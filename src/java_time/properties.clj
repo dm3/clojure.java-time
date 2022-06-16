@@ -3,8 +3,7 @@
             [java-time.util :as jt.u]
             [java-time.fields :as jt.f]
             [java-time.units :as jt.units])
-  (:import [java.time.temporal
-            TemporalField #?@(:bb [] :default [TemporalUnit]) TemporalAccessor Temporal]
+  (:import [java.time.temporal TemporalField TemporalUnit TemporalAccessor Temporal]
            (clojure.lang Keyword)))
 
 (defn- property->key [p]
@@ -48,8 +47,6 @@
 
 (def ^:dynamic *units* (UnitGroup. :predefined (:predefined unit-groups)))
 
-;; TODO TemporalUnit not available in bb
-#?(:bb nil :default (do
 (extend-type TemporalUnit
   jt.c/KnowsTimeBetween
   (time-between [u t1 t2]
@@ -80,7 +77,6 @@
 
         (unit? o)
         (property->key o)))
-))
 
 ;;;;;;;;; FIELD
 
@@ -129,7 +125,6 @@
         (field? o)
         (property->key o)))
 
-#?(:bb nil :default (do
 (defn ^TemporalUnit unit
   "Returns a `TemporalUnit` for the given key `k` or extracts the field from
   the given temporal `entity`.
@@ -140,7 +135,6 @@
   `java-time.properties/*units*` to a custom `java-time.properties.UnitGroup`."
   ([k] (get-unit k))
   ([entity k] (jt.c/unit* entity k)))
-))
 
 (defn ^TemporalField field
   "Returns a `TemporalField` for the given key `k` or extracts the field from
@@ -156,11 +150,11 @@
 (extend-type Keyword
   jt.c/KnowsTimeBetween
   (time-between [k t1 t2]
-    (jt.c/time-between (or (get-field k) #?@(:bb [] :default [(get-unit k)])) t1 t2))
+    (jt.c/time-between (or (get-field k) (get-unit k)) t1 t2))
 
   jt.c/Supporting
   (supports? [k t]
-    (jt.c/supports? (or (get-field k) #?@(:bb [] :default [(get-unit k)])) t)))
+    (jt.c/supports? (or (get-field k) (get-unit k)) t)))
 
 (extend Keyword
   jt.c/ReadableRangeProperty

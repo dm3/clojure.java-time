@@ -7,7 +7,7 @@
             [java-time.convert :as jt.convert]
             [java-time.defconversion :refer (conversion! deffactory)])
   (:import [java.time Duration Period]
-           [java.time.temporal ChronoUnit TemporalAmount Temporal #?@(:bb [] :default [TemporalUnit])]))
+           [java.time.temporal ChronoUnit TemporalAmount Temporal TemporalUnit]))
 
 (defn- ^Duration d-plus [^Duration cp, ^TemporalAmount o]
   (.plus cp o))
@@ -190,14 +190,12 @@
       :months (months value)
       :days (days value))))
 
-#?(:bb nil :default (do
 (conversion! [Number TemporalUnit] Duration
   (fn [value ^TemporalUnit unit]
     (Duration/of (long value) unit)))
 
 (conversion! clojure.lang.Keyword TemporalUnit
   jt.p/get-unit-checked)
-))
 
 (conversion! clojure.lang.Keyword TemporalAmount
   jt.p/get-unit-checked)

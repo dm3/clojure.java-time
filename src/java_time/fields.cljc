@@ -1,7 +1,5 @@
 (ns java-time.fields
-  (:import (java.time.temporal IsoFields ChronoField
-                               #?@(:bb []
-                                   :default [JulianFields]))))
+  (:import (java.time.temporal IsoFields ChronoField JulianFields)))
 
 (defonce iso
   {:week-based-year IsoFields/WEEK_BASED_YEAR
@@ -42,7 +40,6 @@
    :minute-of-hour               ChronoField/MINUTE_OF_HOUR})
 
 (defonce julian
-  #?(:bb {} ;; JulianFields not available in bb
-     :default {:julian-day          JulianFields/JULIAN_DAY
-               :modified-julian-day JulianFields/MODIFIED_JULIAN_DAY
-               :rata-die            JulianFields/RATA_DIE}))
+  {:julian-day          JulianFields/JULIAN_DAY
+   :modified-julian-day JulianFields/MODIFIED_JULIAN_DAY
+   :rata-die            JulianFields/RATA_DIE})
