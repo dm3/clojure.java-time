@@ -1,11 +1,11 @@
-#!/usr/bin/env bb
+;; run via ./bin/bb-test-runner.sh
 (ns bb-test-runner
   (:require [clojure.test :as t]
             [babashka.classpath :as cp]))
 
 ;;TODO
 (def test-nsyms [#_'java-time-test
-                 #_'java-time.graph-test])
+                 'java-time.graph-test])
 
 (some->> (seq test-nsyms)
          (apply require))
