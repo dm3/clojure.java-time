@@ -64,7 +64,7 @@
                        (ex-info "Conversion failed"
                                 {:path (:path path#), :arguments ~args, :to ~tp}
                                 e#))))]
-       (if (seq? ~tp)
+       (if (instance? clojure.lang.ISeq ~tp)
          result#
          (first result#))
        (throw (ex-info
