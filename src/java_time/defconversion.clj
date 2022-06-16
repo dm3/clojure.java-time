@@ -90,9 +90,9 @@
 (defmacro deffactory [nm docstring returnskw tp implicit-arities-kw implicit-arities & fn-bodies]
   (assert (= :returns returnskw))
   (assert (= :implicit-arities implicit-arities-kw))
-  (let [tp (resolve tp)
-        _ (assert (class? tp) (str tp " is not resolvable"))
-        tp (-> ^Class tp .getName symbol)
+  (let [^Class tpcls (resolve tp)
+        _ (assert (class? tpcls) (str tp " is not resolvable"))
+        tp (-> ^Class tpcls .getName symbol)
         fn-name (with-meta nm {:tag tp})
         explain-fn-name (symbol (str "path-to-" nm))
         predicate-name (symbol (str nm "?"))]
