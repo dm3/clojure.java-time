@@ -22,7 +22,7 @@
     "True if the `o` entity supports the `p` property"))
 
 (defprotocol HasChronology
-  (^Chronology chronology [o]
+  (^java.time.chrono.Chronology chronology [o]
     "The `Chronology` of the entity"))
 
 (defprotocol HasFields
