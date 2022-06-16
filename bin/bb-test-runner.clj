@@ -5,7 +5,7 @@
 
 ;;TODO
 (def test-nsyms [#_'java-time-test
-                 'java-time.graph-test])
+                 #_'java-time.graph-test])
 
 (some->> (seq test-nsyms)
          (apply require))
