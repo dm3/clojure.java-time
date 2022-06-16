@@ -193,7 +193,7 @@
     (let [path (ConversionPath. (vector) (vector) #{src} 0)]
       (if (assignable? src dst)
         path
-        (let [q #?(:bb (atom ())
+        (let [q #?(:bb (atom (list path))
                    :default (doto (PriorityQueue.) (.add path)))
               add #?(:bb #(swap! q (fn [prev]
                                      (sort-by (fn [^ConversionPath p]
