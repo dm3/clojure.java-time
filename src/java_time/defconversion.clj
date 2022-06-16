@@ -10,9 +10,8 @@
   vs)
 
 (defn- to-seq [in]
-  (if (sequential? in)
-    in
-    (vector in)))
+  (cond-> in
+    (not (sequential? in)) vector))
 
 (defn- wrap-validation [from to f]
   (fn [vs]
@@ -26,11 +25,11 @@
                 (let [res (to-seq (apply f vs))]
                   (subvec res (first combo) (inc (last combo)))))
               (g/types (subvec xs (first combo) (inc (last combo))))
-              (if (= (count idxs) (count xs))
-                cost
+              (cond-> cost
                 ;; TODO: mark as lossy conversion
                 ;; currently we just incur a 0.5*number of types dropped penalty
-                (+ cost (* 0.5 (- (count xs) (count combo)))))))))
+                (not= (count idxs) (count xs))
+                (+ (* 0.5 (- (count xs) (count combo)))))))))
 
 (def ^:dynamic *fail-on-duplicate-conversion?* true)
 
