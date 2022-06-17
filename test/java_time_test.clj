@@ -9,7 +9,9 @@
 (deftest constructors
   (testing "clocks"
     (testing ", with-clock"
-      (are [f] (= (j/with-clock clock (f)) (f clock))
+      (are [f] (= (j/with-clock clock (f))
+                  (j/with-clock-fn clock f)
+                  (f clock))
            j/zoned-date-time
            j/offset-date-time
            j/offset-time
