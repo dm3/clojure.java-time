@@ -52,30 +52,28 @@
 (defn types-of [xs]
   (g/types (map type xs)))
 
-(defn- call-conversion [nm tp args]
-  {:pre [(symbol? tp)
-         (not (namespace tp))]}
-  `(if-let [[path# fn#] (g/conversion-fn
-                          @graph
-                          (types-of ~args)
-                          (g/types ~(to-seq tp)))]
-     (or (try (first (fn# ~args))
-              (catch Exception e#
-                (throw
-                  (ex-info "Conversion failed"
-                           {:path (:path path#), :arguments ~args, :to ~tp}
-                           e#))))
-         (throw (ex-info
-                  (format "Conversion from %s to %s returned nil!" ~args ~tp)
-                  {:arguments ~args, :to ~tp, :constructor ~nm})))
-     (throw (ex-info (format "Could not convert %s to %s!" ~args ~tp)
-                     {:arguments ~args, :to ~tp, :constructor ~nm}))))
+(defn ^:internal call-conversion [nm tp args]
+  (if-let [[path fn] (g/conversion-fn
+                       @graph
+                       (types-of args)
+                       (g/types [tp]))]
+    (or (try (first (fn args))
+             (catch Exception e
+               (throw
+                 (ex-info "Conversion failed"
+                          {:path (:path path), :arguments args, :to tp}
+                          e))))
+        (throw (ex-info
+                 (format "Conversion from %s to %s returned nil!" args tp)
+                 {:arguments args, :to tp, :constructor nm})))
+    (throw (ex-info (format "Could not convert %s to %s!" args tp)
+                    {:arguments args, :to tp, :constructor nm}))))
 
 (defn- gen-implicit-arities [nm tp arities]
   (for [arity arities]
     (let [args (mapv #(gensym (str "arg_" (inc %) "_")) (range arity))]
       `([~@args]
-        ~(call-conversion nm tp args)))))
+        (call-conversion ~nm ~tp ~args)))))
 
 (defn get-path [from to]
   (let [[p _] (g/conversion-fn @graph
