@@ -29,11 +29,9 @@
    same name in the current namespace.  Argument lists, doc-strings,
    and original line-numbers are preserved."
   ([sym]
-     `(import-fn ~sym nil))
-  ([sym name]
      (let [vr (find-var sym)
            m (meta vr)
-           n (or name (:name m))
+           n (:name m)
            arglists (:arglists m)
            protocol (:protocol m)]
        (when (:macro m)
@@ -71,22 +69,6 @@
                       (link-vars ~vr (var ~n))
                       ~vr)))))
 
-(defmacro import-def
-  "Given a regular def'd var from another namespace, defined a new var with the
-   same name in the current namespace."
-  ([sym]
-     (let [vr (find-var sym)
-           m (meta vr)
-           n (or (:name m) (-> sym name symbol))
-           n (if (:dynamic m) (with-meta n {:dynamic true}) n)
-           nspace (:ns m)]
-       #?(:bb `(def ~n ~sym)
-          :default `(do
-                      (def ~n @~vr)
-                      (alter-meta! (var ~n) merge (dissoc (meta ~vr) :name))
-                      (link-vars ~vr (var ~n))
-                      ~vr)))))
-
 (defmacro import-vars
   "Imports a list of vars from other namespaces."
   [& syms]
@@ -108,8 +90,7 @@
           (fn [sym]
             (let [vr (resolve sym)
                   m (meta vr)]
-              (cond
-               (:macro m) `(import-macro ~sym)
-               (:arglists m) `(import-fn ~sym)
-               :else `(import-def ~sym))))
+              (if (:macro m)
+                `(import-macro ~sym)
+                `(import-fn ~sym))))
           syms))))
