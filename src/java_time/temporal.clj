@@ -65,7 +65,7 @@
 (defn- quarter->month [q]
   (Math/min 12 (Math/max 1 (long (inc (* 3 (dec q)))))))
 
-(defrecord MonthDayFieldProperty [^MonthDay o, ^TemporalField field]
+(deftype MonthDayFieldProperty [^MonthDay o, ^TemporalField field]
   jt.c/WritableProperty
   (with-value [_ v]
     (condp = field
@@ -74,18 +74,16 @@
       IsoFields/QUARTER_OF_YEAR (.withMonth o (quarter->month v)))))
 
 (alter-meta! #'->MonthDayFieldProperty assoc :private true)
-(alter-meta! #'map->MonthDayFieldProperty assoc :private true)
 
-(defrecord DayOfWeekFieldProperty [^DayOfWeek o, ^TemporalField field]
+(deftype DayOfWeekFieldProperty [^DayOfWeek o, ^TemporalField field]
   jt.c/WritableProperty
   (with-value [_ v]
     (condp = field
       ChronoField/DAY_OF_WEEK (DayOfWeek/of v))))
 
 (alter-meta! #'->DayOfWeekFieldProperty assoc :private true)
-(alter-meta! #'map->DayOfWeekFieldProperty assoc :private true)
 
-(defrecord MonthFieldProperty [^Month o, ^TemporalField field]
+(deftype MonthFieldProperty [^Month o, ^TemporalField field]
   jt.c/WritableProperty
   (with-value [_ v]
     (condp = field
@@ -93,23 +91,20 @@
       IsoFields/QUARTER_OF_YEAR (Month/of (quarter->month v)))))
 
 (alter-meta! #'->MonthFieldProperty assoc :private true)
-(alter-meta! #'map->MonthFieldProperty assoc :private true)
 
-(defrecord ZoneOffsetFieldProperty [^ZoneOffset o, ^TemporalField field]
+(deftype ZoneOffsetFieldProperty [^ZoneOffset o, ^TemporalField field]
   jt.c/WritableProperty
   (with-value [_ v]
     (condp = field
       ChronoField/OFFSET_SECONDS (ZoneOffset/ofTotalSeconds v))))
 
 (alter-meta! #'->ZoneOffsetFieldProperty assoc :private true)
-(alter-meta! #'map->ZoneOffsetFieldProperty assoc :private true)
 
-(defrecord TemporalFieldProperty [^Temporal o, ^TemporalField field]
+(deftype TemporalFieldProperty [^Temporal o, ^TemporalField field]
   jt.c/WritableProperty
   (with-value [_ v] (.with o field v)))
 
 (alter-meta! #'->TemporalFieldProperty assoc :private true)
-(alter-meta! #'map->TemporalFieldProperty assoc :private true)
 
 (defmacro field-property [java-type has-range?]
   (let [java-type-arg (with-meta (gensym) {:tag java-type})]
@@ -204,15 +199,14 @@
 
 ;;;;;;;;; AMOUNT
 
-(defrecord TemporalAmountUnitProperty [^TemporalAmount ta, ^TemporalUnit unit]
+(deftype TemporalAmountUnitProperty [^TemporalAmount ta, ^TemporalUnit unit]
   jt.c/ReadableProperty
   (value [_]
     (.get ta unit)))
 
 (alter-meta! #'->TemporalAmountUnitProperty assoc :private true)
-(alter-meta! #'map->TemporalAmountUnitProperty assoc :private true)
 
-(defrecord PeriodUnitProperty [^Period p, unit-key]
+(deftype PeriodUnitProperty [^Period p, unit-key]
   jt.c/ReadableProperty
   (value [_]
     (case unit-key
@@ -228,9 +222,8 @@
       :days (.withDays p v))))
 
 (alter-meta! #'->PeriodUnitProperty assoc :private true)
-(alter-meta! #'map->PeriodUnitProperty assoc :private true)
 
-(defrecord DurationUnitProperty [^Duration d, unit-key]
+(deftype DurationUnitProperty [^Duration d, unit-key]
   jt.c/ReadableProperty
   (value [_]
     (case unit-key
@@ -244,7 +237,6 @@
       :nanos (.withNanos d v))))
 
 (alter-meta! #'->DurationUnitProperty assoc :private true)
-(alter-meta! #'map->DurationUnitProperty assoc :private true)
 
 (def default-unit-property-factory
   (reify PropertyFactory

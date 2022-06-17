@@ -667,19 +667,24 @@
 
   (testing "duration"
     (let [d (j/duration 100000001)]
-      (is (= (j/properties d)
-             {:nanos (j/property d :nanos)
-              :seconds (j/property d :seconds)}))
+      (is (= (-> (j/properties d)
+                 (update :nanos j/value)
+                 (update :seconds j/value))
+             {:nanos (j/value (j/property d :nanos))
+              :seconds (j/value (j/property d :seconds))}))
       (is (= (j/units d)
              {:nanos (j/unit :nanos)
               :seconds (j/unit :seconds)}))))
 
   (testing "period"
     (let [p (j/period 10 5 1)]
-      (is (= (j/properties p)
-             {:days (j/property p :days)
-              :months (j/property p :months)
-              :years (j/property p :years)}))
+      (is (= (-> (j/properties p)
+                 (update :days j/value)
+                 (update :months j/value)
+                 (update :years j/value))
+             {:days (j/value (j/property p :days))
+              :months (j/value (j/property p :months))
+              :years (j/value (j/property p :years))}))
       (is (= (j/units p)
              {:days (j/unit :days)
               :months (j/unit :months)
