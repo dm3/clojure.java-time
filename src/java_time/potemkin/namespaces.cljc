@@ -63,7 +63,7 @@
            n (or name (:name m))
            arglists (:arglists m)]
        #?(:bb `(defmacro ~n [& args#]
-                 (list* #_'~sym args#))
+                 (list* '~sym args#))
           :default `(do
                       (def ~n ~(resolve sym))
                       (alter-meta! (var ~n) merge (dissoc (meta ~vr) :name))
@@ -75,11 +75,9 @@
   "Given a regular def'd var from another namespace, defined a new var with the
    same name in the current namespace."
   ([sym]
-     `(import-def ~sym nil))
-  ([sym name]
      (let [vr (find-var sym)
            m (meta vr)
-           n (or name (:name m))
+           n (or (:name m) (-> sym name symbol))
            n (if (:dynamic m) (with-meta n {:dynamic true}) n)
            nspace (:ns m)]
        #?(:bb `(def ~n ~sym)

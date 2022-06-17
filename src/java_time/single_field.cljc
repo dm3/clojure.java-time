@@ -10,6 +10,15 @@
            [java.time.format DateTimeFormatter]
            [java.time Clock Year Month YearMonth MonthDay DayOfWeek ZoneId Instant]))
 
+(defn- resolve-tag [tag]
+  (if (symbol? tag)
+    (let [cls (resolve tag)]
+      (if (var? cls)
+        ;;primitive
+        tag
+        (symbol (.getName ^Class cls))))
+    tag))
+
 (defn- get-only-unit-value ^long [^TemporalAmount a, ^TemporalUnit u]
   (let [non-zero-units
         (->> (.getUnits a)
@@ -27,7 +36,8 @@
     (long our-value)))
 
 (defmacro enumerated-entity [tp doc & {:keys [unit]}]
-  (let [fname (with-meta (symbol (jt.u/dashize (str tp))) {:tag tp})
+  (let [tp (resolve-tag tp)
+        fname (with-meta (symbol (jt.u/dashize (-> (str tp) (string/split #"\.") last))) {:tag tp})
         fields (symbol (str fname "-fields"))]
     `(do
        (def ~fields
@@ -80,7 +90,9 @@
                        o# os#)))))))))
 
 (defmacro single-field-entity [tp doc & {:keys [parseable?]}]
-  (let [fname (with-meta (symbol (jt.u/dashize (str tp))) {:tag tp})
+  (let [^Class tpcls (resolve tp)
+        tp (symbol (.getName tpcls))
+        fname (with-meta (symbol (jt.u/dashize (-> (str tp) (string/split #"\.") last))) {:tag tp})
         arg (gensym)]
     `(do
        (defn ^{:doc ~(str "True if `" tp "`.")} ~(symbol (str fname "?"))
@@ -122,7 +134,10 @@
                                              minor-field-ctor minor-field-default]}]
   (let [[major-field-ctor major-field-type] major-field-ctor
         [minor-field-ctor minor-field-type] minor-field-ctor
-        fname (with-meta (symbol (jt.u/dashize (str tp))) {:tag tp})
+        major-field-type (resolve-tag major-field-type)
+        minor-field-type (resolve-tag minor-field-type)
+        tp (resolve-tag tp)
+        fname (with-meta (symbol (jt.u/dashize (-> (str tp) (string/split #"\.") last))) {:tag tp})
         arg (gensym)
         tmp-major (with-meta (gensym) {:tag major-field-type})
         tmp-minor (with-meta (gensym) {:tag minor-field-type})]

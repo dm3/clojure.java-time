@@ -2,7 +2,7 @@
   (:require [clojure.string :as string]))
 
 #?(:bb nil
-   :default (when (= "true" (System/getProperty "java-time.util.get-static-fields-of-type"))
+   :default (when (some-> (System/getProperty "java-time.util.get-static-fields-of-type") (= "true"))
               (defn ^:deprecated get-static-fields-of-type [^Class klass, ^Class of-type]
                 (->> (seq (.getFields klass))
                      (map (fn [^java.lang.reflect.Field f]
