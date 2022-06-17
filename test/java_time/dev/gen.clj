@@ -171,7 +171,7 @@
           (:refer-clojure :exclude ~'(zero? range iterate max min contains? format abs))
           (:require ~'[java-time.util :as jt.u]
                     ~@(sort require-macros)))
-       (format "(let [lock (Object.) do-load (delay (locking lock (require %s #?@(:bb [] :default ['java-time.mock]))))]\n  (defn load-java-time \"Load java-time implementation\" [] @do-load))"
+       (format "(let [lock (the-ns 'java-time) do-load (delay (locking lock (require %s #?@(:bb [] :default ['java-time.mock]))))]\n  (defn load-java-time \"Load java-time implementation\" [] @do-load))"
                (str/join " " (map #(str "'" %) (sort (disj require-fns 'java-time.mock)))))
        '(if *compile-files*
           (load-java-time)
