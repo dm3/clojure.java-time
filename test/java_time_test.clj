@@ -629,6 +629,7 @@
            (j/unit (j/duration) (j/unit :seconds))))
 
     (is (j/unit? (j/unit :seconds)))
+    (is (not (j/unit? nil)))
 
     (is (j/supports? (j/duration) :seconds))
     (is (j/supports? :seconds (j/local-date-time)))
