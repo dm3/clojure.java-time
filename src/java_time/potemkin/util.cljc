@@ -64,16 +64,3 @@
                          (re-nil v)
                          (let [v (de-nil (apply f k))]
                            (or (.putIfAbsent m k v) v))))))))))
-
-(when (some-> (System/getProperty "java-time.potemkin.util.doit") (= "true"))
-  (defmacro doit
-    "A version of doseq that doesn't emit all that inline-destroying chunked-seq code."
-    [[x it] & body]
-    (let [it-sym (gensym "iterable")]
-      `(let [~it-sym ~it
-             it# (.iterator ~(with-meta it-sym {:tag 'java.lang.Iterable}))]
-         (loop []
-           (when (.hasNext it#)
-             (let [~x (.next it#)]
-               ~@body)
-             (recur)))))))
