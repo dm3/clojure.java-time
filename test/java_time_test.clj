@@ -1,8 +1,7 @@
 (ns java-time-test
   (:require [clojure.test :refer :all]
             [java-time.util :as jt.u]
-            [java-time :as j]
-            )
+            [java-time :as j])
   (:import java.util.Locale))
 
 (def clock (j/fixed-clock "2015-11-26T10:20:30.000000040Z" "UTC"))
