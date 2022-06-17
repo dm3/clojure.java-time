@@ -341,6 +341,8 @@
       (is (j/zero? (j/duration 0)))
       (is (= (j/duration 10) (j/abs (j/duration -10))))
       (is (= (j/duration -10) (j/negate (j/duration 10))))
+      (is (= (j/duration 10) (j/min (j/duration 10) (j/duration 11) (j/duration 12))))
+      (is (= (j/duration 12) (j/max (j/duration 10) (j/duration 11) (j/duration 12))))
       (is (j/negative? (j/duration -10)))))
 
   (testing "period"
