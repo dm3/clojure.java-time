@@ -8,6 +8,8 @@
 * #81(terop): Remove clj-tuple - no advantages over Clojure vector anymore
 * Remove `java-time.util/get-static-fields-of-type`
   * set Java property `java-time.util.get-static-fields-of-type=true` to revert
+* #32: Lazily load implementation
+  * new function `java-time/load-java-time` to force loading
 
 ## 0.3.3
 

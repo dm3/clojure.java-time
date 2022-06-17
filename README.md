@@ -173,6 +173,15 @@ Duration, on the other hand, represents a standard duration less than or equal
 to a single standard (24-hour) day.
 
 ### Caution
+Lazy loading and caching is used to improve the user experience, but in some
+cases this is not what you want.
+
+The `java-time` namespace lazily loads its implementation upon the first
+call to any function. However, do not rely on this behavior--if you need
+to preload the implementation use `java-time/load-java-time`. If this is
+still a problem, please use AOT compilation to decrease the load time (`java-time`
+will transitively compile its implementation automatically when compiling files).
+
 The current incarnation of the library is relatively slow while calling the 2-3
 arity `zoned-date-time/offset-time/offset-date-time` constructors for the
 *first time* in a given Clojure runtime. If you need predictable latency at the

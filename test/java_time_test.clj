@@ -1,7 +1,8 @@
 (ns java-time-test
   (:require [clojure.test :refer :all]
             [java-time.util :as jt.u]
-            [java-time :as j])
+            [java-time :as j]
+            )
   (:import java.util.Locale))
 
 (def clock (j/fixed-clock "2015-11-26T10:20:30.000000040Z" "UTC"))
@@ -1025,3 +1026,10 @@
       (is (= (j/local-time 0 34 0 0)
              (j/local-time fmt "12:34AM")))
       (is (thrown? Exception (j/local-time fmt "12:34am"))))))
+
+(jt.u/when-threeten-extra
+  (require 'java-time.dev.gen)
+  (deftest gen-test
+    (is (= (slurp "src/java_time.cljc")
+           (with-out-str ((resolve 'java-time.dev.gen/print-java-time-ns))))
+        "java-time main namespace is out of date -- call (java-time.dev.gen/spit-java-time-ns)")))
