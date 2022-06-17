@@ -124,7 +124,7 @@
         (field? o)
         (property->key o)))
 
-(defn ^TemporalUnit unit
+(defn ^java.time.temporal.TemporalUnit unit
   "Returns a `TemporalUnit` for the given key `k` or extracts the field from
   the given temporal `entity`.
 
@@ -135,7 +135,7 @@
   ([k] (get-unit k))
   ([entity k] (jt.c/unit* entity k)))
 
-(defn ^TemporalField field
+(defn ^java.time.temporal.TemporalUnit field
   "Returns a `TemporalField` for the given key `k` or extracts the field from
   the given temporal `entity`.
 

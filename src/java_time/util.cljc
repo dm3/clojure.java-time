@@ -1,27 +1,27 @@
 (ns java-time.util
-  (:require [clojure.string :as string])
-  #?@(:bb []
-      :default [(:import [java.lang.reflect Field])]))
+  (:require [clojure.string :as string]))
 
 #?(:bb nil
-   :default (defn ^:deprecated get-static-fields-of-type [^Class klass, ^Class of-type]
-              (->> (seq (.getFields klass))
-                   (map (fn [^Field f]
-                          (when (.isAssignableFrom of-type (.getType f))
-                            [(.getName f) (.get f nil)])))
-                   (keep identity)
-                   (into {}))))
+   :default (when (= "true" (System/getProperty "java-time.util.get-static-fields-of-type"))
+              (defn ^:deprecated get-static-fields-of-type [^Class klass, ^Class of-type]
+                (->> (seq (.getFields klass))
+                     (map (fn [^java.lang.reflect.Field f]
+                            (when (.isAssignableFrom of-type (.getType f))
+                              [(.getName f) (.get f nil)])))
+                     (keep identity)
+                     (into {})))))
 
 (defn dashize [camelcase]
   (let [words (re-seq #"([^A-Z]+|[A-Z]+[^A-Z]*)" camelcase)]
     (string/join "-" (map (comp string/lower-case first) words))))
 
 (defmacro if-class [clstr then else]
-  (if (and #?(:bb (resolve (symbol clstr)))
-           (try (Class/forName clstr)
-                (catch Throwable e)))
-    then
-    else))
+  (let [loaded (try (Class/forName clstr)
+                    (catch Throwable e))]
+    (if #?(:bb (and (resolve (symbol clstr)) loaded)
+           :default loaded)
+      then
+      else)))
 
 (defmacro when-class [clstr & body]
   `(if-class ~clstr (do ~@body) nil))

@@ -193,7 +193,7 @@
 
 ;;;;;;;;; RANGE
 
-(defn ^ValueRange value-range
+(defn ^java.time.temporal.ValueRange value-range
   "Creates a `ValueRange` given the `min` and `max` amounts or a map of
   `:min-smallest`, `:max-smallest`, `:min-largest` and `:max-largest`."
   ([min max]

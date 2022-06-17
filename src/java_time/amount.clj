@@ -65,7 +65,7 @@
   :implicit-arities [1 2]
   ([] (Duration/ofMillis 0)))
 
-(defn ^Duration micros
+(defn ^java.time.Duration micros
   "Duration of a specified number of microseconds."
   [micros]
   (Duration/ofNanos (Math/multiplyExact (long micros) 1000)))
