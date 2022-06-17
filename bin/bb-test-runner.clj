@@ -3,8 +3,7 @@
   (:require [clojure.test :as t]
             [babashka.classpath :as cp]))
 
-(def require-nsyms ['java-time.potemkin.util
-                    'java-time.joda
+(def require-nsyms ['java-time.joda
                     'java-time.core
                     'java-time.properties
                     'java-time.util

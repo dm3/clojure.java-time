@@ -1,7 +1,6 @@
 (ns java-time.graph
   (:require [clojure.set :as sets]
             [clojure.string :as string]
-            [java-time.potemkin.util :as u]
             [java-time.util :as jt.u])
   #?@(:bb []
       :default [(:import [java.util PriorityQueue])]))
@@ -65,7 +64,7 @@
 
 (def assignable?
   ^{:doc "True if `a` is assignable to `b`, e.g. Integer is assignable to Number."}
-  (u/fast-memoize
+  (memoize
     (fn [^Types a ^Types b]
       (or (= a b)
           (and (= (.arity a) (.arity b))
@@ -98,7 +97,7 @@
     (map first (combos n s))))
 
 (def continuous-combinations
-  (u/fast-memoize
+  (memoize
     (fn [n]
       (let [rng (range n)]
         (into [] (comp (map inc)
@@ -313,7 +312,7 @@
       g)))
 
 (def conversion-path
-  (u/fast-memoize
+  (memoize
     (fn [^ConversionGraph g, ^Types src, ^Types dst]
       (when (has-source-type? g src dst)
         (let [g' (expand-frontier g src max-extent)]
