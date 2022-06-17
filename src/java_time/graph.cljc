@@ -53,11 +53,12 @@
 (def max-extent 2)
 
 (defn types [ts]
-  (let [cnt (count ts)]
+  (let [ts (vec ts)
+        cnt (count ts)]
     (when (> cnt max-arity)
       (throw (ex-info (format "Maximum arity supported by conversion graph is %s!" max-arity)
                       {:types ts})))
-    (Types. (vec ts) cnt)))
+    (Types. ts cnt)))
 
 (defn- assignable-type? [a b]
   (or (= a b) (.isAssignableFrom ^Class b a)))
@@ -125,8 +126,8 @@
 (defn- collect-targets [v]
   (reduce
     (fn [r [k v]]
-      (concat r (cond-> v
-                  (map? v) collect-targets)))
+      (into r (cond-> v
+                (map? v) collect-targets)))
     [] v))
 
 (defn- add-conversion [m ^Types src dst conversion]
@@ -218,9 +219,10 @@
                     (recur))))))))))
 
 (defn- replace-range [v replacement idxs]
-  (concat (subvec v 0 (first idxs))
-          replacement
-          (subvec v (inc (peek idxs)) (count v))))
+  (-> v
+      (subvec 0 (first idxs))
+      (into replacement)
+      (into (subvec v (inc (peek idxs)) (count v)))))
 
 (defn- index-conversions [^Types src idxs [[_ ^Types replacement] ^Conversion conv]]
   [src
