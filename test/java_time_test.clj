@@ -6,7 +6,7 @@
 
 (def clock (j/fixed-clock "2015-11-26T10:20:30.000000040Z" "UTC"))
 
-(deftest constructors
+(deftest constructors-test
   (testing "clocks"
     (testing ", with-clock"
       (are [f] (= (j/with-clock clock (f))
@@ -321,7 +321,7 @@
      (is (j/period? (j/period)))
      (is (not (j/period? nil)))))
 
-(deftest operations
+(deftest operations-test
   (testing "duration"
     (is (j/duration? (j/duration 1 :days)))
     (is (not (j/duration? nil)))
@@ -410,7 +410,7 @@
              (j/minus (j/day-of-week 6) 5)
              (j/minus (j/day-of-week 6) (j/days 5)))))))
 
-(deftest ordering
+(deftest ordering-test
 
   (testing "times"
     (let [ldt (j/local-date-time clock)
@@ -573,7 +573,7 @@
       (is (j/not-before? apr-1 jan-1))
       (is (not (j/not-before? jan-1 apr-1))))))
 
-(deftest mock-clock
+(deftest mock-clock-test
   (testing "constructors"
     (is (= (j/mock-clock)
            (j/mock-clock 0)
@@ -622,7 +622,7 @@
           (j/set-clock! clock 0)
           (is (= 0 (j/value clock))))))))
 
-(deftest properties
+(deftest properties-test
   (testing "units"
     (is (= (j/unit :seconds)
            (j/unit (j/duration) :seconds)
@@ -795,7 +795,7 @@
     (testing "throws"
       (is (thrown? Exception (j/as (j/local-time 0) :year))))))
 
-(deftest legacy-conversion
+(deftest legacy-conversion-test
   (testing "deprecated"
     (testing "converts through instant"
       (is (= (j/instant 1000) (j/instant (java.util.Date. 1000))))
@@ -925,7 +925,7 @@
 
   (import '[org.joda.time Duration Period DateTimeZone
             LocalDate LocalTime LocalDateTime DateTime Instant])
-  (deftest joda
+  (deftest joda-test
     (testing "duration from duration and period"
       (is (= (j/duration 1 :millis)
             (j/duration (Duration/millis 1))
