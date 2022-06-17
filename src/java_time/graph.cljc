@@ -132,7 +132,7 @@
 (defn- add-conversion [m ^Types src dst conversion]
   (let [add #(update % (peek (.types src))
                      (fnil conj [])
-                     (vector dst conversion))]
+                     [dst conversion])]
     (if (> (.arity src) 1)
       (update-in m (pop (.types src)) add)
       (add m))))
