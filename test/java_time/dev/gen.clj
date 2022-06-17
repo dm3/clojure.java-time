@@ -173,7 +173,10 @@
                     ~@(sort require-macros)))
        (format "(let [lock (Object.) do-load (delay (locking lock (require %s #?@(:bb [] :default ['java-time.mock]))))]\n  (defn load-java-time \"Load java-time implementation\" [] @do-load))"
                (str/join " " (map #(str "'" %) (sort (disj require-fns 'java-time.mock)))))
-       '(when *compile-files* (load-java-time))]
+       '(if *compile-files*
+          (load-java-time)
+          (when-not (= "true" (System/getProperty "java-time.no-async-load"))
+            (.start (Thread. (fn [] (load-java-time))))))]
       (apply import-vars (:macros impl-info))
       (apply import-vars (:fns impl-info))
       (map #(list 'jt.u/when-threeten-extra %) (apply import-vars (:threeten-extra-fns impl-info))))))
