@@ -51,14 +51,8 @@
                    (memoize-form m f x y))
                   ([x y z]
                    (memoize-form m f x y z))
-                  ([x y z w]
-                   (memoize-form m f x y z w))
-                  ([x y z w u]
-                   (memoize-form m f x y z w u))
-                  ([x y z w u v]
-                   (memoize-form m f x y z w u v))
-                  ([x y z w u v & rest]
-                   (let [k (list* x y z w u v rest)]
+                  ([x y z & rest]
+                   (let [k (list* x y z rest)]
                      (let [v (.get ^ConcurrentHashMap m k)]
                        (if-not (nil? v)
                          (re-nil v)
