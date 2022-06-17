@@ -72,8 +72,7 @@
 (defn- gen-implicit-arities [nm tp arities]
   (for [arity arities]
     (let [args (mapv #(gensym (str "arg_" (inc %) "_")) (range arity))]
-      `([~@args]
-        (call-conversion ~nm ~tp ~args)))))
+      `(~args (call-conversion ~nm ~tp ~args)))))
 
 (defn get-path [from to]
   (let [[p _] (g/conversion-fn @graph
