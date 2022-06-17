@@ -99,7 +99,7 @@
   (u/fast-memoize
     (fn [n]
       (let [rng (range n)]
-        (into [] (comp (map inc )
+        (into [] (comp (map inc)
                        (map #(combinations % rng))
                        cat
                        (filter #(apply = 1 (map - (rest %) %))))
