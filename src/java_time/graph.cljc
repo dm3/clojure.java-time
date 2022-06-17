@@ -115,7 +115,7 @@
   (run! (fn [[t r]]
           (when (assignable-type? k t)
             (if-not more-arity-steps
-              (vswap! vresult concat (mapv #(as-source types-so-far t %) r))
+              (vswap! vresult into (map #(as-source types-so-far t %)) r)
               (search-for-possible-sources vresult r
                                            (conj types-so-far t)
                                            (first more-arity-steps)
