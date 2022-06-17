@@ -131,7 +131,7 @@
 
 (defprotocol Multipliable
   (multiply-by [o v]
-    "Entity `o` mutlitplied by the value `v`"))
+    "Entity `o` multiplied by the value `v`"))
 
 (defprotocol Ordered
   (single-before? [a b]
