@@ -228,9 +228,10 @@
            (j/offset-date-time (j/instant clock) "UTC")))
 
     (is (= (j/truncate-to (j/offset-date-time clock) :millis)
-          (j/offset-date-time (j/to-java-date clock) "UTC")))
+           (j/offset-date-time (j/to-java-date clock) "UTC")))
 
     (is (j/offset-date-time? (j/offset-date-time)))
+    (is (not (j/offset-date-time? nil)))
 
     (j/with-clock (j/system-clock "UTC")
       (is (= (j/offset-date-time 2015)
@@ -265,7 +266,7 @@
            (j/offset-time (j/instant clock) "UTC")))
 
     (is (= (j/truncate-to (j/offset-time clock) :millis)
-          (j/offset-time (j/to-java-date clock) "UTC")))
+           (j/offset-time (j/to-java-date clock) "UTC")))
 
     (is (j/offset-time? (j/offset-time (j/zone-id "UTC"))))
     (is (j/offset-time? (j/offset-time +0)))
@@ -317,10 +318,13 @@
             (j/period 0 :months)
             (j/period 0 :days)))
 
-     (is (j/period? (j/period)))))
+     (is (j/period? (j/period)))
+     (is (not (j/period? nil)))))
 
 (deftest operations
   (testing "duration"
+    (is (j/duration? (j/duration 1 :days)))
+    (is (not (j/duration? nil)))
     (testing "plus"
       (is (= (j/duration 100000001)
              (j/plus (j/standard-days 1) (j/hours 3) (j/minutes 46) (j/seconds 40) (j/millis 1) (j/nanos 0))
@@ -341,11 +345,13 @@
 
     (testing "number ops"
       (is (j/zero? (j/duration 0)))
+      (is (not (j/zero? (j/duration 10))))
       (is (= (j/duration 10) (j/abs (j/duration -10))))
       (is (= (j/duration -10) (j/negate (j/duration 10))))
       (is (= (j/duration 10) (j/min (j/duration 10) (j/duration 11) (j/duration 12))))
       (is (= (j/duration 12) (j/max (j/duration 10) (j/duration 11) (j/duration 12))))
-      (is (j/negative? (j/duration -10)))))
+      (is (j/negative? (j/duration -10)))
+      (is (not (j/negative? (j/duration 10))))))
 
   (testing "period"
     (testing "plus"
