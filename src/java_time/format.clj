@@ -40,7 +40,7 @@
       (.parseCaseInsensitive fmt-builder))
     fmt-builder))
 
-(defn ^DateTimeFormatter formatter
+(defn ^java.time.format.DateTimeFormatter formatter
   "Constructs a DateTimeFormatter out of a
 
   * format string - \"yyyy/MM/dd\", \"HH:mm\", etc.

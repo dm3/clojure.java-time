@@ -82,7 +82,7 @@
                       (IllegalArgumentException.)
                       (throw))))))
 
-(defn ^Date to-java-date
+(defn ^java.util.Date to-java-date
   "Converts a date entity to a `java.util.Date`.
 
   *Deprecated*:

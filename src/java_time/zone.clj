@@ -387,26 +387,26 @@
 
 ;;;;; Clock
 
-(defn ^Clock system-clock
+(defn ^java.time.Clock system-clock
   "Creates a system clock. In the default timezone if called without arguments,
   otherwise accepts a Zone Id."
   ([] (Clock/systemDefaultZone))
   ([k] (Clock/system (zone-id k))))
 
-(defn ^Clock fixed-clock
+(defn ^java.time.Clock fixed-clock
   "Creates a fixed clock either at the current instant or at the supplied
   instant/instant + zone."
   ([] (Clock/fixed (Instant/now) (zone-id)))
   ([i] (Clock/fixed (jt.t/instant i) (zone-id)))
   ([i z] (Clock/fixed (jt.t/instant i) (zone-id z))))
 
-(defn ^Clock offset-clock
+(defn ^java.time.Clock offset-clock
   "Creates a clock offset from the current/provided clock by a given
   `duration`."
   ([d] (Clock/offset (system-clock) (jt.a/duration d)))
   ([^Clock c, d] (Clock/offset c (jt.a/duration d))))
 
-(defn ^Clock tick-clock
+(defn ^java.time.Clock tick-clock
   "Creates a clock wrapping system/provided clock that only ticks as per
   specified duration."
   ([d] (Clock/tick (system-clock) (jt.a/duration d)))
