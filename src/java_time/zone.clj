@@ -310,9 +310,10 @@
   (fn [y m d]
     (offset-date-time y m d 0)))
 
-(conversion! java.util.GregorianCalendar ZonedDateTime
-  (fn [^java.util.GregorianCalendar cal]
-    (.toZonedDateTime cal)))
+(jt.u/when-class "java.util.GregorianCalendar"
+  (conversion! java.util.GregorianCalendar ZonedDateTime
+    (fn [^java.util.GregorianCalendar cal]
+      (.toZonedDateTime cal))))
 
 (defprotocol HasOffset
   (with-offset [o offset]

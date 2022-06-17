@@ -17,11 +17,13 @@
              (filter (fn [[_ uv]] (not (zero? uv)))))
         [our-unit our-value] (first (filter (fn [[tu]] (= tu u)) non-zero-units))]
     (when-not our-unit
-      (throw (java.time.temporal.UnsupportedTemporalTypeException.
-               (format "No unit: %s found in %s!" u a))))
+      (let [msg (format "No unit: %s found in %s!" u a)]
+        (throw #?(:bb (ex-info msg {})
+                  :default (java.time.temporal.UnsupportedTemporalTypeException. msg)))))
     (when (> (count non-zero-units) 1)
-      (throw (java.time.temporal.UnsupportedTemporalTypeException.
-               (format "Cannot use: %s, expected only %s to be non-zero!" a u))))
+      (let [msg (format "Cannot use: %s, expected only %s to be non-zero!" a u)]
+        (throw #?(:bb (ex-info msg {})
+                  :default (java.time.temporal.UnsupportedTemporalTypeException. msg)))))
     (long our-value)))
 
 (defmacro enumerated-entity [tp doc & {:keys [unit]}]
@@ -29,7 +31,7 @@
         fields (symbol (str fname "-fields"))]
     `(do
        (def ~fields
-         (->> (jt.u/get-static-fields-of-type ~tp TemporalAccessor)
+         (->> (jt.u/class->TemporalAccessor-static-fields ~tp)
               (vals)
               (map (fn [m#] [(keyword (string/lower-case (str m#))) m#]))
               (into {})))

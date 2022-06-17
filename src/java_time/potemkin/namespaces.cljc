@@ -31,22 +31,22 @@
   ([sym]
      `(import-fn ~sym nil))
   ([sym name]
-     (let [vr (resolve sym)
+     (let [vr (find-var sym)
            m (meta vr)
            n (or name (:name m))
            arglists (:arglists m)
            protocol (:protocol m)]
-       (when-not vr
-         (throw (IllegalArgumentException. (str "Don't recognize " sym))))
        (when (:macro m)
          (throw (IllegalArgumentException.
                   (str "Calling import-fn on a macro: " sym))))
 
-       `(do
-          (def ~(with-meta n {:protocol protocol}) (deref ~vr))
-          (alter-meta! (var ~n) merge (dissoc (meta ~vr) :name))
-          (link-vars ~vr (var ~n))
-          ~vr))))
+       #?(:bb `(defn ~n [& args#]
+                 (apply ~sym args#))
+          :default `(do
+                      (def ~(with-meta n {:protocol protocol}) (deref ~vr))
+                      (alter-meta! (var ~n) merge (dissoc (meta ~vr) :name))
+                      (link-vars ~vr (var ~n))
+                      ~vr)))))
 
 (defmacro import-macro
   "Given a macro in another namespace, defines a macro with the same
@@ -55,21 +55,21 @@
   ([sym]
      `(import-macro ~sym nil))
   ([sym name]
-     (let [vr (resolve sym)
+     (let [vr (find-var sym)
            m (meta vr)
+           _ (when-not (:macro m)
+               (throw (IllegalArgumentException.
+                        (str "Calling import-macro on a non-macro: " sym))))
            n (or name (:name m))
            arglists (:arglists m)]
-       (when-not vr
-         (throw (IllegalArgumentException. (str "Don't recognize " sym))))
-       (when-not (:macro m)
-         (throw (IllegalArgumentException.
-                  (str "Calling import-macro on a non-macro: " sym))))
-       `(do
-          (def ~n ~(resolve sym))
-          (alter-meta! (var ~n) merge (dissoc (meta ~vr) :name))
-          (.setMacro (var ~n))
-          (link-vars ~vr (var ~n))
-          ~vr))))
+       #?(:bb `(defmacro ~n [& args#]
+                 (list* #_'~sym args#))
+          :default `(do
+                      (def ~n ~(resolve sym))
+                      (alter-meta! (var ~n) merge (dissoc (meta ~vr) :name))
+                      (.setMacro (var ~n))
+                      (link-vars ~vr (var ~n))
+                      ~vr)))))
 
 (defmacro import-def
   "Given a regular def'd var from another namespace, defined a new var with the
@@ -77,18 +77,17 @@
   ([sym]
      `(import-def ~sym nil))
   ([sym name]
-     (let [vr (resolve sym)
+     (let [vr (find-var sym)
            m (meta vr)
            n (or name (:name m))
            n (if (:dynamic m) (with-meta n {:dynamic true}) n)
            nspace (:ns m)]
-       (when-not vr
-         (throw (IllegalArgumentException. (str "Don't recognize " sym))))
-       `(do
-          (def ~n @~vr)
-          (alter-meta! (var ~n) merge (dissoc (meta ~vr) :name))
-          (link-vars ~vr (var ~n))
-          ~vr))))
+       #?(:bb `(def ~n ~sym)
+          :default `(do
+                      (def ~n @~vr)
+                      (alter-meta! (var ~n) merge (dissoc (meta ~vr) :name))
+                      (link-vars ~vr (var ~n))
+                      ~vr)))))
 
 (defmacro import-vars
   "Imports a list of vars from other namespaces."

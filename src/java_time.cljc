@@ -3,7 +3,7 @@
   (:require [java-time.potemkin.namespaces :as potemkin]
             [java-time.util :as jt.u]
             [java-time core properties temporal amount zone single-field local chrono
-             convert sugar seqs adjuster interval format joda clock pre-java8 mock]))
+             convert sugar seqs adjuster interval format joda clock pre-java8 #?@(:bb [] :default [mock])]))
 
 (potemkin/import-vars
   [java-time.clock
@@ -44,8 +44,9 @@
    zone-id? zoned-date-time? offset-date-time? offset-time?
    with-zone-same-instant with-offset with-offset-same-instant]
 
-  [java-time.mock
-   mock-clock advance-clock! set-clock!]
+  #?@(:bb []
+      :default [[java-time.mock
+                 mock-clock advance-clock! set-clock!]])
 
   [java-time.convert
    as-map convert-amount to-java-date to-sql-date to-sql-timestamp

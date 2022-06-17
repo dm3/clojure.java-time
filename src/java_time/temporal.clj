@@ -329,9 +329,10 @@
   (fn [^java.util.Date dt]
     (.toInstant dt)))
 
-(conversion! java.util.Calendar Instant
-  (fn [^java.util.Calendar c]
-    (.toInstant c)))
+(jt.u/when-class "java.util.Calendar"
+  (conversion! java.util.Calendar Instant
+    (fn [^java.util.Calendar c]
+      (.toInstant c))))
 
 (conversion! CharSequence Instant
   (fn [^CharSequence s]

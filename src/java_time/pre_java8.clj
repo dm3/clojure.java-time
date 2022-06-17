@@ -3,6 +3,7 @@
              [convert :as jt.c]
              [local :as jt.l]
              [temporal :as jt.t]
+             [util :as jt.u]
              [defconversion :refer [conversion!]]]))
 
 (defn ^java.util.Date java-date
@@ -35,9 +36,10 @@
   (fn [^java.sql.Timestamp dt]
     (.toLocalDateTime dt)))
 
-(conversion! java.sql.Time java.time.LocalTime
-  (fn [^java.sql.Time dt]
-    (.toLocalTime dt)))
+(jt.u/when-class "java.sql.Time"
+  (conversion! java.sql.Time java.time.LocalTime
+    (fn [^java.sql.Time dt]
+      (.toLocalTime dt))))
 
 (defsqldate java.sql.Date sql-date jt.l/local-date 3
   "Creates a `java.sql.Date` out of any combination of arguments valid for
@@ -81,14 +83,15 @@
     (java.sql.Timestamp. (long instant-or-millis))
     (java.sql.Timestamp/from (jt.t/instant instant-or-millis))))
 
-(defsqldate java.sql.Time sql-time jt.l/local-time 3
-  "Creates a `java.sql.Time` out of any combination of arguments valid for
-  `java-time/local-time` (except the nanos constructor) or the `LocalTime`
-  itself.
+(jt.u/when-class "java.sql.Time"
+  (defsqldate java.sql.Time sql-time jt.l/local-time 3
+    "Creates a `java.sql.Time` out of any combination of arguments valid for
+    `java-time/local-time` (except the nanos constructor) or the `LocalTime`
+    itself.
 
-  Please consider using the JSR-310 Java Time types instead of `java.sql.Time`
-  if your drivers support them.
+    Please consider using the JSR-310 Java Time types instead of `java.sql.Time`
+    if your drivers support them.
 
-  Even though `java.sql.Time` extends a `java.util.Date`, it's supposed to be
-  used as a local time (no date component or timezone) for the purposes of
-  conversion from/to native JDBC driver TIME types.")
+    Even though `java.sql.Time` extends a `java.util.Date`, it's supposed to be
+    used as a local time (no date component or timezone) for the purposes of
+    conversion from/to native JDBC driver TIME types."))

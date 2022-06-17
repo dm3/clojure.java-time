@@ -1,6 +1,5 @@
 (ns java-time.clock
-  (:require [java-time.core :as jt.c])
-  (:import [java.time Clock Instant]))
+  (:import [java.time Clock]))
 
 (def ^:dynamic ^Clock *clock* nil)
 

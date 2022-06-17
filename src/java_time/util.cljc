@@ -3,13 +3,12 @@
   #?@(:bb []
       :default [(:import [java.lang.reflect Field])]))
 
-(defn get-static-fields-of-type [^Class klass, ^Class of-type]
-  #?(:bb (throw (ex-info (str "TODO get-static-fields-of-type " klass " " of-type)
-                         {}))
-     :default (->> (seq (.getFields klass))
+#?(:bb nil
+   :default (defn ^:deprecated get-static-fields-of-type [^Class klass, ^Class of-type]
+              (->> (seq (.getFields klass))
                    (map (fn [^Field f]
                           (when (.isAssignableFrom of-type (.getType f))
-                            [(.getName f) (.get f nil)])) )
+                            [(.getName f) (.get f nil)])))
                    (keep identity)
                    (into {}))))
 
@@ -17,11 +16,20 @@
   (let [words (re-seq #"([^A-Z]+|[A-Z]+[^A-Z]*)" camelcase)]
     (string/join "-" (map (comp string/lower-case first) words))))
 
+(defmacro if-class [clstr then else]
+  (if (and #?(:bb (resolve (symbol clstr)))
+           (try (Class/forName clstr)
+                (catch Throwable e)))
+    then
+    else))
+
+(defmacro when-class [clstr & body]
+  `(if-class ~clstr (do ~@body) nil))
+
 (defmacro if-threeten-extra [then-body else-body]
-  (if (try (Class/forName "org.threeten.extra.Temporals")
-           (catch Throwable e))
-    `(do ~then-body)
-    `(do ~else-body)))
+  `(if-class "org.threeten.extra.Temporals"
+     ~then-body
+     ~else-body))
 
 (defmacro when-threeten-extra [& body]
   `(if-threeten-extra (do ~@body) nil))
@@ -56,3 +64,34 @@
   key and value as a collection of two elements."
   [f coll]
   (reduce-map (fn [xf] (fn [m k v] (let [[k v] (f k v)] (xf m k v)))) coll))
+
+(defn class->TemporalAccessor-static-fields [^Class klass]
+  {:pre [(class? klass)]}
+  (case (.getName klass)
+    "java.time.Month" {"JUNE" java.time.Month/JUNE
+                       "DECEMBER" java.time.Month/DECEMBER
+                       "SEPTEMBER" java.time.Month/SEPTEMBER
+                       "OCTOBER" java.time.Month/OCTOBER
+                       "FEBRUARY" java.time.Month/FEBRUARY
+                       "MAY" java.time.Month/MAY
+                       "AUGUST" java.time.Month/AUGUST
+                       "MARCH" java.time.Month/MARCH
+                       "JANUARY" java.time.Month/JANUARY
+                       "JULY" java.time.Month/JULY
+                       "APRIL" java.time.Month/APRIL
+                       "NOVEMBER" java.time.Month/NOVEMBER}
+    "java.time.DayOfWeek" {"MONDAY" java.time.DayOfWeek/MONDAY
+                           "TUESDAY" java.time.DayOfWeek/TUESDAY
+                           "WEDNESDAY" java.time.DayOfWeek/WEDNESDAY
+                           "THURSDAY" java.time.DayOfWeek/THURSDAY
+                           "FRIDAY" java.time.DayOfWeek/FRIDAY
+                           "SATURDAY" java.time.DayOfWeek/SATURDAY
+                           "SUNDAY" java.time.DayOfWeek/SUNDAY}
+    "org.threeten.extra.AmPm" (if-threeten-extra
+                                {"AM" org.threeten.extra.AmPm/AM, "PM" org.threeten.extra.AmPm/PM}
+                                (throw (ex-info "org.threeten.extra.AmPm not found"))) 
+    "org.threeten.extra.Quarter" (if-threeten-extra
+                                   {"Q1" org.threeten.extra.Quarter/Q1, "Q2" org.threeten.extra.Quarter/Q2, "Q3" org.threeten.extra.Quarter/Q3, "Q4" org.threeten.extra.Quarter/Q4}
+                                   (throw (ex-info "org.threeten.extra.Quarter not found"))) 
+    (throw (ex-info (str "TODO class->TemporalAccessor-static-fields " klass)
+                    {}))))
