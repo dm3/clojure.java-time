@@ -82,7 +82,7 @@
                       (IllegalArgumentException.)
                       (throw))))))
 
-(defn ^java.util.Date to-java-date
+(defn ^:deprecated ^java.util.Date to-java-date
   "Converts a date entity to a `java.util.Date`.
 
   *Deprecated*:
@@ -93,7 +93,7 @@
   (if (instance? Date o) o
     (Date/from (jt.t/instant o))))
 
-(defn ^java.sql.Date to-sql-date
+(defn ^:deprecated ^java.sql.Date to-sql-date
   "Converts a local date entity to a `java.sql.Date`.
 
   *Deprecated*:
@@ -102,7 +102,7 @@
   instead."
   [o] (java.sql.Date/valueOf (jt.l/local-date o)))
 
-(defn ^java.sql.Timestamp to-sql-timestamp
+(defn ^:deprecated ^java.sql.Timestamp to-sql-timestamp
   "Converts a date entity to a `java.sql.Timestamp`.
 
   *Deprecated*:
