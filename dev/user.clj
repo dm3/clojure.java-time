@@ -2,7 +2,7 @@
   (:require [clojure.tools.namespace.repl :as repl]
             [criterium.core :as crit]
             [taoensso.timbre :as timbre]
-            [taoensso.timbre.profiling :as profiling :refer (pspy pspy* profile defnp p p*)]))
+            [taoensso.tufte :as profiling :refer (pspy profile defnp p)]))
 
 (defn go []
   (set! *warn-on-reflection* false)
