@@ -318,11 +318,11 @@
         (let [g' (expand-frontier g src max-extent)]
           (graph-conversion-path g' src dst))))))
 
-(defn- convert-via [path]
+(defn- convert-via [{:keys [fns] :as path}]
   (case (count (:path path))
     0 [path identity]
-    1 [path (-> path :fns first)]
-    [path (fn [v] (reduce (fn [v f] (f v)) v (:fns path)))]))
+    1 [path (first fns)]
+    [path (fn [v] (reduce (fn [v f] (f v)) v fns))]))
 
 (defn conversion-fn
   "Create a function which will convert between the `src` and the `dst`
