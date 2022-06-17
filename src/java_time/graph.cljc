@@ -207,7 +207,7 @@
             dsts (equivalent-targets g dst)]
         (loop []
           (when-some [^ConversionPath p (poll)]
-            (let [curr (or (-> p .path last second) src)]
+            (let [curr (or (-> p .path peek second) src)]
               (if (some #(assignable? curr %) dsts)
                 p
                 (do (run! (fn [[[src dst] c]]
@@ -220,7 +220,7 @@
 (defn- replace-range [v replacement idxs]
   (concat (subvec v 0 (first idxs))
           replacement
-          (subvec v (inc (last idxs)) (count v))))
+          (subvec v (inc (peek idxs)) (count v))))
 
 (defn- index-conversions [^Types src idxs [[_ ^Types replacement] ^Conversion conv]]
   [src
@@ -228,7 +228,7 @@
    (fn [vs]
      (let [vs (vec vs)]
        (replace-range vs
-                      ((.f conv) (subvec vs (first idxs) (inc (last idxs))))
+                      ((.f conv) (subvec vs (first idxs) (inc (peek idxs))))
                       idxs)))
    (.cost conv)])
 
@@ -251,7 +251,7 @@
     (->> (continuous-combinations (.arity src))
          (mapcat
            (fn [idxs]
-             (let [^Types input (types (subvec (.types src) (first idxs) (inc (last idxs))))]
+             (let [^Types input (types (subvec (.types src) (first idxs) (inc (peek idxs))))]
                (->> (possible-conversions g input)
                     (filter (fn [[[_ ^Types replacement] _]]
                               (>= max-arity (+ (.arity replacement)
