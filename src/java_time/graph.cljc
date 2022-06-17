@@ -68,12 +68,13 @@
     (fn [^Types a ^Types b]
       (or (= a b)
           (and (= (.arity a) (.arity b))
-               (let [ta (.types a), tb (.types b)]
-                 (loop [idx 0]
-                   (when (assignable-type? (nth ta idx) (nth tb idx))
-                     (if (> (.arity a) (inc idx))
-                       (recur (inc idx))
-                       true)))))))))
+               (boolean
+                 (let [ta (.types a), tb (.types b)]
+                   (loop [idx 0]
+                     (when (assignable-type? (nth ta idx) (nth tb idx))
+                       (if (> (.arity a) (inc idx))
+                         (recur (inc idx))
+                         true))))))))))
 
 (defprotocol IConversionGraph
   (get-conversion [_ src dst])
