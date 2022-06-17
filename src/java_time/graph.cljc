@@ -83,15 +83,15 @@
   (possible-conversions [_ src]))
 
 (defn- expand [[a b]]
-  (when-not (empty? b)
+  (when-some [[bf & br] (seq b)] 
     (cons
-      [(conj a (first b)) (rest b)]
-      (expand [a (rest b)]))))
+      [(conj a bf) br]
+      (expand [a br]))))
 
 (defn- combinations [n s]
   (letfn [(combos [n s]
             (if (zero? n)
-              (list (vector (vector) s))
+              (list [[] s])
               (mapcat expand (combos (dec n) s))))]
     (map first (combos n s))))
 
@@ -99,15 +99,15 @@
   (u/fast-memoize
     (fn [n]
       (let [rng (range n)]
-        (->> (map inc rng)
-             (map #(combinations % rng))
-             (apply concat)
-             (filterv #(apply = 1 (map - (rest %) %))))))))
+        (into [] (comp (map inc )
+                       (map #(combinations % rng))
+                       cat
+                       (filter #(apply = 1 (map - (rest %) %))))
+              rng)))))
 
 (defn- as-source [types-so-far t [dst c]]
-  (vector
-    (vector (types (conj types-so-far t)) dst)
-    c))
+  [[(types (conj types-so-far t)) dst]
+   c])
 
 (defn- search-for-possible-sources
   [vresult m types-so-far k more-arity-steps]
@@ -124,10 +124,9 @@
 (defn- collect-targets [v]
   (reduce
     (fn [r [k v]]
-      (if (map? v)
-        (concat r (collect-targets v))
-        (concat r v)))
-    (vector) v))
+      (concat r (cond-> v
+                  (map? v) collect-targets)))
+    [] v))
 
 (defn- add-conversion [m ^Types src dst conversion]
   (let [add #(update % (peek (.types src))
@@ -189,34 +188,33 @@
     (conj (.visited? p) dst)
     (+ (.cost p) (.cost c))))
 
-(def graph-conversion-path
-  (fn [g src dst]
-    (let [path (ConversionPath. (vector) (vector) #{src} 0)]
-      (if (assignable? src dst)
-        path
-        (let [q #?(:bb (atom ())
-                   :default (PriorityQueue.))
-              add #?(:bb #(swap! q (fn [prev]
-                                     (sort-by (fn [^ConversionPath p]
-                                                [(.cost p) (count (.path p))])
-                                              (fn [a b] (compare b a))
-                                              (conj prev %))))
-                     :default #(.add q %))
-              poll #?(:bb #(-> (swap-vals! q next) first first)
-                      :default #(.poll q))
-              _ (add path)
-              dsts (equivalent-targets g dst)]
-          (loop []
-            (when-some [^ConversionPath p (poll)]
-              (let [curr (or (-> p .path last second) src)]
-                (if (some #(assignable? curr %) dsts)
-                  p
-                  (do (run! (fn [[[src dst] c]]
-                              (when (and (> max-path-length (count (.path p)))
-                                         (not ((.visited? p) dst)))
-                                (add (conj-path p src dst c))))
-                            (possible-conversions g curr))
-                      (recur)))))))))))
+(defn graph-conversion-path [g src dst]
+  (let [path (ConversionPath. [] [] #{src} 0)]
+    (if (assignable? src dst)
+      path
+      (let [q #?(:bb (atom ())
+                 :default (PriorityQueue.))
+            add #?(:bb #(swap! q (fn [prev]
+                                   (sort-by (fn [^ConversionPath p]
+                                              [(.cost p) (count (.path p))])
+                                            (fn [a b] (compare b a))
+                                            (conj prev %))))
+                   :default #(.add q %))
+            poll #?(:bb #(-> (swap-vals! q next) ffirst)
+                    :default #(.poll q))
+            _ (add path)
+            dsts (equivalent-targets g dst)]
+        (loop []
+          (when-some [^ConversionPath p (poll)]
+            (let [curr (or (-> p .path last second) src)]
+              (if (some #(assignable? curr %) dsts)
+                p
+                (do (run! (fn [[[src dst] c]]
+                            (when (and (> max-path-length (count (.path p)))
+                                       (not ((.visited? p) dst)))
+                              (add (conj-path p src dst c))))
+                          (possible-conversions g curr))
+                    (recur))))))))))
 
 (defn- replace-range [v replacement idxs]
   (concat (subvec v 0 (first idxs))
@@ -307,7 +305,7 @@
               [new-conversions g'] (with-conversions g more-conversions)
               accepted-conversions (filter (fn [[conv-src _ _ cost]]
                                              (>= max-cost cost)) new-conversions)]
-          (recur g' (reduce (fn [q [_ dst _ _]] (conj q (vector dst (inc step))))
+          (recur g' (reduce (fn [q [_ dst _ _]] (conj q [dst (inc step)]))
                             (pop q) accepted-conversions))))
       g)))
 
