@@ -111,14 +111,15 @@
 
 (defn- search-for-possible-sources
   [vresult m types-so-far k more-arity-steps]
-  (u/doit [[t r] m]
-    (when (assignable-type? k t)
-      (if-not more-arity-steps
-        (vswap! vresult concat (mapv #(as-source types-so-far t %) r))
-        (search-for-possible-sources vresult r
-                                     (conj types-so-far t)
-                                     (first more-arity-steps)
-                                     (next more-arity-steps))))))
+  (run! (fn [[t r]]
+          (when (assignable-type? k t)
+            (if-not more-arity-steps
+              (vswap! vresult concat (mapv #(as-source types-so-far t %) r))
+              (search-for-possible-sources vresult r
+                                           (conj types-so-far t)
+                                           (first more-arity-steps)
+                                           (next more-arity-steps)))))
+        m))
 
 (defn- collect-targets [v]
   (reduce
@@ -193,8 +194,8 @@
     (let [path (ConversionPath. (vector) (vector) #{src} 0)]
       (if (assignable? src dst)
         path
-        (let [q #?(:bb (atom (list path))
-                   :default (doto (PriorityQueue.) (.add path)))
+        (let [q #?(:bb (atom ())
+                   :default (PriorityQueue.))
               add #?(:bb #(swap! q (fn [prev]
                                      (sort-by (fn [^ConversionPath p]
                                                 [(.cost p) (count (.path p))])
@@ -203,18 +204,19 @@
                      :default #(.add q %))
               poll #?(:bb #(-> (swap-vals! q next) first first)
                       :default #(.poll q))
+              _ (add path)
               dsts (equivalent-targets g dst)]
           (loop []
-            (when-let [^ConversionPath p (poll)]
+            (when-some [^ConversionPath p (poll)]
               (let [curr (or (-> p .path last second) src)]
                 (if (some #(assignable? curr %) dsts)
                   p
-                  (do
-                    (u/doit [[[src dst] c] (possible-conversions g curr)]
-                      (when (and (> max-path-length (count (.path p)))
-                                 (not ((.visited? p) dst)))
-                        (add (conj-path p src dst c))))
-                    (recur)))))))))))
+                  (do (run! (fn [[[src dst] c]]
+                              (when (and (> max-path-length (count (.path p)))
+                                         (not ((.visited? p) dst)))
+                                (add (conj-path p src dst c))))
+                            (possible-conversions g curr))
+                      (recur)))))))))))
 
 (defn- replace-range [v replacement idxs]
   (concat (subvec v 0 (first idxs))

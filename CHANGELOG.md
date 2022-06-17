@@ -6,8 +6,10 @@
 
 * #78(liquidz): Add missing chrono fields (v0.3.3 has breaking changes)
 * #81(terop): Remove clj-tuple - no advantages over Clojure vector anymore
-* Remove java-time.util/get-static-fields-of-type
+* Remove `java-time.util/get-static-fields-of-type`
   * set Java property `java-time.util.get-static-fields-of-type=true` to revert
+* Remove `java-time.potemkin.util/doit`
+  * set Java property `java-time.potemkin.util/doit=true` to revert
 
 ## 0.3.3
 
