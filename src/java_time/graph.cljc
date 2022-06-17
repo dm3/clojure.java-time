@@ -140,7 +140,7 @@
 (deftype ConversionGraph [m-by-arity srcs]
   IConversionGraph
   (get-conversion [_ src dst]
-    (let [m (get m-by-arity (.arity ^Types src))]
+    (let [m (m-by-arity (.arity ^Types src))]
       (->> (get-in m (.types ^Types src))
            (some #(= dst (first %))))))
   (assoc-conversion [_ src dst f cost]
@@ -150,19 +150,19 @@
       (conj srcs src)))
   (possible-sources [_] srcs)
   (equivalent-targets [_ dst]
-    (->> (vals m-by-arity)
-         (mapcat collect-targets)
-         (map first)
-         (filter #(assignable? % dst))
-         (set)))
+    (into #{} (comp (mapcat collect-targets)
+                    (map first)
+                    (filter #(assignable? % dst)))
+          (vals m-by-arity)))
   (possible-conversions [_ src]
-    (let [result (volatile! (vector))]
+    (let [^Types src src
+          result (volatile! [])]
       (search-for-possible-sources
         result
-        (get m-by-arity (.arity ^Types src))
-        (vector)
-        (first (.types ^Types src))
-        (next (.types ^Types src)))
+        (m-by-arity (.arity src))
+        []
+        (first (.types src))
+        (next (.types src)))
       @result)))
 
 (defn conversion-graph []
@@ -184,7 +184,7 @@
 
 (defn- conj-path [^ConversionPath p src dst ^Conversion c]
   (ConversionPath.
-    (conj (.path p) (vector src dst))
+    (conj (.path p) [src dst])
     (conj (.fns p) (.f c))
     (conj (.visited? p) dst)
     (+ (.cost p) (.cost c))))
@@ -224,13 +224,14 @@
           (subvec v (inc (last idxs)) (count v))))
 
 (defn- index-conversions [^Types src idxs [[_ ^Types replacement] ^Conversion conv]]
-  (vector src (types (replace-range (.types src) (.types replacement) idxs))
-          (fn [vs]
-            (let [vs (vec vs)]
-              (replace-range vs
-                             ((.f conv) (subvec vs (first idxs) (inc (last idxs))))
-                             idxs)))
-          (.cost conv)))
+  [src
+   (types (replace-range (.types src) (.types replacement) idxs))
+   (fn [vs]
+     (let [vs (vec vs)]
+       (replace-range vs
+                      ((.f conv) (subvec vs (first idxs) (inc (last idxs))))
+                      idxs)))
+   (.cost conv)])
 
 (defn- sub-conversions
   "Given an `src` types, generate all of the conversions from these types that
@@ -247,7 +248,7 @@
               [src -> String]"
   [g ^Types src]
   (if (> (.arity src) max-arity)
-    (vector)
+    []
     (->> (continuous-combinations (.arity src))
          (mapcat
            (fn [idxs]
@@ -259,7 +260,8 @@
                     (map #(index-conversions src idxs %)))))))))
 
 (defn- with-conversions [g convs]
-  (loop [g g, new-conversions (vector)
+  (loop [g g
+         new-conversions []
          [src dst f cost :as con] (first convs)
          convs (next convs)]
     (if con
@@ -275,16 +277,15 @@
 ;; we want to skip the branches that contain the destination types as their part.
 ;; In our conversion world it's very unlikely that a value will be reduced to
 ;; the value of the same type.
-(def contains-types?
+(defn contains-types?
   "True if `a` contains `b` as its part."
-  (fn [^Types a, ^Types b]
-    (and (not= (.arity a) (.arity b))
-         (let [ta (.types a), tb (.types b)]
-           (loop [idx 0]
-             (when (>= (.arity a) (+ idx (.arity b)))
-               (if (= tb (subvec ta idx (+ idx (.arity b))))
-                 true
-                 (recur (inc idx)))))))))
+  [^Types a, ^Types b]
+  (and (not= (.arity a) (.arity b))
+       (let [ta (.types a), tb (.types b)]
+         (loop [idx 0]
+           (when (>= (.arity a) (+ idx (.arity b)))
+             (or (= tb (subvec ta idx (+ idx (.arity b))))
+                 (recur (inc idx))))))))
 
 ;; if a graph's sources do not contain all of the types present in the
 ;; requested source and the destination doesn't contain them either we conclude
@@ -318,15 +319,14 @@
           (graph-conversion-path g' src dst))))))
 
 (defn- convert-via [path]
-  (condp = (count (:path path))
-    0 (vector path (fn [x] x))
-    1 (vector path (->> path :fns first))
-    (let [fns (->> path :fns vec)]
-      (vector path (fn [v] (reduce (fn [v f] (f v)) v fns))))))
+  (case (count (:path path))
+    0 [path identity]
+    1 [path (-> path :fns first)]
+    [path (fn [v] (reduce (fn [v f] (f v)) v (:fns path)))]))
 
 (defn conversion-fn
   "Create a function which will convert between the `src` and the `dst`
   `Types`."
   [g src dst]
-  (when-let [path (conversion-path g src dst)]
+  (when-some [path (conversion-path g src dst)]
     (convert-via path)))
