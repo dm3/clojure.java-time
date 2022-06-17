@@ -12,11 +12,13 @@
   [java-time.core
    zero? negative? negate abs max min 
    before? not-after? after? not-before?
-   supports? chronology fields units properties property
+   supports?
+   fields units properties property
    as value range min-value max-value largest-min-value smallest-max-value
-   with-value with-min-value with-max-value with-largest-min-value with-smallest-max-value
-   truncate-to time-between with-zone leap?
-   plus minus multiply-by]
+   truncate-to time-between with-zone 
+   plus minus multiply-by
+   ;; TODO below here needs unit tests
+   chronology leap? with-value with-min-value with-max-value with-largest-min-value with-smallest-max-value]
 
   [java-time.amount
    duration period period? duration?
