@@ -143,7 +143,7 @@
   "Latest/longest of the given time entities. Entities should be of the same
   type"
   [o & os]
-  (last (sort (cons o os))))
+  (first (sort #(compare %2 %1) (cons o os))))
 
 (defn min
   "Earliest/shortest of the given time entities. Entities should be of the same
