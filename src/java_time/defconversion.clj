@@ -21,15 +21,15 @@
 (defn- combinations [xs f cost]
   (let [idxs (g/continuous-combinations (count xs))]
     (for [combo idxs]
-      (vector (fn [& vs]
-                (let [res (to-seq (apply f vs))]
-                  (subvec res (first combo) (inc (last combo)))))
-              (g/types (subvec xs (first combo) (inc (last combo))))
-              (cond-> cost
-                ;; TODO: mark as lossy conversion
-                ;; currently we just incur a 0.5*number of types dropped penalty
-                (not= (count idxs) (count xs))
-                (+ (* 0.5 (- (count xs) (count combo)))))))))
+      [(fn [& vs]
+         (let [res (to-seq (apply f vs))]
+           (subvec res (first combo) (inc (last combo)))))
+       (g/types (subvec xs (first combo) (inc (last combo))))
+       (cond-> cost
+         ;; TODO: mark as lossy conversion
+         ;; currently we just incur a 0.5*number of types dropped penalty
+         (not= (count idxs) (count xs))
+         (+ (* 0.5 (- (count xs) (count combo)))))])))
 
 (def ^:dynamic *fail-on-duplicate-conversion?* true)
 
