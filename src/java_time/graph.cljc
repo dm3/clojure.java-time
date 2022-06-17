@@ -321,7 +321,7 @@
   (condp = (count (:path path))
     0 (vector path (fn [x] x))
     1 (vector path (->> path :fns first))
-    (let [fns (->> path :fns (apply vector))]
+    (let [fns (->> path :fns vec)]
       (vector path (fn [v] (reduce (fn [v f] (f v)) v fns))))))
 
 (defn conversion-fn
