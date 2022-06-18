@@ -10,7 +10,7 @@
 
 * #78(liquidz): Add missing chrono fields (v0.3.3 has breaking changes)
 * #81(terop): Remove clj-tuple - no advantages over Clojure vector anymore
-* #53: Fix before/after on Intervals
+* #52: Fix before/after on Intervals
 
 ### Enhancements
 * #32: Asynchronously load implementation
