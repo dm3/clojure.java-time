@@ -75,7 +75,7 @@ consists of one namespace, namely `java-time`.  For the purposes of this guide,
 we will `use` the main namespace:
 
 ```clj
-(refer-clojure :exclude [range iterate format max min])
+(refer-clojure :exclude [zero? range iterate max min contains? format abs])
 (use 'java-time)
 ```
 

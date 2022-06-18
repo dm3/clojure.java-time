@@ -20,7 +20,10 @@
                    :plugins [[lein-codox "0.10.8"]
                              [jonase/eastwood "1.2.3"]]
                    :codox {:namespaces [java-time java-time.repl]
-                           :doc-files ["README.md" "CHANGELOG.md"]}
+                           :doc-files ["README.md" "CHANGELOG.md"]
+                           :metadata {:doc/format :markdown}
+                           :output-path "docs"
+                           :source-uri "https://github.com/dm3/clojure.java-time/blob/{version}/{filepath}#L{line}"}
                    :source-paths ["dev"]
                    :global-vars {*warn-on-reflection* true}
                    :eastwood {:exclude-namespaces [java-time
