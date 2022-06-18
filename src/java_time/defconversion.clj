@@ -53,11 +53,11 @@
   (g/types (map type xs)))
 
 (defn ^:internal call-conversion [nm tp args]
-  (if-let [[path fn] (g/conversion-fn
+  (if-let [[path f] (g/conversion-fn
                        @graph
                        (types-of args)
                        (g/types [tp]))]
-    (or (try (first (fn args))
+    (or (try (first (f args))
              (catch Exception e
                (throw
                  (ex-info "Conversion failed"
