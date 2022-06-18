@@ -952,7 +952,7 @@
 
   (import [org.joda.time Duration Period DateTimeZone
            LocalDate LocalTime LocalDateTime DateTime Instant])
-  (deftest joda
+  (deftest joda-test
     (testing "duration from duration and period"
       (is (= (j/duration 1 :millis)
             (j/duration (Duration/millis 1))
