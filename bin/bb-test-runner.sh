@@ -1,4 +1,4 @@
 #!/bin/bash
 
 set -e
-bb --debug test
+bb --debug --file ./bin/bb-test-runner.clj
