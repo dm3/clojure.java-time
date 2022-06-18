@@ -2,9 +2,12 @@
   (:require [clojure.string :as str]
             [clojure.set :as set]))
 
+(def impl-local-sym '+impl+)
+
 (defn normalize-argv [argv]
   {:post [(or (empty? %)
-              (apply distinct? %))]}
+              (apply distinct? %))
+          (not-any? #{impl-local-sym} %)]}
   (into [] (map-indexed (fn [i arg]
                           (if (symbol? arg)
                             (do (assert (not (namespace arg)))
@@ -29,13 +32,13 @@
         forward-meta (into (sorted-map) (select-keys m [:doc :tag :deprecated]))
         forward-meta (cond-> forward-meta
                        (nil? (:tag forward-meta)) (dissoc :tag))
-        impl '+impl+]
+        _ (assert (not= n impl-local-sym))]
     (when (:macro m)
       (throw (IllegalArgumentException.
                (str "Calling import-fn on a macro: " sym))))
-    (list 'let [impl (list 'delay
-                            (list 'load-java-time)
-                            (list 'deref (list 'resolve (list 'quote sym))))]
+    (list 'let [impl-local-sym (list 'delay
+                                     (list 'load-java-time)
+                                     (list 'deref (list 'resolve (list 'quote sym))))]
                (list* 'defn n
                       (concat
                         (some-> (not-empty forward-meta) list)
@@ -44,8 +47,8 @@
                                  (let [argv (normalize-argv argv)]
                                    (list argv
                                          (if (some #{'&} argv)
-                                           (list* 'apply (list 'deref impl) (remove #{'&} argv))
-                                           (list* (list 'deref impl) argv)))))
+                                           (list* 'apply (list 'deref impl-local-sym) (remove #{'&} argv))
+                                           (list* (list 'deref impl-local-sym) argv)))))
                                arglists)))))))
 
 (defn import-macro [sym]
