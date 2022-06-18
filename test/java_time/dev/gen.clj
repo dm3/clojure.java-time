@@ -29,6 +29,7 @@
         n (:name m)
         arglists (:arglists m)
         protocol (:protocol m)
+        when-class (-> sym meta :when-class)
         forward-meta (into (sorted-map) (select-keys m [:doc :tag :deprecated]))
         forward-meta (cond-> forward-meta
                        (nil? (:tag forward-meta)) (dissoc :tag))
@@ -36,20 +37,21 @@
     (when (:macro m)
       (throw (IllegalArgumentException.
                (str "Calling import-fn on a macro: " sym))))
-    (list 'let [impl-local-sym (list 'delay
-                                     (list 'load-java-time)
-                                     (list 'deref (list 'resolve (list 'quote sym))))]
-               (list* 'defn n
-                      (concat
-                        (some-> (not-empty forward-meta) list)
-                        (normalize-arities
-                          (map (fn [argv] 
-                                 (let [argv (normalize-argv argv)]
-                                   (list argv
-                                         (if (some #{'&} argv)
-                                           (list* 'apply (list 'deref impl-local-sym) (remove #{'&} argv))
-                                           (list* (list 'deref impl-local-sym) argv)))))
-                               arglists)))))))
+    (cond->> (list 'let [impl-local-sym (list 'delay
+                                              (list 'load-java-time)
+                                              (list 'deref (list 'resolve (list 'quote sym))))]
+                   (list* 'defn n
+                          (concat
+                            (some-> (not-empty forward-meta) list)
+                            (normalize-arities
+                              (map (fn [argv] 
+                                     (let [argv (normalize-argv argv)]
+                                       (list argv
+                                             (if (some #{'&} argv)
+                                               (list* 'apply (list 'deref impl-local-sym) (remove #{'&} argv))
+                                               (list* (list 'deref impl-local-sym) argv)))))
+                                   arglists)))))
+      when-class (list 'java-time.util/when-class when-class))))
 
 (defn import-macro [sym]
   (let [vr (find-var sym)
@@ -81,11 +83,13 @@
                          rest
                          (mapcat unravel)
                          (map
-                           #(symbol
-                              (str (first x)
-                                   (when-let [n (namespace %)]
-                                     (str "." n)))
-                              (name %))))
+                           #(with-meta
+                              (symbol
+                                (str (first x)
+                                     (when-let [n (namespace %)]
+                                       (str "." n)))
+                                (name %))
+                              (meta %))))
                     [x]))
         syms (mapcat unravel syms)]
     (map (fn [sym]
@@ -159,7 +163,8 @@
 
          '[java-time.format format formatter]
 
-         '[java-time.pre-java8 java-date sql-date sql-timestamp instant->sql-timestamp sql-time]
+         '[java-time.pre-java8 java-date sql-date sql-timestamp instant->sql-timestamp
+           ^{:when-class "java.sql.Time"} sql-time]
 
          '[java-time.interval
            move-start-to move-end-to move-start-by move-end-by
