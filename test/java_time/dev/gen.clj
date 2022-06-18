@@ -16,6 +16,10 @@
                             (symbol (str "arg" i)))))
         argv))
 
+(defn normalize-arities [arities]
+  (cond-> arities
+    (= 1 (count arities)) first))
+
 (defn import-fn [sym]
   (let [vr (find-var sym)
         m (meta vr)
@@ -35,13 +39,14 @@
                (list* 'defn n
                       (concat
                         (some-> (not-empty forward-meta) list)
-                        (map (fn [argv] 
-                               (let [argv (normalize-argv argv)]
-                                 (list argv
-                                       (if (some #{'&} argv)
-                                         (list* 'apply (list 'deref impl) (remove #{'&} argv))
-                                         (list* (list 'deref impl) argv)))))
-                             arglists))))))
+                        (normalize-arities
+                          (map (fn [argv] 
+                                 (let [argv (normalize-argv argv)]
+                                   (list argv
+                                         (if (some #{'&} argv)
+                                           (list* 'apply (list 'deref impl) (remove #{'&} argv))
+                                           (list* (list 'deref impl) argv)))))
+                               arglists)))))))
 
 (defn import-macro [sym]
   (let [vr (find-var sym)
@@ -55,13 +60,14 @@
            (concat
              (some-> (not-empty (into (sorted-map) (select-keys m [:doc :deprecated])))
                      list)
-             (map (fn [argv]
-                    (let [argv (normalize-argv argv)]
-                      (list argv
-                            (if (some #{'&} argv)
-                              (list* 'list* (list 'quote sym) (remove #{'&} argv))
-                              (list* 'list (list 'quote sym) argv)))))
-                  arglists)))))
+             (normalize-arities
+               (map (fn [argv]
+                      (let [argv (normalize-argv argv)]
+                        (list argv
+                              (if (some #{'&} argv)
+                                (list* 'list* (list 'quote sym) (remove #{'&} argv))
+                                (list* 'list (list 'quote sym) argv)))))
+                    arglists))))))
 
 (defn import-vars
   "Imports a list of vars from other namespaces."
@@ -159,7 +165,8 @@
 (defn gen-java-time-ns-forms []
   (let [require-macros (into #{} (map first) (:macros impl-info))
         require-fns #_(set/difference (into #{} (map first)
-                                          (concat (:threeten-extra-fns impl-info) (:fns impl-info)))
+                                          (concat (:threeten-extra-fns impl-info)
+                                                  (:fns impl-info)))
                                     require-macros)
         ;;FIXME implementations must be loaded in this order for a stable graph traversal (I think)
         (into #{} (map #(symbol (str "java-time." %)))
