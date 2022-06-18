@@ -6,12 +6,15 @@
 
 * #78(liquidz): Add missing chrono fields (v0.3.3 has breaking changes)
 * #81(terop): Remove clj-tuple - no advantages over Clojure vector anymore
-* Remove `java-time.util/get-static-fields-of-type`
-  * set Java property `java-time.util.get-static-fields-of-type=true` to revert
+* #53: Fix before/after on Intervals
+
+### Enhancements
 * #32: Asynchronously load implementation
   * new function `java-time/load-java-time` to force loading
   * by default, implementation is loaded asynchronously, use system property `java-time.no-async-load=true`
     to disable
+* Remove `java-time.util/get-static-fields-of-type`
+  * set Java property `java-time.util.get-static-fields-of-type=true` to revert
 
 ## 0.3.3
 
