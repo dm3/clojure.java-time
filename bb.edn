@@ -9,5 +9,5 @@
           (spit ".nrepl-port" port)
           (fs/delete-on-exit ".nrepl-port")
           (deref proc))
-  test (require 'java-time.bb-test-runner)}}
+  test (require 'bb-test-runner)}}
 

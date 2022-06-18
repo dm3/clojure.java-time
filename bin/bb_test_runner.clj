@@ -23,8 +23,8 @@
                     'java-time.pre-java8
                     'java-time
                     ])
-;;TODO
-(def test-nsyms [;'java-time-test
+
+(def test-nsyms ['java-time-test
                  'java-time.graph-test])
 
 (some->> (seq (concat require-nsyms test-nsyms))
