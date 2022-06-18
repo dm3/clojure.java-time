@@ -178,7 +178,7 @@
             (.start (Thread. (fn [] (load-java-time))))))]
       (apply import-vars (:macros impl-info))
       (apply import-vars (:fns impl-info))
-      (map #(list 'java-time.utils/when-threeten-extra %) (apply import-vars (:threeten-extra-fns impl-info))))))
+      (map #(list 'java-time.util/when-threeten-extra %) (apply import-vars (:threeten-extra-fns impl-info))))))
 
 (defn print-form [form]
   (cond
