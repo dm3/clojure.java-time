@@ -17,7 +17,7 @@
                                   [org.clojure/tools.namespace "1.3.0"]
                                   [joda-time/joda-time ~joda-time-version]
                                   [org.threeten/threeten-extra ~threeten-extra-version]]
-                   :plugins [[lein-codox "0.10.3"]
+                   :plugins [[lein-codox "0.10.8"]
                              [jonase/eastwood "1.2.3"]]
                    :codox {:namespaces [java-time java-time.repl]
                            :doc-files ["README.md" "CHANGELOG.md"]}
