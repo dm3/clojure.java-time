@@ -54,9 +54,9 @@
 
 (defn ^:internal call-conversion [nm tp args]
   (if-let [[path f] (g/conversion-fn
-                       @graph
-                       (types-of args)
-                       (g/types [tp]))]
+                      @graph
+                      (types-of args)
+                      (g/types [tp]))]
     (or (try (first (f args))
              (catch Exception e
                (throw
