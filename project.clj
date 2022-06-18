@@ -23,7 +23,7 @@
                            :doc-files ["README.md" "CHANGELOG.md"]
                            :metadata {:doc/format :markdown}
                            :output-path "docs"
-                           :source-uri "https://github.com/dm3/clojure.java-time/blob/{version}/{filepath}#L{line}"}
+                           :source-uri "https://github.com/dm3/clojure.java-time/blob/{git-commit}/{filepath}#L{line}"}
                    :source-paths ["dev"]
                    :global-vars {*warn-on-reflection* true}
                    :eastwood {:exclude-namespaces [java-time
