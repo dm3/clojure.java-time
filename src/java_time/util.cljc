@@ -1,16 +1,6 @@
 (ns java-time.util
   (:require [clojure.string :as string]))
 
-#?(:bb nil
-   :default (when (some-> (System/getProperty "java-time.util.get-static-fields-of-type") (= "true"))
-              (defn ^:deprecated get-static-fields-of-type [^Class klass, ^Class of-type]
-                (->> (seq (.getFields klass))
-                     (map (fn [^java.lang.reflect.Field f]
-                            (when (.isAssignableFrom of-type (.getType f))
-                              [(.getName f) (.get f nil)])))
-                     (keep identity)
-                     (into {})))))
-
 (defn dashize [camelcase]
   (let [words (re-seq #"([^A-Z]+|[A-Z]+[^A-Z]*)" camelcase)]
     (string/join "-" (map (comp string/lower-case first) words))))
