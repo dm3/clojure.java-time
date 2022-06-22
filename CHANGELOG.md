@@ -14,9 +14,6 @@
 
 ### Enhancements
 * #32: Asynchronously load implementation
-  * new function `java-time/load-java-time` to force loading
-  * by default, implementation is loaded asynchronously, use system property `java-time.no-async-load=true`
-    to disable
 
 ### Internal
 * Remove `java-time.util/get-static-fields-of-type`

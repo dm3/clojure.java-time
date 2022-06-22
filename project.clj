@@ -19,17 +19,22 @@
                                   [org.threeten/threeten-extra ~threeten-extra-version]]
                    :plugins [[lein-codox "0.10.8"]
                              [jonase/eastwood "1.2.3"]]
-                   :codox {:namespaces [java-time java-time.repl]
-                           :doc-files ["README.md" "CHANGELOG.md"]
-                           :metadata {:doc/format :markdown}
-                           :output-path "docs"
-                           :source-uri "https://github.com/dm3/clojure.java-time/blob/{git-commit}/{filepath}#L{line}"}
+                   
                    :source-paths ["dev"]
                    :global-vars {*warn-on-reflection* true}
                    :eastwood {:exclude-namespaces [java-time
                                                    ;;FIXME
                                                    java-time-test]
                               :exclude-linters []}}
+             ;; lein doc
+             :codox {:injections [(require 'java-time)
+                                  (require 'java-time.impl.load)
+                                  (java-time.impl.load/load-java-time)]
+                     :codox {:namespaces [java-time java-time.repl]
+                             :doc-files ["README.md" "CHANGELOG.md"]
+                             :metadata {:doc/format :markdown}
+                             :output-path "docs"
+                             :source-uri "https://github.com/dm3/clojure.java-time/blob/{git-commit}/{filepath}#L{line}"}}
              :async-profiler
              {:jvm-opts ["-Djdk.attach.allowAttachSelf" "-XX:+UnlockDiagnosticVMOptions" "-XX:+DebugNonSafepoints"]
               :dependencies [[com.clojure-goes-fast/clj-async-profiler "0.3.1"]]}
