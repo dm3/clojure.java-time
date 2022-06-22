@@ -184,10 +184,12 @@
                          (list '.join 'java-time.impl.load/serialized-load-thread))))])))
 
 (defn print-form [form]
-  (binding [*print-namespace-maps* false
-            *print-meta* true
-            *print-length* nil
-            *print-level* nil]
+  (with-bindings
+    (cond-> {#'*print-meta* true
+             #'*print-length* nil
+             #'*print-level* nil}
+      (resolve '*print-namespace-maps*)
+      (assoc (resolve '*print-namespace-maps*) false))
     (cond
       (string? form) (println form)
       :else (println (pr-str (walk/postwalk
