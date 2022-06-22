@@ -1,8 +1,10 @@
 ;; internal!
 (ns java-time.impl.load)
 
+;; all macro deps should be loaded by the end of `java-time` load. this takes
+;; about the same time as `java-time` itself to load, so there isn't much penalty.
 (def ^Thread serialized-load-thread
-  (let [^Runnable f (bound-fn [] (require 'java-time.clock 'java-time.util))] ;; all macro deps should be loaded by the end of `java-time` load
+  (let [^Runnable f (bound-fn [] (require 'java-time.clock 'java-time.util))]
     (doto (Thread. f) .start)))
 
 (let [lock (the-ns 'java-time.impl.load) do-load (delay (locking lock (.join serialized-load-thread) (require 'java-time.core 'java-time.adjuster 'java-time.amount 'java-time.chrono 'java-time.clock 'java-time.convert 'java-time.format 'java-time.interval 'java-time.joda 'java-time.local 'java-time.pre-java8 'java-time.properties 'java-time.seqs 'java-time.single-field 'java-time.sugar 'java-time.temporal 'java-time.zone #?@(:bb [] :default ['java-time.mock]))))] (def load-java-time (fn [] @do-load)))
