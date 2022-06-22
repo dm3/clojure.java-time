@@ -10,7 +10,7 @@ fi
 rm -rf ./doc
 
 git checkout $1
-lein with-profile -user codox
+lein doc
 cp -r ./target/doc ./docs
 
 git checkout master
