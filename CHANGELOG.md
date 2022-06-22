@@ -14,6 +14,7 @@
 
 ### Enhancements
 * #32: Asynchronously load implementation
+  * [up to 95% faster loading](https://github.com/dm3/clojure.java-time/issues/32#issuecomment-116365209)
 
 ### Internal
 * Remove `java-time.util/get-static-fields-of-type`
