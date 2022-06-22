@@ -3,50 +3,128 @@
   (:import [java.time.temporal ValueRange]
            [java.time.chrono Chronology]))
 
-(defprotocol Amount
-  (zero? [a]
-    "True if the amount is zero")
-  (negative? [a]
-    "True if the amount is negative")
-  (negate [a]
-    "Negates a temporal amount:
+;; enable parallel loading
+(locking *ns*
+  (when-not (resolve 'as*)
+    (defprotocol Amount
+      (zero? [a]
+        "True if the amount is zero")
+      (negative? [a]
+        "True if the amount is negative")
+      (negate [a]
+        "Negates a temporal amount:
 
-      (negate (negate x)) == x")
-  (abs [a]
-    "Returns the absolute value of a temporal amount:
+          (negate (negate x)) == x")
+      (abs [a]
+        "Returns the absolute value of a temporal amount:
 
-      (abs (negate x)) == (abs x)"))
+          (abs (negate x)) == (abs x)"))
 
-(defprotocol Supporting
-  (supports? [o p]
-    "True if the `o` entity supports the `p` property"))
+    (defprotocol Supporting
+      (supports? [o p]
+        "True if the `o` entity supports the `p` property"))
 
-(defprotocol HasChronology
-  (^java.time.chrono.Chronology chronology [o]
-    "The `Chronology` of the entity"))
+    (defprotocol HasChronology
+      (^java.time.chrono.Chronology chronology [o]
+        "The `Chronology` of the entity"))
 
-(defprotocol HasFields
-  (fields [o]
-    "Fields present in this temporal entity")
-  (field* [o k]
-    "Internal use"))
+    (defprotocol HasFields
+      (fields [o]
+        "Fields present in this temporal entity")
+      (field* [o k]
+        "Internal use"))
 
-(defprotocol HasUnits
-  (units [o]
-    "Units present in this temporal entity.")
-  (unit* [o k]
-    "Internal use"))
+    (defprotocol HasUnits
+      (units [o]
+        "Units present in this temporal entity.")
+      (unit* [o k]
+        "Internal use"))
 
-(defprotocol HasProperties
-  (properties [o]
-    "Map of properties present in this temporal entity")
-  (property [o k]
-    "Property of this temporal entity under key `k`"))
+    (defprotocol HasProperties
+      (properties [o]
+        "Map of properties present in this temporal entity")
+      (property [o k]
+        "Property of this temporal entity under key `k`"))
 
-(defprotocol As
-  (as* [o k]
-    "Value of property/unit identified by key/object `k` of the temporal
-    entity `o`"))
+    (defprotocol As
+      (as* [o k]
+        "Value of property/unit identified by key/object `k` of the temporal
+        entity `o`"))
+
+    (defprotocol ReadableProperty
+      (value [p]
+        "Value of the property"))
+
+    (defprotocol ReadableRangeProperty
+      (range [p]
+        "Range of values for this property")
+      (min-value [p]
+        "Minimum value of this property")
+      (largest-min-value [p]
+        "Largest minimum value of this property")
+      (smallest-max-value [p]
+        "Smallest maximum value of this property, e.g. 28th of February for months")
+      (max-value [p]
+        "Maximum value of this property, e.g. 29th of February for months"))
+
+    (defprotocol WritableProperty
+      (with-value [p v]
+        "Underlying temporal entity with the value of this property set to `v`"))
+
+    (defprotocol WritableRangeProperty
+      (with-min-value [p]
+        "Underlying temporal entity with the value set to the minimum available for
+        this property")
+      (with-largest-min-value [p]
+        "Underlying temporal entity with the value set to the largest minimum
+        available for this property")
+      (with-smallest-max-value [p]
+        "Underlying temporal entity with the value set to the smallest maximum
+        available for this property")
+      (with-max-value [p]
+        "Underlying temporal entity with the value set to the maximum
+        available for this property"))
+
+    (defprotocol KnowsTimeBetween
+      (time-between [o e u]
+        "Time between temporal entities `o` and `e` in unit `u`.
+
+          (j/time-between (j/local-date 2015) (j/local-date 2016) :days)
+          => 365
+
+          (j/time-between :days (j/local-date 2015) (j/local-date 2016))
+          => 365"))
+
+    (defprotocol KnowsIfLeap
+      (leap? [o]
+        "True if the year of this entity is a leap year."))
+
+    (defprotocol Truncatable
+      (truncate-to [o u]
+        "Truncates this entity to the specified time unit. Only works for units that
+        divide into the length of standard day without remainder (up to `:days`)."))
+
+    (defprotocol HasZone
+      (with-zone [o z]
+        "Returns this temporal entity with the specified `ZoneId`"))
+
+    (defprotocol Plusable
+      "Internal"
+      (seq-plus [o os]))
+
+    (defprotocol Minusable
+      "Internal"
+      (seq-minus [o os]))
+
+    (defprotocol Multipliable
+      (multiply-by [o v]
+        "Entity `o` multiplied by the value `v`"))
+
+    (defprotocol Ordered
+      (single-before? [a b]
+        "Internal use")
+      (single-after? [a b]
+        "Internal use"))))
 
 (defn as
   "Values of property/unit identified by keys/objects `ks` of the temporal
@@ -63,81 +141,6 @@
    [(as* o k1) (as* o k2)])
   ([o k1 k2 & ks]
    (concat (as o k1 k2) (mapv #(as* o %) ks))))
-
-(defprotocol ReadableProperty
-  (value [p]
-    "Value of the property"))
-
-(defprotocol ReadableRangeProperty
-  (range [p]
-    "Range of values for this property")
-  (min-value [p]
-    "Minimum value of this property")
-  (largest-min-value [p]
-    "Largest minimum value of this property")
-  (smallest-max-value [p]
-    "Smallest maximum value of this property, e.g. 28th of February for months")
-  (max-value [p]
-    "Maximum value of this property, e.g. 29th of February for months"))
-
-(defprotocol WritableProperty
-  (with-value [p v]
-    "Underlying temporal entity with the value of this property set to `v`"))
-
-(defprotocol WritableRangeProperty
-  (with-min-value [p]
-    "Underlying temporal entity with the value set to the minimum available for
-    this property")
-  (with-largest-min-value [p]
-    "Underlying temporal entity with the value set to the largest minimum
-    available for this property")
-  (with-smallest-max-value [p]
-    "Underlying temporal entity with the value set to the smallest maximum
-    available for this property")
-  (with-max-value [p]
-    "Underlying temporal entity with the value set to the maximum
-    available for this property"))
-
-(defprotocol KnowsTimeBetween
-  (time-between [o e u]
-    "Time between temporal entities `o` and `e` in unit `u`.
-
-      (j/time-between (j/local-date 2015) (j/local-date 2016) :days)
-      => 365
-
-      (j/time-between :days (j/local-date 2015) (j/local-date 2016))
-      => 365"))
-
-(defprotocol KnowsIfLeap
-  (leap? [o]
-    "True if the year of this entity is a leap year."))
-
-(defprotocol Truncatable
-  (truncate-to [o u]
-    "Truncates this entity to the specified time unit. Only works for units that
-    divide into the length of standard day without remainder (up to `:days`)."))
-
-(defprotocol HasZone
-  (with-zone [o z]
-    "Returns this temporal entity with the specified `ZoneId`"))
-
-(defprotocol Plusable
-  "Internal"
-  (seq-plus [o os]))
-
-(defprotocol Minusable
-  "Internal"
-  (seq-minus [o os]))
-
-(defprotocol Multipliable
-  (multiply-by [o v]
-    "Entity `o` multiplied by the value `v`"))
-
-(defprotocol Ordered
-  (single-before? [a b]
-    "Internal use")
-  (single-after? [a b]
-    "Internal use"))
 
 (defn max
   "Latest/longest of the given time entities. Entities should be of the same
