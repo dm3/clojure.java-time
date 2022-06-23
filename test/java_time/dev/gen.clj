@@ -31,7 +31,7 @@
         arglists (:arglists m)
         protocol (:protocol m)
         when-class (-> sym meta :when-class)
-        forward-meta (into (sorted-map) (select-keys m [:tag]))
+        forward-meta (into (sorted-map) (select-keys m [:tag :arglists]))
         _ (assert (not= n impl-local-sym))]
     (when (:macro m)
       (throw (IllegalArgumentException.
@@ -196,8 +196,10 @@
                                (fn [v]
                                  (if (meta v)
                                    (if (symbol? v)
-                                     (vary-meta v #(cond-> nil
-                                                     (some? (:tag %)) (assoc :tag (:tag %))))
+                                     (vary-meta v #(not-empty
+                                                     (cond-> (sorted-map)
+                                                       (some? (:tag %)) (assoc :tag (:tag %))
+                                                       (some? (:arglists %)) (assoc :arglists (list 'quote (:arglists %))))))
                                      (with-meta v nil))
                                    v))
                                form)))))
