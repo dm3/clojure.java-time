@@ -201,7 +201,7 @@
                                                        (some? (:tag %)) (assoc :tag (:tag %))
                                                        (some? (:doc %)) (assoc :doc (:doc %))
                                                        (true? (:deprecated %)) (assoc :deprecated (:deprecated %))
-                                                       (some? (:arglists %)) (assoc :arglists (list 'quote (:arglists %))))))
+                                                       (some? (:arglists %)) (assoc :arglists (list 'quote (doall (map normalize-argv (:arglists %))))))))
                                      (with-meta v nil))
                                    v))
                                form)))))

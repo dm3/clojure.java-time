@@ -192,11 +192,11 @@
        (after? y (first more)))
      false)))
 
-(def ^{:arglists '[[x] [x y] [x y & more]]} not-after?
+(def ^{:arglists '([x] [x y] [x y & more])} not-after?
   "Similar to [[before?]], but also returns truthy if the inputs are equal."
   (complement after?))
 
-(def ^{:arglists '[[x] [x y] [x y & more]]} not-before?
+(def ^{:arglists '([x] [x y] [x y & more])} not-before?
   "Similar to [[after?]], but also returns truthy if the inputs are equal."
   (complement before?))
 
