@@ -35,11 +35,8 @@
 (def ^Runnable async-load-fast-path
   (bound-fn []
     (load-java-time)
-    (run! (fn [sym]
-            (let [api (resolve (symbol "java-time" (name sym)))
-                  impl (resolve sym)]
-              (alter-var-root api (constantly @impl))
-              (alter-meta! api vary-meta (fnil into {}) (select-keys (meta impl) [:doc :arglists :deprecated]))))
+    (run! #(alter-var-root (resolve (symbol "java-time" (name %)))
+                           (constantly @(resolve %)))
           @slow-path-vars)))
 
 (defmacro when-class [clstr & body]
