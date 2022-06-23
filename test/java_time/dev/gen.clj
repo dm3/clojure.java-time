@@ -31,7 +31,7 @@
         arglists (:arglists m)
         protocol (:protocol m)
         when-class (-> sym meta :when-class)
-        forward-meta (into (sorted-map) (select-keys m [:tag :arglists]))
+        forward-meta (into (sorted-map) (select-keys m [:tag :arglists :doc :deprecated]))
         _ (assert (not= n impl-local-sym))]
     (when (:macro m)
       (throw (IllegalArgumentException.
@@ -199,6 +199,8 @@
                                      (vary-meta v #(not-empty
                                                      (cond-> (sorted-map)
                                                        (some? (:tag %)) (assoc :tag (:tag %))
+                                                       (some? (:doc %)) (assoc :doc (:doc %))
+                                                       (true? (:deprecated %)) (assoc :deprecated (:deprecated %))
                                                        (some? (:arglists %)) (assoc :arglists (list 'quote (:arglists %))))))
                                      (with-meta v nil))
                                    v))
