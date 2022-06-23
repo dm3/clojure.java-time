@@ -18,12 +18,19 @@
 
 (def slow-path-vars (volatile! []))
 
-(def slow-path
+(def slow-path*
   (fn [sym]
     (vswap! slow-path-vars conj sym)
     (fn [& args]
       (load-java-time)
       (apply (resolve sym) args))))
+
+(defmacro slow-path [vsym]
+  (if *compile-files*
+    `(do (vswap! slow-path-vars conj ~vsym)
+         (load-java-time)
+         @(resolve ~vsym))
+    `(slow-path* ~vsym)))
 
 (def ^Runnable async-load-fast-path
   (bound-fn []
