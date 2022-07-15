@@ -349,6 +349,13 @@ less information, e.g. (assuming we're in UTC timezone):
 => #object[java.time.LocalTime 0x3a3cd6d5 "01:00"]
 ```
 
+Converting an Instant to ZonedDateTime requires a time zone:
+
+```clojure
+(j/local-date-time (j/instant 100) "UTC)
+=> #object[java.time.LocalDateTime 0x63465073 "1970-01-01T00:00:00.100"]
+```
+
 #### Legacy Date-Time Types
 
 Any date which can be converted to an instant, can also be converted to a
