@@ -26,7 +26,7 @@
 (gen-sugar-fns)
 
 (defn weekend? 
-  "Returns true if argument satisfies [[saturday?]] and [[sunday?]],
+  "Returns true if argument is [[saturday?]] or [[sunday?]],
   otherwise false."
   [dt]
   (or (saturday? dt) (sunday? dt)))
