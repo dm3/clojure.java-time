@@ -38,7 +38,7 @@
 (defmacro enumerated-entity [tp doc & {:keys [unit]}]
   (assert (string? doc))
   (let [tp (resolve-tag tp)
-        fname (with-meta (symbol (jt.u/dashize (-> (str tp) (string/split #"\.") last))) {:tag tp})
+        fname (with-meta (symbol (jt.u/dashize (-> (str tp) (string/split #"\.") peek))) {:tag tp})
         fields (symbol (str fname "-fields"))]
     `(do
        (def ~fields
@@ -93,7 +93,7 @@
   (assert (string? doc))
   (let [^Class tpcls (resolve tp)
         tp (symbol (.getName tpcls))
-        fname (with-meta (symbol (jt.u/dashize (-> (str tp) (string/split #"\.") last))) {:tag tp})
+        fname (with-meta (symbol (jt.u/dashize (-> (str tp) (string/split #"\.") peek))) {:tag tp})
         arg (gensym)]
     `(do
        (defn ^{:doc ~(str "True if `" tp "`.")} ~(symbol (str fname "?"))
