@@ -95,8 +95,10 @@
   (conj (map (fn [fn-name]
                (let [fn-name (with-meta fn-name {:tag Period})]
                  `(defn ~fn-name
-                    [v#]
-                    (. Period ~(symbol (str 'of (string/capitalize (str fn-name)))) (int v#)))))
+                    ~(str "Returns a `Period` of `n` " fn-name ".")
+                    {:arglists '[[~'i]]}
+                    [i#]
+                    (. Period ~(symbol (str 'of (string/capitalize (str fn-name)))) (int i#)))))
              ['years
               'months
               'days
