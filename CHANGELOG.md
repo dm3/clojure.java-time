@@ -18,6 +18,7 @@
 
 ### Internal
 * Deprecate `java-time.util/get-static-fields-of-type`
+* Remove potemkin namespaces
 
 ## 0.3.3
 
