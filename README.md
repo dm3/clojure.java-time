@@ -77,7 +77,7 @@ we will `require` the main namespace:
 ```clj
 (require '[java-time :as jt]
          ;; for REPL experimentation
-         java-time.repl)
+         'java-time.repl)
 ```
 
 ### Concept run-through
