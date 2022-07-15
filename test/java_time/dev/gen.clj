@@ -177,7 +177,8 @@
       
       [(list* 'java-time.impl.load/when-class "org.threeten.extra.Temporals" (apply import-vars (:threeten-extra-fns impl-info)))
        (list 'let ['t (list 'Thread. 'java-time.impl.load/async-load-fast-path)]
-             (list 'if '*compile-files*
+             (list 'if (list 'or '*compile-files*
+                             (list 'not= "true" (list 'System/getProperty "java-time.async-load")))
                    (list '.join 't)
                    (list 'do (list '.start 't)
                          ;; 70% of the runtime, would be nice to (carefully) eliminate
