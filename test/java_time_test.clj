@@ -1090,7 +1090,7 @@
 ;; Q: Can we add a new function, or at least an example for converting a Unix timestamp (epoch seconds) to a LocalDateTime object?
 (deftest unix-epoch-example-test
   (is (= (j/local-date-time #inst "1970-01-01T00:00:00.100" "UTC")
-         (-> ;; A: First you must get an Instant as Unix epoch doesn't have timezone information. java-time/instant constructor accepts a number of milliseconds:
+         (-> ;; A: First you must get an Instant as Unix epoch doesn't have time zone information. java-time/instant constructor accepts a number of milliseconds:
              (j/instant 100)
              ;; Then you'll get a LocalDateTime by providing the instant and the time zone to the local-date-time constructor:
              (j/local-date-time "UTC")))))

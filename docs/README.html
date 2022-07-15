@@ -52,7 +52,7 @@
 <h3><a href="#concept-run-through" id="concept-run-through"></a>Concept run-through</h3>
 <p>Java Time API may seem daunting. Instead of a single <code>java.util.Date</code> you have a <code>ZonedDateTime</code>, <code>OffsetDateTime</code>, <code>LocalDateTime</code>, <code>Instant</code>, and other types. You would be well served by reading the official documentation for the <a href="https://docs.oracle.com/javase/tutorial/datetime/iso/index.html">Java Time API</a>, but we’ll also do a quick run-through here.</p>
 <h4><a href="#local-dates-andor-times" id="local-dates-andor-times"></a>Local Dates and/or Times</h4>
-<p><code>LocalDate</code>, <code>LocalTime</code> and <code>LocalDateTime</code> are used to represent a date, time and date-time respectively without an offset or a timezone. The local time entities are used to represent human-based dates/times. They are a good fit for representing the time of various events:</p>
+<p><code>LocalDate</code>, <code>LocalTime</code> and <code>LocalDateTime</code> are used to represent a date, time and date-time respectively without an offset or a time zone. The local time entities are used to represent human-based dates/times. They are a good fit for representing the time of various events:</p>
 <ul>
 <li><code>LocalDate</code> - birthday, holiday
 <ul>
@@ -82,7 +82,7 @@
 </code></pre>
 <h4><a href="#zoned-dates" id="zoned-dates"></a>Zoned Dates</h4>
 <p>There are two types which deal with zones: * <code>OffsetDateTime</code> * see <a href="https://dm3.github.io/clojure.java-time/java-time.html#var-offset-date-time"><code>jt/offset-date-time</code></a> * <code>ZonedDateTime</code> * see <a href="https://dm3.github.io/clojure.java-time/java-time.html#var-zoned-date-time"><code>jt/zoned-date-time</code></a></p>
-<p>They do pretty much what you would expect from their name. You can think of the <code>Offset</code> time as a more concrete version of the <code>Zoned</code> time. For example, the same timezone can have different offsets throughout the year due to DST or governmental regulations.</p>
+<p>They do pretty much what you would expect from their name. You can think of the <code>Offset</code> time as a more concrete version of the <code>Zoned</code> time. For example, the same time zone can have different offsets throughout the year due to DST or governmental regulations.</p>
 <pre><code class="language-clj">(jt/offset-time 10)
 ;=&gt; #&lt;java.time.OffsetTime 10:00+01:00&gt;
 
@@ -210,7 +210,7 @@
 ;=&gt; false
 </code></pre>
 <h4><a href="#conversions" id="conversions"></a>Conversions</h4>
-<p>Time entities can be converted to other time entities if the target contains less information, e.g. (assuming we’re in UTC timezone):</p>
+<p>Time entities can be converted to other time entities if the target contains less information, e.g. (assuming we’re in UTC time zone):</p>
 <pre><code class="language-clj">(jt/zoned-date-time (jt/offset-date-time 2015 9 28 1))
 ;=&gt; #object[java.time.ZonedDateTime "2015-09-28T01:00Z"]
 
@@ -238,7 +238,7 @@
 (jt/java-date 50000)
 ;=&gt; #inst "1970-01-01T00:00:50.000-00:00"
 </code></pre>
-<p>An instance of <code>java.util.Date</code> serves the same purpose as the new <code>java.time.Instant</code>. It’s a machine timestamp which isn’t aware of the timezone. Please, do not get confused by the way it is printed by the Clojure printer - the UTC timezone is applied during formatting.</p>
+<p>An instance of <code>java.util.Date</code> serves the same purpose as the new <code>java.time.Instant</code>. It’s a machine timestamp which isn’t aware of the time zone. Please, do not get confused by the way it is printed by the Clojure printer - the UTC time zone is applied during formatting.</p>
 <p>Sometimes you’ll have to work with the legacy <code>java.sql.{Date,Time,Timestamp}</code> types. The correspondence between the legacy types and the new Date-Time entities is as follows:</p>
 <ul>
 <li><code>java.sql.Date</code>  &lt;-&gt; <code>java.time.LocalDate</code></li>

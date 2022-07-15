@@ -52,15 +52,15 @@
   minutes, millis, micros and nanos. The duration itself contains only seconds
   and nanos as properties.
 
-  Given one argument will
-    * interpret as millis if a number
-    * try to parse from the standard format if a string
-    * extract supported units from another `TemporalAmount`
-    * convert from a Joda Period/Duration
+  Given one argument will:
+  * interpret as millis if a number
+  * try to parse from the standard format if a string
+  * extract supported units from another `TemporalAmount`
+  * convert from a Joda Period/Duration
 
-  Given two arguments will
-    * get a duration between two `Temporal`s
-    * get a duration of a specified unit, e.g. `(duration 100 :seconds)`"
+  Given two arguments will:
+  * get a duration between two `Temporal`s
+  * get a duration of a specified unit, e.g. `(duration 100 :seconds)`"
   :returns Duration
   :implicit-arities [1 2]
   ([] (Duration/ofMillis 0)))

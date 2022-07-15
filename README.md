@@ -91,7 +91,7 @@ but we'll also do a quick run-through here.
 #### Local Dates and/or Times
 
 `LocalDate`, `LocalTime` and `LocalDateTime` are used to represent a date, time
-and date-time respectively without an offset or a timezone. The local time entities
+and date-time respectively without an offset or a time zone. The local time entities
 are used to represent human-based dates/times. They are a good fit for representing
 the time of various events:
 
@@ -125,7 +125,7 @@ There are two types which deal with zones:
 
 They do pretty much what you would expect from their name.
 You can think of the `Offset` time as a more concrete version of the `Zoned`
-time. For example, the same timezone can have different offsets throughout the
+time. For example, the same time zone can have different offsets throughout the
 year due to DST or governmental regulations.
 
 ```clj
@@ -341,7 +341,7 @@ Compare dates:
 #### Conversions
 
 Time entities can be converted to other time entities if the target contains
-less information, e.g. (assuming we're in UTC timezone):
+less information, e.g. (assuming we're in UTC time zone):
 
 ```clj
 (jt/zoned-date-time (jt/offset-date-time 2015 9 28 1))
@@ -382,8 +382,8 @@ Any date which can be converted to an instant, can also be converted to a
 
 An instance of `java.util.Date` serves the same purpose as the new
 `java.time.Instant`. It's a machine timestamp which isn't aware of the
-timezone. Please, do not get confused by the way it is printed by the Clojure
-printer - the UTC timezone is applied during formatting.
+time zone. Please, do not get confused by the way it is printed by the Clojure
+printer - the UTC time zone is applied during formatting.
 
 Sometimes you'll have to work with the legacy `java.sql.{Date,Time,Timestamp}`
 types. The correspondence between the legacy types and the new Date-Time

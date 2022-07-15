@@ -388,7 +388,7 @@
 ;;;;; Clock
 
 (defn ^java.time.Clock system-clock
-  "Creates a system clock. In the default timezone if called without arguments,
+  "Creates a system clock. In the default time zone if called without arguments,
   otherwise accepts a Zone Id."
   ([] (Clock/systemDefaultZone))
   ([k] (Clock/system (zone-id k))))

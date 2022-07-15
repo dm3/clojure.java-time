@@ -49,11 +49,11 @@
   if your drivers support them.
 
   Even though `java.sql.Date` extends a `java.util.Date`, it's supposed to be
-  used as a local date (no time component or timezone) for the purposes of
+  used as a local date (no time component or time zone) for the purposes of
   conversion from/to native JDBC driver DATE types.")
 
 (defsqldate java.sql.Timestamp sql-timestamp jt.l/local-date-time 7
-  "Creates a `java.sql.Timestamp` in the local timezone out of any combination
+  "Creates a `java.sql.Timestamp` in the local time zone out of any combination
   of arguments valid for `java-time/local-date-time` or the `LocalDateTime`
   itself.
 
@@ -65,7 +65,7 @@
   `java.sql.Timestamp` if your drivers support them.
 
   `java.sql.Timestamp` is a version of a `java.util.Date` supposed to be used
-  as a local date-time (no timezone) for the purposes of conversion from/to native
+  as a local date-time (no time zone) for the purposes of conversion from/to native
   JDBC driver TIMESTAMP types.")
 
 (defn instant->sql-timestamp
@@ -76,7 +76,7 @@
   `java.sql.Timestamp` if your drivers support them.
 
   `java.sql.Timestamp` is a version of a `java.util.Date` supposed to be used
-  as a local date-time (no timezone) for the purposes of conversion from/to native
+  as a local date-time (no time zone) for the purposes of conversion from/to native
   JDBC driver TIMESTAMP types."
   [instant-or-millis]
   (if (number? instant-or-millis)
@@ -93,5 +93,5 @@
     if your drivers support them.
 
     Even though `java.sql.Time` extends a `java.util.Date`, it's supposed to be
-    used as a local time (no date component or timezone) for the purposes of
+    used as a local time (no date component or time zone) for the purposes of
     conversion from/to native JDBC driver TIME types."))

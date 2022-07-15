@@ -13,6 +13,7 @@
   "Returns a mock implementation of the `java.time.Clock`. The mock supports
   `advance-clock!` operation which allows to move the time in the clock, e.g.:
 
+  ```
   (let [clock (mock-clock 0 \"UTC\")]
     (with-clock clock
       (is (= (value clock) 0))
@@ -20,10 +21,11 @@
       (advance-clock! clock (j/millis 1))
       (is (= (value clock) 1))
       (is (= (instant) (instant 1)))))
+  ```
 
   You can move the clock back via advancing by a negative temporal amount.
 
-  Creates a clock at epoch in the default timezone when called without arguments."
+  Creates a clock at epoch in the default time zone when called without arguments."
   ([] (mock-clock 0))
   ([instant] (mock-clock instant (zone/zone-id)))
   ([instant zone]
