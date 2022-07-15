@@ -88,20 +88,20 @@ jobs:
           lein: ${{ env.LEIN_VERSION }}
       - name: Run JVM tests
         run: lein test-all
-  test-bb:
-    needs: setup
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-      - name: Prepare java
-        uses: actions/setup-java@v2
-        with:
-          distribution: 'temurin'
-          java-version: 17
-      - name: Setup Babashka
-        uses: turtlequeue/setup-babashka@v1.3.0
-        with:
-          babashka-version: 0.8.156
-      - name: Run Babashka tests
-        run: ./bin/bb-test-runner.sh
+#  test-bb:
+#    needs: setup
+#    runs-on: ubuntu-latest
+#    steps:
+#      - name: Checkout
+#        uses: actions/checkout@v2
+#      - name: Prepare java
+#        uses: actions/setup-java@v2
+#        with:
+#          distribution: 'temurin'
+#          java-version: 17
+#      - name: Setup Babashka
+#        uses: turtlequeue/setup-babashka@v1.3.0
+#        with:
+#          babashka-version: 0.8.156
+#      - name: Run Babashka tests
+#        run: ./bin/bb-test-runner.sh
