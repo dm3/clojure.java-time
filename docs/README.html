@@ -47,19 +47,28 @@
 <p>The <a href="https://dm3.github.io/clojure.java-time/">API</a> of the Clojure.Java-Time consists of one namespace, namely <code>java-time</code>.  For the purposes of this guide, we will <code>require</code> the main namespace:</p>
 <pre><code class="language-clj">(require '[java-time :as jt]
          ;; for REPL experimentation
-         java-time.repl)
+         'java-time.repl)
 </code></pre>
 <h3><a href="#concept-run-through" id="concept-run-through"></a>Concept run-through</h3>
 <p>Java Time API may seem daunting. Instead of a single <code>java.util.Date</code> you have a <code>ZonedDateTime</code>, <code>OffsetDateTime</code>, <code>LocalDateTime</code>, <code>Instant</code>, and other types. You would be well served by reading the official documentation for the <a href="https://docs.oracle.com/javase/tutorial/datetime/iso/index.html">Java Time API</a>, but we’ll also do a quick run-through here.</p>
 <h4><a href="#local-dates-andor-times" id="local-dates-andor-times"></a>Local Dates and/or Times</h4>
 <p><code>LocalDate</code>, <code>LocalTime</code> and <code>LocalDateTime</code> are used to represent a date, time and date-time respectively without an offset or a timezone. The local time entities are used to represent human-based dates/times. They are a good fit for representing the time of various events:</p>
 <ul>
-<li><code>LocalDate</code> - birthday, holiday</li>
+<li><code>LocalDate</code> - birthday, holiday
+<ul>
 <li>see <a href="http://dm3.github.io/clojure.java-time/java-time.html#var-local-date"><code>jt/local-date</code></a></li>
-<li><code>LocalTime</code> - bus schedule, opening time of a shop</li>
+</ul>
+</li>
+<li><code>LocalTime</code> - bus schedule, opening time of a shop
+<ul>
 <li>see <a href="http://dm3.github.io/clojure.java-time/java-time.html#var-local-time"><code>jt/local-time</code></a></li>
-<li><code>LocalDateTime</code> - start of a competition</li>
+</ul>
+</li>
+<li><code>LocalDateTime</code> - start of a competition
+<ul>
 <li>see <a href="http://dm3.github.io/clojure.java-time/java-time.html#var-local-date-time"><code>jt/local-date-time</code></a></li>
+</ul>
+</li>
 </ul>
 <p>Example usage:</p>
 <pre><code class="language-clj">(jt/local-date 2015 10)

@@ -96,11 +96,11 @@ are used to represent human-based dates/times. They are a good fit for represent
 the time of various events:
 
 * `LocalDate` - birthday, holiday
-  * see [`jt/local-date`](http://dm3.github.io/clojure.java-time/java-time.html#var-local-date)
+    * see [`jt/local-date`](http://dm3.github.io/clojure.java-time/java-time.html#var-local-date)
 * `LocalTime` - bus schedule, opening time of a shop
-  * see [`jt/local-time`](http://dm3.github.io/clojure.java-time/java-time.html#var-local-time)
+    * see [`jt/local-time`](http://dm3.github.io/clojure.java-time/java-time.html#var-local-time)
 * `LocalDateTime` - start of a competition
-  * see [`jt/local-date-time`](http://dm3.github.io/clojure.java-time/java-time.html#var-local-date-time)
+    * see [`jt/local-date-time`](http://dm3.github.io/clojure.java-time/java-time.html#var-local-date-time)
 
 Example usage:
 
