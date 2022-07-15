@@ -94,7 +94,7 @@
 
   *Deprecated*:
   This function only has a single arity and works for entities directly
-  convertible to `java.time.Instant`. Please consider using [[java-date]]`
+  convertible to `java.time.Instant`. Please consider using [[java-date]]
   instead."
   [o]
   (cond-> o
