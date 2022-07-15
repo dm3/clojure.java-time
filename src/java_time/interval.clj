@@ -15,24 +15,32 @@
    "Moves the start instant of the interval to the given instant (or something
    convertible to an instant):
 
+   ```
    (move-start-to (interval 0 10000) (instant 5000))
    => #<Interval ...:05Z/...:10Z>
+   ```
 
-  Fails if the new start instant falls after the end instant:
+   Fails if the new start instant falls after the end instant:
 
+   ```
    (move-start-to (interval 0 10000) (millis 15000))
-   => DateTimeException...")
+   => DateTimeException...
+   ```")
   (move-end-to [i new-end]
    "Moves the end of the interval to the given instant (or something
    convertible to an instant):
 
+   ```
    (move-end-to (interval 0 10000) (instant 15000))
    => #<Interval ...:00Z/...:15Z>
+   ```
 
-  Fails if the new end instant falls before the start instant:
+   Fails if the new end instant falls before the start instant:
 
+   ```
    (move-end-to (interval 0 10000) (millis -1))
-   => DateTimeException...")
+   => DateTimeException...
+   ```")
   (start [i] "Gets the start instant of the interval")
   (end [i] "Gets the end instant of the interval")
   (contains? [i o] "True if the interval contains the given instant or interval")
@@ -53,6 +61,7 @@
     "Constructs an interval out of a string, start and end instants or a start
     + duration:
 
+    ```
     (j/interval \"2010-01-01T00:00:00Z/2013-01-01T00:00:00Z\")
     => #<Interval 2010-01-01T00:00:00Z/2013-01-01T00:00:00Z>
 
@@ -61,6 +70,7 @@
 
     (j/interval (j/instant 100000) (j/duration 15 :minutes))
     => #<Interval 1970-01-01T00:01:40Z/1970-01-01T00:16:40Z>
+    ```
 
     Requires the optional `threeten-extra` dependency."
     ([^String o] (Interval/parse o))
@@ -126,24 +136,32 @@
   "Moves the start instant of the interval by the sum of given
   periods/durations/numbers of milliseconds:
 
-    (move-start-by (interval 0 10000) (millis 1000) (seconds 1))
-    => #<Interval ...:02Z/...:10Z>
+  ```
+  (move-start-by (interval 0 10000) (millis 1000) (seconds 1))
+  => #<Interval ...:02Z/...:10Z>
+  ```
 
   Fails if the new start instant falls after the end instant.
 
-    (move-start-by (interval 0 10000) (millis 11000))
-    ; => DateTimeException..."
+  ```
+  (move-start-by (interval 0 10000) (millis 11000))
+  ;=> DateTimeException...
+  ```"
   [i & os] (seq-move-start-by i os))
 
 (defn move-end-by
   "Moves the end instant of the interval by the sum of given
   periods/durations/numbers of milliseconds.
 
-    (move-start-by (interval 0 10000) (millis 1000) (seconds 1))
-    => #<Interval ...:00Z/...:12Z>
+  ```
+  (move-start-by (interval 0 10000) (millis 1000) (seconds 1))
+  => #<Interval ...:00Z/...:12Z>
+  ```
 
   Fails if the new end instant falls before the start instant.
 
-    (move-end-by (interval 0 10000) (millis -11000))
-    => DateTimeException..."
+  ```
+  (move-end-by (interval 0 10000) (millis -11000))
+  => DateTimeException...
+  ```"
   [i & os] (seq-move-end-by i os))
