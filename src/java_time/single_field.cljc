@@ -46,15 +46,17 @@
               vals
               (into {} (map (fn [m#] [(keyword (string/lower-case (str m#))) m#])))))
 
-       (defn ^{:doc ~(str "True if `" tp "`.")} ~(symbol (str fname "?"))
-         {:arglists '~'[[o]]}
+       (defn ~(symbol (str fname "?"))
+         {:arglists '~'[[o]]
+          :doc ~(str "True if `" tp "`.")}
          [o#]
          (instance? ~tp o#))
 
        (conversion! ~tp Number jt.c/value)
 
-       (defn ~fname ~doc
-         {:arglists '~'[[] [v] [fmt arg]]}
+       (defn ~fname
+         {:arglists '~'[[] [v] [fmt arg]]
+          :doc ~doc}
          ([] (. ~tp from (jt.z/zoned-date-time)))
          ([v#] (cond (keyword? v#)
                      (v# ~fields)
@@ -98,8 +100,9 @@
         fname (with-meta (symbol (jt.u/dashize (-> (str tp) (string/split #"\.") peek))) {:tag tp})
         arg (gensym)]
     `(do
-       (defn ^{:doc ~(str "True if `" tp "`.")} ~(symbol (str fname "?"))
-         {:arglists '~'[[o]]}
+       (defn ~(symbol (str fname "?"))
+         {:arglists '~'[[o]]
+          :doc ~(str "Returns true if `o` is `" tp "`, otherwise false.")}
          [o#]
          (instance? ~tp o#))
 
@@ -148,8 +151,9 @@
         tmp-major (with-meta (gensym) {:tag major-field-type})
         tmp-minor (with-meta (gensym) {:tag minor-field-type})]
     `(do
-       (defn ^{:doc ~(str "True if `" tp "`.") } ~(symbol (str fname "?"))
-         {:arglists '~'[[o]]}
+       (defn ~(symbol (str fname "?"))
+         {:arglists '~'[[o]]
+          :doc ~(str "Returns true if `o` is `" tp "`, otherwise false.")}
          [o#]
          (instance? ~tp o#))
 
