@@ -343,13 +343,13 @@
 
     * no arguments - current instant
     * one argument
-      + clock
-      + java.util.Date/Calendar
-      + another temporal entity
-      + string representation
-      + millis from epoch
+        + clock
+        + java.util.Date/Calendar
+        + another temporal entity
+        + string representation
+        + millis from epoch
     * two arguments
-      + formatter (format) and a string"
+        + formatter (format) and a string"
   :returns Instant
   :implicit-arities [1 2]
   ([] (jt.clock/make #(Instant/now %))))

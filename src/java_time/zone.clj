@@ -93,19 +93,19 @@
 
     * no arguments - current date-time with the default offset
     * one argument
-      + clock
-      + zone offset
-      + another temporal entity
-      + string representation
-      + year
+        + clock
+        + zone offset
+        + another temporal entity
+        + string representation
+        + year
     * two arguments
-      + formatter (format) and a string
-      + local date-time and an offset
-      + another temporal entity and an offset (preserves local time)
-      + year and month
+        + formatter (format) and a string
+        + local date-time and an offset
+        + another temporal entity and an offset (preserves local time)
+        + year and month
     * three arguments
-      + local date, local time and an offset
-      + year, month and date
+        + local date, local time and an offset
+        + year, month and date
     * four up to seven arguments - position date-time constructors
     * eight arguments - time fields up to nanoseconds and a zone offset
 
@@ -128,16 +128,16 @@
 
     * no arguments - current time with the default offset
     * one argument
-      + clock
-      + zone id
-      + another temporal entity
-      + string representation
-      + hour
+        + clock
+        + zone id
+        + another temporal entity
+        + string representation
+        + hour
     * two arguments
-      + formatter (format) and a string
-      + local time and an offset
-      + instant and an offset
-      + hour and minutes
+        + formatter (format) and a string
+        + local time and an offset
+        + instant and an offset
+        + hour and minutes
     * three arguments - hours, minutes, seconds
     * four arguments - hours, minutes, seconds, nanos
     * five arguments - last is the offset
@@ -157,18 +157,18 @@
 
     * no arguments - current date-time in the default zone
     * one argument
-      + clock
-      + zone id
-      + another temporal entity
-      + string representation
-      + year
+        + clock
+        + zone id
+        + another temporal entity
+        + string representation
+        + year
     * two arguments
-      + formatter and a string
-      + local date-time and a zone id
-      + year and month
+        + formatter and a string
+        + local date-time and a zone id
+        + year and month
     * three arguments
-      + local date, local time and a zone id
-      + year, month and day
+        + local date, local time and a zone id
+        + year, month and day
     * four to seven arguments - date-time fields
     * eight arguments - last is the zone id
 
