@@ -43,9 +43,8 @@
     `(do
        (def ~fields
          (->> (jt.u/class->TemporalAccessor-static-fields ~tp)
-              (vals)
-              (map (fn [m#] [(keyword (string/lower-case (str m#))) m#]))
-              (into {})))
+              vals
+              (into {} (map (fn [m#] [(keyword (string/lower-case (str m#))) m#])))))
 
        (defn ^{:doc ~(str "True if `" tp "`.")} ~(symbol (str fname "?"))
          [o#]
