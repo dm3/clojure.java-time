@@ -134,7 +134,8 @@ year due to DST or governmental regulations.
 
 Offset/Zone times only take the offset/zone as the last arguments for the
 maximum arity constructor. You can influence the zone/offset by using the
-`with-zone` or `with-offset` functions, like so:
+[`jt/with-zone`](https://dm3.github.io/clojure.java-time/java-time.html#var-with-zone)
+or [`jt/with-offset`](https://dm3.github.io/clojure.java-time/java-time.html#var-with-offset) functions, like so:
 
 ```clj
 (jt/with-zone (jt/zoned-date-time 2015 10) "UTC")
