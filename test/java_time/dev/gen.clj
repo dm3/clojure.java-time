@@ -216,7 +216,7 @@
   (run! print-form (gen-java-time-ns-forms)))
 
 (defn spit-java-time-ns []
-  (spit "src/java_time.cljc" (with-out-str (print-java-time-ns))))
+  (spit "src/java_time.clj" (with-out-str (print-java-time-ns))))
 
 (comment
   (print-java-time-ns)

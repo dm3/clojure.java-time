@@ -1082,7 +1082,7 @@
 (jt.u/when-threeten-extra
   (require 'java-time.dev.gen)
   (deftest gen-test
-    (is (= (slurp "src/java_time.cljc")
+    (is (= (slurp "src/java_time.clj")
            (with-out-str ((resolve 'java-time.dev.gen/print-java-time-ns))))
         "java-time main namespace is out of date -- call (java-time.dev.gen/spit-java-time-ns)")))
 
