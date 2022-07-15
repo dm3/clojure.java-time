@@ -14,11 +14,13 @@
   passed in `value-fn`. By default the actual value of the unit/field is
   produced.
 
-    (as-map (duration))
-    => {:nanos 0, :seconds 0}
+  ```
+  (as-map (duration))
+  => {:nanos 0, :seconds 0}
 
-    (as-map (local-date 2015 1 1))
-    => {:year 2015, :month-of-year 1, :day-of-month 1, ...}"
+  (as-map (local-date 2015 1 1))
+  => {:year 2015, :month-of-year 1, :day-of-month 1, ...}
+  ```"
   ([e] (as-map e jt.c/value))
   ([e value-fn] (jt.u/map-vals value-fn (jt.c/properties e))))
 
@@ -48,20 +50,23 @@
 ;; BSD Licence
 (defn convert-amount
   "Converts an amount from one unit to another. Returns a map of:
-    * `:whole` - the whole part of the conversion in the `to` unit
-    * `:remainder` - the remainder in the `from` unit
+
+  * `:whole` - the whole part of the conversion in the `to` unit
+  * `:remainder` - the remainder in the `from` unit
 
   Arguments may be keywords or instances of `TemporalUnit`.
 
-  Converts between precise units - nanos up to weeks, treating days as exact
-  multiples of 24 hours. Also converts between imprecise units - months up to
-  millenia. See `ChronoUnit` and `IsoFields` for all of the supported units.
+  Converts between precise units--nanos up to weeks---treating days as exact
+  multiples of 24 hours. Also converts between imprecise units---months up to
+  millennia. See `ChronoUnit` and `IsoFields` for all of the supported units.
   Does not convert between precise and imprecise units.
 
   Throws `ArithmeticException` if long overflow occurs during computation.
 
-    (convert-amount 10000 :seconds :hours)
-    => {:remainder 2800 :whole 2}"
+  ```
+  (convert-amount 10000 :seconds :hours)
+  => {:remainder 2800 :whole 2}
+  ```"
   [amount from-unit to-unit]
   (let [^TemporalUnit from-unit (jt.p/unit from-unit)
         ^TemporalUnit to-unit (jt.p/unit to-unit)]
@@ -79,26 +84,26 @@
 
             :else (-> (format "Cannot convert between precise (nanos up to weeks) and imprecise units, got: %s to %s!"
                               from-unit to-unit)
-                      (IllegalArgumentException.)
-                      (throw))))))
+                      IllegalArgumentException.
+                      throw)))))
 
 (defn ^:deprecated ^java.util.Date to-java-date
   "Converts a date entity to a `java.util.Date`.
 
   *Deprecated*:
   This function only has a single arity and works for entities directly
-  convertible to `java.time.Instant`. Please consider using `java-date`
+  convertible to `java.time.Instant`. Please consider using [[java-date]]`
   instead."
   [o]
-  (if (instance? Date o) o
-    (Date/from (jt.t/instant o))))
+  (cond-> o
+    (not (instance? Date o)) (-> jt.t/instant Date/from)))
 
 (defn ^:deprecated ^java.sql.Date to-sql-date
   "Converts a local date entity to a `java.sql.Date`.
 
   *Deprecated*:
   This function only has a single arity and works for entities directly
-  convertible to `java.time.LocalDate`. Please consider using `sql-date`
+  convertible to `java.time.LocalDate`. Please consider using [[sql-date]]
   instead."
   [o] (java.sql.Date/valueOf (jt.l/local-date o)))
 
@@ -107,7 +112,7 @@
 
   *Deprecated*:
   This function only has a single arity and works for entities directly
-  convertible to `java.time.Instant`. Please consider using `sql-timestamp`
+  convertible to `java.time.Instant`. Please consider using [[sql-timestamp]]
   instead."
   [o]
   (java.sql.Timestamp/valueOf (jt.l/local-date-time o)))

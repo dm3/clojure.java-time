@@ -89,11 +89,13 @@
       (time-between [o e u]
         "Time between temporal entities `o` and `e` in unit `u`.
 
-          (j/time-between (j/local-date 2015) (j/local-date 2016) :days)
-          => 365
+        ```
+        (j/time-between (j/local-date 2015) (j/local-date 2016) :days)
+        => 365
 
-          (j/time-between :days (j/local-date 2015) (j/local-date 2016))
-          => 365"))
+        (j/time-between :days (j/local-date 2015) (j/local-date 2016))
+        => 365
+        ```"))
 
     (defprotocol KnowsIfLeap
       (leap? [o]
@@ -130,11 +132,13 @@
   "Values of property/unit identified by keys/objects `ks` of the temporal
   entity `o`, e.g.
 
-    (as (duration 1 :hour) :minutes)
-    => 60
+  ```
+  (as (duration 1 :hour) :minutes)
+  => 60
 
-    (as (local-date 2015 9) :year :month-of-year)
-    => [2015 9]"
+  (as (local-date 2015 9) :year :month-of-year)
+  => [2015 9]
+  ```"
   ([o k]
    (as* o k))
   ([o k1 k2]
@@ -155,15 +159,17 @@
   (first (sort (cons o os))))
 
 (defn before?
-  "Returns a truthy value if time entities are ordered from the earliest to the
-  latest (same semantics as `<`):
+  "Returns `true` if time entities are ordered from the earliest to the
+  latest (same semantics as `<`), otherwise `false`.
 
-    (before? (local-date 2009) (local-date 2010) (local-date 2011))
-    => truthy...
+  ```
+  (before? (local-date 2009) (local-date 2010) (local-date 2011))
+  => true
 
-    (before? (interval (instant 10000) (instant 1000000))
-             (instant 99999999))
-    => truthy..."
+  (before? (interval (instant 10000) (instant 1000000))
+           (instant 99999999))
+  => true
+  ```"
   ([x] true)
   ([x y] (single-before? x y))
   ([x y & more]
@@ -174,15 +180,17 @@
      false)))
 
 (defn after?
-  "Returns a truthy value if time entities are ordered from the latest to the
-  earliest (same semantics as `>`):
+  "Returns `true` if time entities are ordered from the latest to the
+  earliest (same semantics as `>`), otherwise `false`.
 
-    (after? (local-date 2011) (local-date 2010) (local-date 2009))
-    => truthy...
+  ```
+  (after? (local-date 2011) (local-date 2010) (local-date 2009))
+  => true
 
-    (after? (instant 99999999)
-            (interval (instant 10000) (instant 1000000)))
-    => truthy..."
+  (after? (instant 99999999)
+          (interval (instant 10000) (instant 1000000)))
+  => true
+  ```"
   ([x] true)
   ([x y] (single-after? x y))
   ([x y & more]
@@ -193,11 +201,11 @@
      false)))
 
 (def ^{:arglists '([x] [x y] [x y & more])} not-after?
-  "Similar to [[before?]], but also returns truthy if the inputs are equal."
+  "Like [[before?]], except returns `true` if the inputs are equal."
   (complement after?))
 
 (def ^{:arglists '([x] [x y] [x y & more])} not-before?
-  "Similar to [[after?]], but also returns truthy if the inputs are equal."
+  "Like [[after?]], except returns `true` if the inputs are equal."
   (complement before?))
 
 (defn plus
@@ -205,16 +213,20 @@
   first argument is always the entity which will accumulate the rest of the
   arguments.
 
-    (j/plus (j/local-date 2015) (j/years 1))
-    => <java.time.LocalDate \"2016-01-01\">"
+  ```
+  (j/plus (j/local-date 2015) (j/years 1))
+  => <java.time.LocalDate \"2016-01-01\">
+  ```"
   [o & os]
   (seq-plus o os))
 
 (defn minus
   "Subtracts all of the `os` from the time entity `o`
 
-    (j/minus (j/local-date 2015) (j/years 1))
-    => <java.time.LocalDate \"2014-01-01\">"
+  ```
+  (j/minus (j/local-date 2015) (j/years 1))
+  => <java.time.LocalDate \"2014-01-01\">
+  ```"
   [o & os]
   (if (seq os)
     (seq-minus o os)
