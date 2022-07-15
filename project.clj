@@ -30,7 +30,9 @@
              :codox {:injections [(require 'java-time)
                                   (require 'java-time.impl.load)
                                   (java-time.impl.load/load-java-time)
-                                  (java-time.impl.load/async-load-fast-path)]
+                                  (java-time.impl.load/async-load-fast-path)
+                                  (require 'java-time.dev.gen)
+                                  (java-time.dev.gen/spit-java-time-ns)]
                      :codox {:namespaces [java-time java-time.repl]
                              :doc-files ["README.md" "CHANGELOG.md"]
                              :metadata {:doc/format :markdown}

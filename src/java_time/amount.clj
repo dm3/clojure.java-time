@@ -53,12 +53,14 @@
   and nanos as properties.
 
   Given one argument will:
+
   * interpret as millis if a number
   * try to parse from the standard format if a string
   * extract supported units from another `TemporalAmount`
   * convert from a Joda Period/Duration
 
   Given two arguments will:
+
   * get a duration between two `Temporal`s
   * get a duration of a specified unit, e.g. `(duration 100 :seconds)`"
   :returns Duration
@@ -107,15 +109,17 @@
   "Creates a period - a temporal entity consisting of years, months and days.
 
   Given one argument will
-    * interpret as years if a number
-    * try to parse from the standard format if a string
-    * extract supported units from another `TemporalAmount`
-    * convert from a Joda Period
+
+  * interpret as years if a number
+  * try to parse from the standard format if a string
+  * extract supported units from another `TemporalAmount`
+  * convert from a Joda Period
 
   Given two arguments will
-    * get a period of a specified unit, e.g. `(period 10 :months)`
-    * get a period between two temporals by converting them to local dates
-    * get a period of a specified number of years and months
+
+  * get a period of a specified unit, e.g. `(period 10 :months)`
+  * get a period between two temporals by converting them to local dates
+  * get a period of a specified number of years and months
 
   Given three arguments will create a year/month/day period."
   :returns Period
