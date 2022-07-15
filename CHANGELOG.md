@@ -17,7 +17,7 @@
     * entire implementation will be loaded b when `java-time` has loaded
 
 ### Internal
-* Remove `java-time.util/get-static-fields-of-type`
+* Deprecate `java-time.util/get-static-fields-of-type`
 
 ## 0.3.3
 
