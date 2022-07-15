@@ -19,7 +19,7 @@
 
 (defn- arities [type ctor n-args]
   (for [i (range (inc n-args))]
-    (let [arg-vec (vec (take i (repeatedly gensym)))
+    (let [arg-vec (mapv #(gensym (str "arg" %)) (range i))
           type-ctor (symbol (name type) "valueOf")]
       `(~arg-vec (~type-ctor (~ctor ~@arg-vec))))))
 

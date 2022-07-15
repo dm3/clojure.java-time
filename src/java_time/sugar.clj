@@ -9,6 +9,7 @@
                `(defn ~(symbol (str day-name '?))
                  ~(str "Returns true if the given time entity with the\n"
                        "  `day-of-week` property falls on a " (str/capitalize day-name) ", otherwise false.")
+                 {:arglists '[[~'i]]}
                  [o#]
                  (if-let [p# (jt.c/property o# :day-of-week)]
                    (= (jt.c/value p#) ~day-number)

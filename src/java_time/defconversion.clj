@@ -71,7 +71,7 @@
 
 (defn- gen-implicit-arities [nm tp arities]
   (for [arity arities]
-    (let [args (mapv #(gensym (str "arg_" (inc %) "_")) (range arity))]
+    (let [args (mapv #(gensym (str "arg" (inc %))) (range arity))]
       `(~args (call-conversion ~nm ~tp ~args)))))
 
 (defn get-path [from to]
@@ -81,6 +81,7 @@
     (select-keys p [:path :cost])))
 
 (defmacro deffactory [nm docstring returnskw tp implicit-arities-kw implicit-arities & fn-bodies]
+  (assert (string? docstring))
   (assert (= :returns returnskw))
   (assert (= :implicit-arities implicit-arities-kw))
   (let [^Class tpcls (resolve tp)
@@ -95,6 +96,7 @@
                (gen-implicit-arities nm tp implicit-arities)))
 
          (defn ~predicate-name
-           ~(str "True if an instance of " tp ".")
+           ~(str "Returns true if `v` is an instance of " tp ", otherwise false.")
+           {:arglists '[[~'v]]}
            [v#]
            (instance? ~tp v#)))))
