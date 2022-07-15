@@ -149,10 +149,12 @@
         tmp-minor (with-meta (gensym) {:tag minor-field-type})]
     `(do
        (defn ^{:doc ~(str "True if `" tp "`.") } ~(symbol (str fname "?"))
+         {:arglists '~'[[o]]}
          [o#]
          (instance? ~tp o#))
 
        (defn ~fname ~doc
+         {:arglists '~'[[] [arg] [a b]]}
          ([] (. ~tp from (jt.z/zoned-date-time)))
          ([~arg] (cond (some (fn [x#] (instance? x# ~arg)) ~major-field-types)
                        (let [~tmp-major (~major-field-ctor ~arg)]
