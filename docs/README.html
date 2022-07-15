@@ -299,7 +299,7 @@
 </code></pre>
 <p>This snippet isn’t included in the Clojure.Java-Time code by default as both the <code>Inst</code> protocol and the Joda-Time types are external to the library.</p>
 <h4><a href="#clocks" id="clocks"></a>Clocks</h4>
-<p>Java Time introduced a concept of <code>Clock</code> - a time entity which can seed the dates, times and zones. However, there’s no built-in facility which would allow you to influence the date-times created using default constructors ala Joda’s <code>DateTimeUtils/setCurrentMillisSystem</code>. Clojure.Java-Time tries to fix that with the <code>with-clock</code> macro and the corresponding <code>with-clock-fn</code> function:</p>
+<p>Java Time introduced a concept of <code>Clock</code> - a time entity which can seed the dates, times and zones. However, there’s no built-in facility which would allow you to influence the date-times created using default constructors à la Joda’s <code>DateTimeUtils/setCurrentMillisSystem</code>. Clojure.Java-Time tries to fix that with the <code>with-clock</code> macro and the corresponding <code>with-clock-fn</code> function:</p>
 <pre><code class="language-clojure">(jt/zone-id)
 ;=&gt; #&lt;java.time.ZoneRegion Europe/London&gt;
 

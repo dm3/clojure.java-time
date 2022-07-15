@@ -481,7 +481,7 @@ the `Inst` protocol and the Joda-Time types are external to the library.
 
 Java Time introduced a concept of `Clock` - a time entity which can seed the
 dates, times and zones. However, there's no built-in facility which would allow
-you to influence the date-times created using default constructors ala Joda's
+you to influence the date-times created using default constructors à la Joda's
 `DateTimeUtils/setCurrentMillisSystem`. Clojure.Java-Time tries to fix that with
 the `with-clock` macro and the corresponding `with-clock-fn` function:
 
