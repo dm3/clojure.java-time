@@ -72,11 +72,10 @@ or to your `project.clj` or `build.boot`:
 
 The [API](https://dm3.github.io/clojure.java-time/) of the Clojure.Java-Time
 consists of one namespace, namely `java-time`.  For the purposes of this guide,
-we will `use` the main namespace:
+we will `require` the main namespace:
 
 ```clj
-(refer-clojure :exclude [zero? range iterate max min contains? format abs])
-(use 'java-time)
+(require '[java-time :as jt])
 ```
 
 ### Concept run-through
@@ -101,13 +100,13 @@ the time of various events:
 A local date/time can be created as you'd expect:
 
 ```clj
-(local-date 2015 10)
+(jt/local-date 2015 10)
 => #<java.time.LocalDate 2015-10-01>
 
-(local-time 10)
+(jt/local-time 10)
 => #<java.time.LocalTime 10:00>
 
-(local-date-time 2015 10)
+(jt/local-date-time 2015 10)
 => #<java.time.LocalDateTime 2015-10-01T00:00>
 ```
 
@@ -120,13 +119,13 @@ time. For example, the same timezone can have different offsets throughout the
 year due to DST or governmental regulations.
 
 ```clj
-(offset-time 10)
+(jt/offset-time 10)
 => #<java.time.OffsetTime 10:00+01:00>
 
-(offset-date-time 2015 10)
+(jt/offset-date-time 2015 10)
 => #<java.time.OffsetDateTime 2015-10-01T10:00+01:00>
 
-(zoned-date-time 2015 10)
+(jt/zoned-date-time 2015 10)
 => #<java.time.ZonedDateTime 2015-10-01T10:00+01:00[Europe/London]>
 ```
 
@@ -135,14 +134,14 @@ maximum arity constructor. You can influence the zone/offset by using the
 `with-zone` or `with-offset` functions, like so:
 
 ```clj
-(with-zone (zoned-date-time 2015 10) "UTC")
+(jt/with-zone (jt/zoned-date-time 2015 10) "UTC")
 => #<java.time.ZonedDateTime 2015-10-01T00:00Z[UTC]>
 
-(with-zone-same-instant (zoned-date-time 2015 10) "UTC")
+(jt/with-zone-same-instant (jt/zoned-date-time 2015 10) "UTC")
 => #<java.time.ZonedDateTime 2015-09-30T23:00Z[UTC]>
 
-(with-clock (system-clock "UTC")
-  (zoned-date-time 2015 10))
+(jt/with-clock (jt/system-clock "UTC")
+  (jt/zoned-date-time 2015 10))
 => #<java.time.ZonedDateTime 2015-10-01T00:00Z[UTC]>
 ```
 
@@ -154,7 +153,7 @@ milliseconds since epoch (`1970-01-01T00:00:00Z`). An instant is directly
 analogous to `java.util.Date`:
 
 ```clj
-user=> (instant)
+user=> (jt/instant)
 #<java.time.Instant "2015-09-26T05:25:48.667Z">
 
 user=> (java.util.Date.)
@@ -181,13 +180,13 @@ constructors you are going to use up by calling them beforehand, e.g.:
 
 ```clj
 (defn warm-up []
-  (zoned-date-time 2015 1 1)
-  (zoned-date-time 2015 1)
-  (zoned-date-time 2015))
+  (jt/zoned-date-time 2015 1 1)
+  (jt/zoned-date-time 2015 1)
+  (jt/zoned-date-time 2015))
 ```
 
 The "constructor" here refers to an arity of a function together with its type
-signature. For example, a `(zoned-date-time 2015)` and `(zoned-date-time (system-clock))`
+signature. For example, a `(jt/zoned-date-time 2015)` and `(jt/zoned-date-time (jt/system-clock))`
 are different constructors.
 
 ### An appetizer
@@ -197,28 +196,28 @@ First, let's do a quick run through common use cases.
 What is the current date?
 
 ```clj
-(def now (local-date))
+(def now (jt/local-date))
 => #object[java.time.LocalDate "2015-09-27"]
 ```
 
 What's the next day?
 
 ```clj
-(plus now (days 1))
+(plus now (jt/days 1))
 => #object[java.time.LocalDate "2015-09-28"]
 ```
 
 The previous day?
 
 ```clj
-(minus now (days 1))
+(jt/minus now (jt/days 1))
 => #object[java.time.LocalDate "2015-09-26"]
 ```
 
 Three days starting at `now`?
 
 ```clj
-(take 3 (iterate plus now (days 1))) ;; note `java-time/iterate`
+(take 3 (jt/iterate jt/plus now (jt/days 1)))
 => (#object[java.time.LocalDate "2015-09-27"]
     #object[java.time.LocalDate "2015-09-28"]
     #object[java.time.LocalDate "2015-09-29"])
@@ -227,72 +226,72 @@ Three days starting at `now`?
 When is the first Monday in month?
 
 ```clj
-(adjust now :first-in-month :monday)
+(jt/adjust now :first-in-month :monday)
 => #object[java.time.LocalDate "2015-09-07"]
 ```
 
 Date with some of its fields truncated:
 
 ```clj
-(truncate-to (local-date-time 2015 9 28 10 15) :days)
+(jt/truncate-to (jt/local-date-time 2015 9 28 10 15) :days)
 => #object[java.time.LocalDateTime "2015-09-28T00:00"]
 ```
 
 Date-time adjusted to the given hour:
 
 ```clj
-(adjust (local-date-time 2015 9 28 10 15) (local-time 6))
+(jt/adjust (jt/local-date-time 2015 9 28 10 15) (jt/local-time 6))
 => #object[java.time.LocalDateTime "2015-09-28T06:00"]
 ```
 
 The latest of the given dates?
 
 ```clj
-(max (local-date 2015 9 20) (local-date 2015 9 28) (local-date 2015 9 1))
+(jt/max (jt/local-date 2015 9 20) (jt/local-date 2015 9 28) (jt/local-date 2015 9 1))
 => #object[java.time.LocalDate "2015-09-28"]
 ```
 
 The shortest of the given durations?
 
 ```clj
-(min (duration 10 :seconds) (duration 5 :hours) (duration 3000 :millis))
+(jt/min (jt/duration 10 :seconds) (jt/duration 5 :hours) (jt/duration 3000 :millis))
 => #object[java.time.Duration "PT3S"]
 ```
 
 Get the year field out of the date:
 
 ```clj
-(as (local-date 2015 9 28) :year)
+(jt/as (jt/local-date 2015 9 28) :year)
 => 2015
 ```
 
 Get multiple fields:
 
 ```clj
-(as (local-date 2015 9 28) :year :month-of-year :day-of-month)
+(jt/as (jt/local-date 2015 9 28) :year :month-of-year :day-of-month)
 => (2015 9 28)
 ```
 
 Get the duration in a different unit:
 
 ```clj
-java-time> (plus (hours 3) (minutes 2))
+java-time> (jt/plus (jt/hours 3) (jt/minutes 2))
 #object[java.time.Duration "PT3H2M"]
-java-time> (as *1 :minutes)
+java-time> (jt/as *1 :minutes)
 182
 ```
 
 Format a date:
 
 ```clj
-(format "MM/dd" (zoned-date-time 2015 9 28))
+(jt/format "MM/dd" (jt/zoned-date-time 2015 9 28))
 => "09/28"
 ```
 
 Parse a date:
 
 ```clj
-(local-date "MM/yyyy/dd" "09/2015/28")
+(jt/local-date "MM/yyyy/dd" "09/2015/28")
 => #object[java.time.LocalDate "2015-09-28"]
 ```
 
@@ -300,30 +299,30 @@ Zoned date-times and offset date-times/times always take the zone/offset as the
 last argument. Offsets can be specified as float values:
 
 ```clj
-(zone-offset +1.5)
+(jt/zone-offset +1.5)
 => #<java.time.ZoneOffset +01:30>
 
-(zone-offset -1.5)
+(jt/zone-offset -1.5)
 => #<java.time.ZoneOffset -01:30>
 ```
 
 Compare dates:
 
 ```clj
-(before? (year 2020) (year 2021))
+(jt/before? (jt/year 2020) (jt/year 2021))
 => true
 
-(after? (year 2021) (year 2021))
+(jt/after? (jt/year 2021) (jt/year 2021))
 => false
 
-(let [expiration-date (year 2010)
-      purchase-date (year 2010)]
-  (not-before? expiration-date purchase-date))
+(let [expiration-date (jt/year 2010)
+      purchase-date (jt/year 2010)]
+  (jt/not-before? expiration-date purchase-date))
 => true
 
-(let [start-date (year 2011)
-      cutoff-date (year 2010)]
-  (not-after? start-date cutoff-date))
+(let [start-date (jt/year 2011)
+      cutoff-date (jt/year 2010)]
+  (jt/not-after? start-date cutoff-date))
 => false
 ```
 
@@ -333,26 +332,26 @@ Time entities can be converted to other time entities if the target contains
 less information, e.g. (assuming we're in UTC timezone):
 
 ```clj
-(zoned-date-time (offset-date-time 2015 9 28 1))
+(jt/zoned-date-time (jt/offset-date-time 2015 9 28 1))
 => #object[java.time.ZonedDateTime "2015-09-28T01:00Z"]
 
-(instant (offset-date-time 2015 9 28 1))
+(jt/instant (jt/offset-date-time 2015 9 28 1))
 => #object[java.time.Instant "2015-09-28T01:00:00Z"]
 
-(offset-time (offset-date-time 2015 9 28 1))
+(jt/offset-time (jt/offset-date-time 2015 9 28 1))
 => #object[java.time.OffsetTime "01:00Z"]
 
-(local-date-time (offset-date-time 2015 9 28 1))
+(jt/local-date-time (jt/offset-date-time 2015 9 28 1))
 => #object[java.time.LocalDateTime "2015-09-28T01:00"]
 
-(local-time (offset-time 1))
+(jt/local-time (jt/offset-time 1))
 => #object[java.time.LocalTime 0x3a3cd6d5 "01:00"]
 ```
 
 Converting an Instant to ZonedDateTime requires a time zone:
 
 ```clojure
-(zoned-date-time (instant 100) "UTC)
+(jt/zoned-date-time (jt/instant 100) "UTC)
 => #object[java.time.ZonedDateTime 0x291777c0 "1970-01-01T00:00:00.100Z[UTC]"]
 ```
 
@@ -362,10 +361,10 @@ Any date which can be converted to an instant, can also be converted to a
 `java.util.Date`:
 
 ```clojure
-(java-date (zoned-date-time 2015 9 28))
+(jt/java-date (jt/zoned-date-time 2015 9 28))
 => #inst "2015-09-27T22:00:00.000-00:00"
 
-(java-date 50000)
+(jt/java-date 50000)
 => #inst "1970-01-01T00:00:50.000-00:00"
 ```
 
@@ -383,13 +382,13 @@ entities is as follows:
   * `java.sql.Time` <-> `java.time.LocalTime`
 
 ```clojure
-(sql-date 2015 9 28)
+(jt/sql-date 2015 9 28)
 => #inst "2015-09-27T22:00:00.000-00:00"
 
-(sql-timestamp 2015 9 28 10 20 30 4000000)
+(jt/sql-timestamp 2015 9 28 10 20 30 4000000)
 => #inst "2015-09-28T09:20:30.004-00:00"
 
-(sql-time 10 20 30)
+(jt/sql-time 10 20 30)
 => #inst "1970-01-01T09:20:30.000-00:00"
 ```
 
@@ -401,13 +400,13 @@ the Clojure.Java-Time conversion graph.
 Conversions to the legacy types also go the other way around:
 
 ```clojure
-(local-date (sql-date 2015 9 28))
-#object[java.time.LocalDate "2015-09-28"]
+(jt/local-date (jt/sql-date 2015 9 28))
+=> #object[java.time.LocalDate "2015-09-28"]
 
-(local-date-time (sql-timestamp 2015 9 28 10 20 30 4000000))
-#object[java.time.LocalDateTime "2015-09-28T10:20:30.004"]
+(jt/local-date-time (jt/sql-timestamp 2015 9 28 10 20 30 4000000))
+=> #object[java.time.LocalDateTime "2015-09-28T10:20:30.004"]
 
-(local-time (sql-time 10 20 30))
+(jt/local-time (jt/sql-time 10 20 30))
 #object[java.time.LocalTime "10:20:30"]
 ```
 
@@ -421,22 +420,22 @@ An interval can be constructed from two entities that can be converted to
 instants:
 
 ```clojure
-(interval (offset-date-time 2015 1 1) (zoned-date-time 2016 1 1))
+(jt/interval (jt/offset-date-time 2015 1 1) (jt/zoned-date-time 2016 1 1))
 => #<org.threeten.extra.Interval 2015-01-01T00:00:00Z/2016-01-01T00:00:00Z>
 
-(move-start-by *1 (duration 5 :days))
+(jt/move-start-by *1 (jt/duration 5 :days))
 => #<org.threeten.extra.Interval 2015-01-06T00:00:00Z/2016-01-01T00:00:00Z>
 
-(move-end-by *1 (duration 5 :days))
+(jt/move-end-by *1 (jt/duration 5 :days))
 => #<org.threeten.extra.Interval 2015-01-06T00:00:00Z/2016-01-06T00:00:00Z>
 
-(contains? *1 (offset-date-time 2015 1 1))
+(jt/contains? *1 (jt/offset-date-time 2015 1 1))
 => false
 ```
 
 #### Joda-Time
 
-Bonus! if you have Joda Time on the classpath (either directly, or via
+Bonus! If you have Joda Time on the classpath (either directly, or via
 `clj-time`), you can seamlessly convert from Joda Time to Java Time types:
 
 ```clojure
@@ -447,7 +446,7 @@ Bonus! if you have Joda Time on the classpath (either directly, or via
            [#<java_time.graph.Types@6d8ded1a [java.time.Instant java.time.ZoneId]>
             #<java_time.graph.Types@5360f6ae [java.time.OffsetTime]>]]}
 
-(offset-time (org.joda.time.DateTime/now))
+(jt/offset-time (org.joda.time.DateTime/now))
 => #<java.time.OffsetTime 22:00:00.000000000-00:00>
 ```
 
@@ -458,7 +457,7 @@ default. If you're stuck on Joda-Time, you can extend the
 using the following:
 
 ```clojure
-(java-time/when-joda-time-loaded
+(jt/when-joda-time-loaded
   (extend-type org.joda.time.ReadableInstant
     Inst (inst-ms* [inst] (.getMillis inst))))
 ```
@@ -475,11 +474,11 @@ you to influence the date-times created using default constructors ala Joda's
 the `with-clock` macro and the corresponding `with-clock-fn` function:
 
 ```clojure
-(zone-id)
+(jt/zone-id)
 => #<java.time.ZoneRegion Europe/London>
 
-(with-clock (system-clock "UTC")
-  (zone-id))
+(jt/with-clock (jt/system-clock "UTC")
+  (jt/zone-id))
 => #<java.time.ZoneRegion UTC>
 ```
 
@@ -487,25 +486,25 @@ In addition to the built-in `java.time` clocks, we provide a Mock clock which
 can be very handy in testing:
 
 ```clojure
-(def clock (mock-clock 0 "UTC"))
+(def clock (jt/mock-clock 0 "UTC"))
 => #'user/clock
 
-(with-clock clock
-  (instant))
+(jt/with-clock clock
+  (jt/instant))
 => #object[java.time.Instant "1970-01-01T00:00:00Z"]
 
-(advance-clock! clock (plus (hours 5) (minutes 20)))
+(jt/advance-clock! clock (jt/plus (jt/hours 5) (jt/minutes 20)))
 => nil
 
-(with-clock clock
-  (instant))
+(jt/with-clock clock
+  (jt/instant))
 => #object[java.time.Instant "1970-01-01T05:20:00Z"]
 
-(set-clock! clock 0)
+(jt/set-clock! clock 0)
 => nil
 
-(with-clock clock
-  (instant))
+(jt/with-clock clock
+  (jt/instant))
 => #object[java.time.Instant "1970-01-01T00:00:00Z"]
 ```
 
@@ -542,23 +541,23 @@ via the `java-time.repl` ns:
 You can obtain any field/unit like this:
 
 ```clojure
-(field :year)
+(jt/field :year)
 => #object[java.time.temporal.ChronoField "Year"]
 
-(unit :days)
+(jt/unit :days)
 => #object[java.time.temporal.ChronoUnit "Days"]
 
-(field (local-date 2015) :year)
+(jt/field (local-date 2015) :year)
 => #object[java.time.temporal.ChronoField "Year"]
 ```
 
 You can obtain all of the fields/units of the temporal entity:
 
 ```clojure
-(fields (local-date))
+(jt/fields (jt/local-date))
 => {:proleptic-month #object[java.time.temporal.ChronoField ...}
 
-(units (duration))
+(jt/units (jt/duration))
 => {:seconds #object[java.time.temporal.ChronoUnit "Seconds"],
     :nanos #object[java.time.temporal.ChronoUnit "Nanos"]}
 ```
@@ -568,13 +567,13 @@ range of valid values for a field and a duration between two dates, but that's
 about it:
 
 ```clojure
-(range (field :year))
+(jt/range (jt/field :year))
 => #object[java.time.temporal.ValueRange "-999999999 - 999999999"]
 
-(range (field :day-of-month))
+(jt/range (jt/field :day-of-month))
 => #object[java.time.temporal.ValueRange "1 - 28/31"]
 
-(time-between (local-date 2015 9) (local-date 2015 9 28) :days)
+(jt/time-between (jt/local-date 2015 9) (jt/local-date 2015 9 28) :days)
 => 27
 ```
 
@@ -585,22 +584,22 @@ Java's. In Clojure, properties allow expressing time entity modifications and
 queries uniformly across all of the entity types.
 
 ```clojure
-(def prop (property (local-date 2015 2 28) :day-of-month))
+(def prop (jt/property (jt/local-date 2015 2 28) :day-of-month))
 => #java_time.temporal.TemporalFieldProperty{...}
 
-(value prop)
+(jt/value prop)
 => 28
 
-(with-min-value prop)
+(jt/with-min-value prop)
 => #object[java.time.LocalDate "2015-02-01"]
 
-(with-value prop 20)
+(jt/with-value prop 20)
 => #object[java.time.LocalDate "2015-02-20"]
 
-(with-max-value prop)
+(jt/with-max-value prop)
 => #object[java.time.LocalDate "2015-02-28"]
 
-(properties (local-date 2015 9 28))
+(jt/properties (jt/local-date 2015 9 28))
 => {:proleptic-month #java_time.temporal.TemporalFieldProperty{...}, ...}
 ```
 
@@ -638,5 +637,5 @@ You can play with the conversion graph using the following helpers:
       java.lang.Number
       [[#object[java_time.graph.Types "[java.time.Instant]"]
         #object[java_time.graph.Conversion "Cost:1.0"]]
-        ...
+        ...}}
 ```
