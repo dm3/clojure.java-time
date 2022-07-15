@@ -128,10 +128,10 @@
   "Returns a `TemporalUnit` for the given key `k` or extracts the field from
   the given temporal `entity`.
 
-  You can see predefined units via `java-time.repl/show-units`.
+  You can see predefined units via [[java-time.repl/show-units]].
 
   If you want to make your own custom TemporalUnits resolvable, you need to rebind the
-  `java-time.properties/*units*` to a custom `java-time.properties.UnitGroup`."
+  `java-time.properties/*units*` to a custom `java_time.properties.UnitGroup`."
   ([k] (get-unit k))
   ([entity k] (jt.c/unit* entity k)))
 
@@ -139,10 +139,10 @@
   "Returns a `TemporalField` for the given key `k` or extracts the field from
   the given temporal `entity`.
 
-  You can see predefined fields via `java-time.repl/show-fields`.
+  You can see predefined fields via [[java-time.repl/show-fields]].
 
   If you want to make your own custom TemporalFields resolvable, you need to rebind the
-  `java-time.properties/*fields*` to a custom `java-time.properties.FieldGroup`."
+  `java-time.properties/*fields*` to a custom `java_time.properties.FieldGroup`."
   ([k] (get-field k))
   ([entity k] (jt.c/field* entity k)))
 

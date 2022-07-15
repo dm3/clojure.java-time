@@ -11,14 +11,16 @@
   Useful when you want to produce a sequence of temporal entities, for
   example:
 
-    (iterate plus (days 0) 1)
-    => (#<Period P0D> #<Period P1D> #<Period P2D> ...)
+  ```
+  (iterate plus (days 0) 1)
+  => (#<Period P0D> #<Period P1D> #<Period P2D> ...)
 
-    (iterate plus (local-date 2010 1 1) (years 1))
-    => (#<LocalDate 2010-01-01> #<LocalDate 2011-01-01> ...)
+  (iterate plus (local-date 2010 1 1) (years 1))
+  => (#<LocalDate 2010-01-01> #<LocalDate 2011-01-01> ...)
 
-    (iterate adjust (local-date 2010 1 1) :next-working-day)
-    => (#<LocalDate 2010-01-01> #<LocalDate 2010-01-04> ...)"
+  (iterate adjust (local-date 2010 1 1) :next-working-day)
+  => (#<LocalDate 2010-01-01> #<LocalDate 2010-01-04> ...)
+  ```"
   [f initial v & vs]
   (clojure.core/iterate
     (apply partialr f v vs) initial))

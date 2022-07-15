@@ -13,9 +13,8 @@
 * #52: Fix before/after on Intervals
 
 ### Enhancements
-* [Experimental] #32: Asynchronously load implementation (only on feature flag)
-    - [up to 95% faster loading](https://github.com/dm3/clojure.java-time/issues/32#issuecomment-116365209)
-    - to enable use `-Djava-time.async-load=true`
+* #32: Asynchronously load implementation while compiling `java-time` namespace
+    * entire implementation will be loaded b when `java-time` has loaded
 
 ### Internal
 * Remove `java-time.util/get-static-fields-of-type`

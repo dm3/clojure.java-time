@@ -27,8 +27,9 @@
           [(.. (.replace n \_ \-) toString (toLowerCase (Locale/US))) fmt]))))
 
 (defn- get-resolver-style [s]
-  (if (instance? ResolverStyle s) s
-    (case s
+  (cond-> s
+    (not (instance? ResolverStyle s))
+    (case
       :strict ResolverStyle/STRICT
       :smart ResolverStyle/SMART
       :lenient ResolverStyle/LENIENT)))
@@ -71,11 +72,13 @@
   formatter key, e.g. `:iso-offset-time`, as a first argument. Given one
   argument uses the default format.
 
-    (format (zoned-date-time))
-    \"2015-03-21T09:22:46.677800+01:00[Europe/London]\"
+  ```
+  (format (zoned-date-time))
+  => \"2015-03-21T09:22:46.677800+01:00[Europe/London]\"
 
-    (format :iso-date (zoned-date-time))
-    \"2015-03-21+01:00\""
+  (format :iso-date (zoned-date-time))
+  \"2015-03-21+01:00\"
+  ```"
   ([o] (str o))
   ([fmt o]
    (.format (formatter fmt) o)))
