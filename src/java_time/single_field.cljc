@@ -22,8 +22,8 @@
 (defn- get-only-unit-value ^long [^TemporalAmount a, ^TemporalUnit u]
   (let [non-zero-units
         (->> (.getUnits a)
-             (map (fn [^TemporalUnit tu] (vector tu (.get a tu))))
-             (filter (fn [[_ uv]] (not (zero? uv)))))
+             (map (fn [^TemporalUnit tu] [tu (.get a tu)]))
+             (remove (fn [[_ uv]] (zero? uv))))
         [our-unit our-value] (first (filter (fn [[tu]] (= tu u)) non-zero-units))]
     (when-not our-unit
       (let [msg (format "No unit: %s found in %s!" u a)]
