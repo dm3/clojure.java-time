@@ -1084,7 +1084,7 @@
   (deftest gen-test
     (is (= (slurp "src/java_time.clj")
            (with-out-str ((resolve 'java-time.dev.gen/print-java-time-ns))))
-        "java-time main namespace is out of date -- call (java-time.dev.gen/spit-java-time-ns)")))
+        "java-time main namespace is out of date -- call (java-time.dev.gen/spit-java-time-ns) or `$ lein doc`")))
 
 ;; https://github.com/dm3/clojure.java-time/issues/75
 ;; Q: Can we add a new function, or at least an example for converting a Unix timestamp (epoch seconds) to a LocalDateTime object?
