@@ -14,7 +14,7 @@
 
 ### Enhancements
 * #32: Asynchronously load implementation while compiling `java-time` namespace
-    * entire implementation will be loaded b when `java-time` has loaded
+    * entire implementation will be loaded when `java-time` has loaded
 
 ### Internal
 * Deprecate `java-time.util/get-static-fields-of-type`
