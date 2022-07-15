@@ -174,8 +174,8 @@
   ([x y] (single-before? x y))
   ([x y & more]
    (if (before? x y)
-     (if (next more)
-       (recur y (first more) (next more))
+     (if-some [n (next more)]
+       (recur y (first more) n)
        (before? y (first more)))
      false)))
 
@@ -195,8 +195,8 @@
   ([x y] (single-after? x y))
   ([x y & more]
    (if (after? x y)
-     (if (next more)
-       (recur y (first more) (next more))
+     (if-some [n (next more)]
+       (recur y (first more) n)
        (after? y (first more)))
      false)))
 
