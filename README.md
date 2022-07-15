@@ -643,11 +643,11 @@ You can play with the conversion graph using the following helpers:
 
 (java-time.repl/show-graph)
 ;=> {1
-;     {org.threeten.extra.DayOfYear
-;      [[#object[java_time.graph.Types "[java.lang.Number]"]
-;        #object[java_time.graph.Conversion "Cost:1.0"]]],
-;      java.lang.Number
-;      [[#object[java_time.graph.Types "[java.time.Instant]"]
-;        #object[java_time.graph.Conversion "Cost:1.0"]]
-;        ...}}
+;    {org.threeten.extra.DayOfYear
+;     [[#object[java_time.graph.Types "[java.lang.Number]"]
+;       #object[java_time.graph.Conversion "Cost:1.0"]]],
+;     java.lang.Number
+;     [[#object[java_time.graph.Types "[java.time.Instant]"]
+;       #object[java_time.graph.Conversion "Cost:1.0"]]
+;     ...}}
 ```
