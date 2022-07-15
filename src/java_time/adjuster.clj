@@ -41,18 +41,20 @@
   "Adjusts the temporal `entity` using the provided `adjuster` with optional `args`.
 
   The adjuster should either be a keyword which resolves to one of the
-  predefined adjusters (see `java-time.repl/show-adjusters`) an instance of
+  predefined adjusters (see [[java-time.repl/show-adjusters]]) an instance of
   `TemporalAdjuster` or a function which returns another temporal entity when
   applied to the given one:
 
-    (adjust (local-date 2015 1 1) :next-working-day)
-    => #<LocalDate 2015-1-2>
+  ```
+  (adjust (local-date 2015 1 1) :next-working-day)
+  => #<LocalDate 2015-1-2>
 
-    (adjust (local-date 2015 1 1) :first-in-month :monday)
-    => #<LocalDate 2015-1-5>
+  (adjust (local-date 2015 1 1) :first-in-month :monday)
+  => #<LocalDate 2015-1-5>
 
-    (adjust (local-date 2015 1 1) plus (days 1))
-    => #<LocalDate 2015-1-2>"
+  (adjust (local-date 2015 1 1) plus (days 1))
+  => #<LocalDate 2015-1-2>
+  ```"
   [entity adjuster & args]
   (cond (instance? TemporalAdjuster adjuster)
         (.adjustInto ^TemporalAdjuster adjuster ^Temporal entity)
