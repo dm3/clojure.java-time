@@ -86,7 +86,7 @@ types. You would be well served by reading the official documentation for the
 [Java Time API](https://docs.oracle.com/javase/tutorial/datetime/iso/index.html), 
 but we'll also do a quick run-through here.
 
-#### Local Dates
+#### Local Dates and/or Times
 
 `LocalDate`, `LocalTime` and `LocalDateTime` are used to represent a date, time
 and date-time respectively without an offset or a timezone. The local time entities
@@ -94,10 +94,13 @@ are used to represent human-based dates/times. They are a good fit for represent
 the time of various events:
 
 * `LocalDate` - birthday, holiday
+  * see [`jt/local-date`](http://dm3.github.io/clojure.java-time/java-time.html#var-local-date)
 * `LocalTime` - bus schedule, opening time of a shop
+  * see [`jt/local-time`](http://dm3.github.io/clojure.java-time/java-time.html#var-local-time)
 * `LocalDateTime` - start of a competition
+  * see [`jt/local-date-time`](http://dm3.github.io/clojure.java-time/java-time.html#var-local-date-time)
 
-A local date/time can be created as you'd expect:
+Example usage:
 
 ```clj
 (jt/local-date 2015 10)
