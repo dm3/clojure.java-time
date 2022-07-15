@@ -19,7 +19,8 @@
   => {:nanos 0, :seconds 0}
 
   (as-map (local-date 2015 1 1))
-  => {:year 2015, :month-of-year 1, :day-of-month 1, ...}"
+  => {:year 2015, :month-of-year 1, :day-of-month 1, ...}
+  ```"
   ([e] (as-map e jt.c/value))
   ([e value-fn] (jt.u/map-vals value-fn (jt.c/properties e))))
 
