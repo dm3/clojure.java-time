@@ -36,6 +36,7 @@
     (long our-value)))
 
 (defmacro enumerated-entity [tp doc & {:keys [unit]}]
+  (assert (string? doc))
   (let [tp (resolve-tag tp)
         fname (with-meta (symbol (jt.u/dashize (-> (str tp) (string/split #"\.") last))) {:tag tp})
         fields (symbol (str fname "-fields"))]
@@ -90,6 +91,7 @@
                        o# os#)))))))))
 
 (defmacro single-field-entity [tp doc & {:keys [parseable?]}]
+  (assert (string? doc))
   (let [^Class tpcls (resolve tp)
         tp (symbol (.getName tpcls))
         fname (with-meta (symbol (jt.u/dashize (-> (str tp) (string/split #"\.") last))) {:tag tp})
@@ -132,12 +134,13 @@
 
 (defmacro two-field-entity [tp doc & {:keys [major-field-types major-field-ctor
                                              minor-field-ctor minor-field-default]}]
+  (assert (string? doc))
   (let [[major-field-ctor major-field-type] major-field-ctor
         [minor-field-ctor minor-field-type] minor-field-ctor
         major-field-type (resolve-tag major-field-type)
         minor-field-type (resolve-tag minor-field-type)
         tp (resolve-tag tp)
-        fname (with-meta (symbol (jt.u/dashize (-> (str tp) (string/split #"\.") last))) {:tag tp})
+        fname (with-meta (symbol (jt.u/dashize (-> (str tp) (string/split #"\.") peek))) {:tag tp})
         arg (gensym)
         tmp-major (with-meta (gensym) {:tag major-field-type})
         tmp-minor (with-meta (gensym) {:tag minor-field-type})]
