@@ -214,7 +214,7 @@ What is the current date?
 What's the next day?
 
 ```clj
-(plus now (jt/days 1))
+(jt/plus now (jt/days 1))
 ;=> #object[java.time.LocalDate "2015-09-28"]
 ```
 
