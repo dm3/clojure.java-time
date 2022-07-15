@@ -1094,3 +1094,9 @@
              (j/instant 100)
              ;; Then you'll get a LocalDateTime by providing the instant and the time zone to the local-date-time constructor:
              (j/local-date-time "UTC")))))
+
+;; https://github.com/dm3/clojure.java-time/issues/64
+(deftest instant-to-zoned-date-time-test
+  (is (= (j/zoned-date-time #inst "1970-01-01T00:00:00.100" "UTC")
+         (-> (j/instant 100)
+             (j/zoned-date-time "UTC")))))
