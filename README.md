@@ -559,7 +559,7 @@ You can obtain any field/unit like this:
 (jt/unit :days)
 ;=> #object[java.time.temporal.ChronoUnit "Days"]
 
-(jt/field (local-date 2015) :year)
+(jt/field (jt/local-date 2015) :year)
 ;=> #object[java.time.temporal.ChronoField "Year"]
 ```
 
