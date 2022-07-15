@@ -80,8 +80,11 @@
                     [x]))
         syms (mapcat unravel syms)]
     (map (fn [sym]
-           (let [_ (require (-> sym namespace symbol))
-                 vr (resolve sym)
+           (let [vr (if-some [rr (resolve 'clojure.core/requiring-resolve)]
+                      (rr sym)
+                      (do (require (-> sym namespace symbol))
+                          (resolve sym)))
+                 _ (assert vr (str sym " is unresolvable"))
                  m (meta vr)]
              (if (:macro m)
                (import-macro sym)
