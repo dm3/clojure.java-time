@@ -47,12 +47,14 @@
               (into {} (map (fn [m#] [(keyword (string/lower-case (str m#))) m#])))))
 
        (defn ^{:doc ~(str "True if `" tp "`.")} ~(symbol (str fname "?"))
+         {:arglists '~'[[o]]}
          [o#]
          (instance? ~tp o#))
 
        (conversion! ~tp Number jt.c/value)
 
        (defn ~fname ~doc
+         {:arglists '~'[[] [v] [fmt arg]]}
          ([] (. ~tp from (jt.z/zoned-date-time)))
          ([v#] (cond (keyword? v#)
                      (v# ~fields)
@@ -97,12 +99,14 @@
         arg (gensym)]
     `(do
        (defn ^{:doc ~(str "True if `" tp "`.")} ~(symbol (str fname "?"))
+         {:arglists '~'[[o]]}
          [o#]
          (instance? ~tp o#))
 
        (conversion! ~tp Number jt.c/value)
 
        (defn ~fname ~doc
+         {:arglists '~'[[] [arg] [fmt arg]]}
          ([] (. ~tp from (jt.z/zoned-date-time)))
          ([~arg] (cond (number? ~arg)
                        (. ~tp of (int ~arg))
