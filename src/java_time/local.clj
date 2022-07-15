@@ -14,17 +14,17 @@
 
     * no arguments - current local-date
     * one argument
-      + clock
-      + another temporal entity
-      + string representation
-      + year
+        + clock
+        + another temporal entity
+        + string representation
+        + year
     * two arguments
-      + formatter (format) and a string
-      + an instant and a zone id
-      + another temporal entity and an offset (preserves local time)
-      + year and month
+        + formatter (format) and a string
+        + an instant and a zone id
+        + another temporal entity and an offset (preserves local time)
+        + year and month
     * three arguments
-      + year, month and date"
+        + year, month and date"
   :returns LocalDate
   :implicit-arities [1 2 3]
   ([] (jt.clock/make (fn [^Clock c] (LocalDate/now c)))))
@@ -34,14 +34,14 @@
 
     * no arguments - current local time
     * one argument
-      + clock
-      + another temporal entity
-      + string representation
-      + hours
+        + clock
+        + another temporal entity
+        + string representation
+        + hours
     * two arguments
-      + formatter (format) and a string
-      + an instant and a zone id
-      + hours and minutes
+        + formatter (format) and a string
+        + an instant and a zone id
+        + hours and minutes
     * three/four arguments - hour, minute, second, nanos"
   :returns LocalTime
   :implicit-arities [1 2 3]
@@ -54,17 +54,17 @@
 
     * no arguments - current local date-time
     * one argument
-      + clock
-      + another temporal entity
-      + string representation
-      + year
+        + clock
+        + another temporal entity
+        + string representation
+        + year
     * two arguments
-      + local date and local time
-      + an instant and a zone id
-      + formatter (format) and a string
-      + year and month
+        + local date and local time
+        + an instant and a zone id
+        + formatter (format) and a string
+        + year and month
 
-    three and more arguments - year/month/day/..."
+    * three and more arguments - year/month/day/..."
   :returns LocalDateTime
   :implicit-arities [1 2 3]
   ([] (jt.clock/make (fn [^Clock c] (LocalDateTime/now c))))
@@ -178,4 +178,3 @@
 
 (conversion! CharSequence java.time.format.DateTimeFormatter
   jt.f/formatter)
-
