@@ -77,9 +77,10 @@
   (conj (map (fn [[fn-name method-name]]
                (let [fn-name (with-meta fn-name {:tag Duration})]
                  `(defn ~fn-name
-                    ~(str "Duration of a specified number of " method-name ".")
-                    [v#]
-                    (. Duration ~(symbol (str 'of (string/capitalize (str method-name)))) (long v#)))))
+                    ~(str "Returns a `Duration` of `i` " method-name ".")
+                    {:arglists '[[~'i]]}
+                    [i#]
+                    (. Duration ~(symbol (str 'of (string/capitalize (str method-name)))) (long i#)))))
              [['standard-days 'days]
               ['hours 'hours]
               ['minutes 'minutes]
@@ -95,7 +96,7 @@
   (conj (map (fn [fn-name]
                (let [fn-name (with-meta fn-name {:tag Period})]
                  `(defn ~fn-name
-                    ~(str "Returns a `Period` of `n` " fn-name ".")
+                    ~(str "Returns a `Period` of `i` " fn-name ".")
                     {:arglists '[[~'i]]}
                     [i#]
                     (. Period ~(symbol (str 'of (string/capitalize (str fn-name)))) (int i#)))))
