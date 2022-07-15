@@ -1,5 +1,5 @@
 (ns java-time.zone
-  (:require [java-time.core :as jt.c :refer (value)]
+  (:require [java-time.core :as jt.c]
             [java-time.temporal :as jt.t]
             [java-time.util :as jt.u]
             [java-time.amount :as jt.a]
@@ -120,7 +120,7 @@
   ([y mo d h m s n] (offset-date-time y mo d h m s n (zone-offset)))
   ([y mo d h m s n o]
    (OffsetDateTime/of
-     (int (value y)) (int (value mo)) (int (value d))
+     (int (jt.c/value y)) (int (jt.c/value mo)) (int (jt.c/value d))
      (int h) (int m) (int s) (int n) (zone-offset o))))
 
 (deffactory offset-time
@@ -183,7 +183,7 @@
   ([y mo d h m s n] (zoned-date-time y mo d h m s n (zone-id)))
   ([y mo d h m s n o]
    (ZonedDateTime/of
-     (int (value y)) (int (value mo)) (int (value d))
+     (int (jt.c/value y)) (int (jt.c/value mo)) (int (jt.c/value d))
      (int h) (int m) (int s) (int n) (zone-id o))))
 
 (conversion! Clock ZonedDateTime
