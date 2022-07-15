@@ -374,13 +374,13 @@ An instance of `java.util.Date` serves the same purpose as the new
 timezone. Please, do not get confused by the way it is printed by the Clojure
 printer - the UTC timezone is applied during formatting.
 
-Sometimes you'll have to work with the legacy `java.sql.Date/Time/Timestamp`
+Sometimes you'll have to work with the legacy `java.sql.{Date,Time,Timestamp}`
 types. The correspondence between the legacy types and the new Date-Time
 entities is as follows:
 
-  * `java.time.LocalDate` - `java.sql.Date`
-  * `java.time.LocalDateTime` - `java.sql.Timestamp`
-  * `java.time.LocalTime` - `java.sql.Time`
+  * `java.sql.Date`  <-> `java.time.LocalDate`
+  * `java.sql.Timestamp` <-> `java.time.LocalDateTime` 
+  * `java.sql.Time` <-> `java.time.LocalTime`
 
 ```clojure
 (sql-date 2015 9 28)
@@ -394,20 +394,20 @@ entities is as follows:
 ```
 
 The results of the above calls get printed as `#inst` because all of the
-`java.sql.Date/Time/Timestamp` are subtypes of `java.util.Date`.
+`java.sql.{Date,Time,Timestamp}` are subtypes of `java.util.Date`.
 Coincidentally, this makes it impossible to plug the `java.sql.*` types into
 the Clojure.Java-Time conversion graph.
 
 Conversions to the legacy types also go the other way around:
 
 ```clojure
-(j/local-date (j/sql-date 2015 9 28))
+(local-date (sql-date 2015 9 28))
 #object[java.time.LocalDate "2015-09-28"]
 
-(j/local-date-time (j/sql-timestamp 2015 9 28 10 20 30 4000000))
+(local-date-time (sql-timestamp 2015 9 28 10 20 30 4000000))
 #object[java.time.LocalDateTime "2015-09-28T10:20:30.004"]
 
-(j/local-time (j/sql-time 10 20 30))
+(local-time (sql-time 10 20 30))
 #object[java.time.LocalTime "10:20:30"]
 ```
 
@@ -491,21 +491,21 @@ can be very handy in testing:
 => #'user/clock
 
 (with-clock clock
-  (j/instant))
+  (instant))
 => #object[java.time.Instant "1970-01-01T00:00:00Z"]
 
 (advance-clock! clock (plus (hours 5) (minutes 20)))
 => nil
 
 (with-clock clock
-  (j/instant))
+  (instant))
 => #object[java.time.Instant "1970-01-01T05:20:00Z"]
 
 (set-clock! clock 0)
 => nil
 
 (with-clock clock
-  (j/instant))
+  (instant))
 => #object[java.time.Instant "1970-01-01T00:00:00Z"]
 ```
 
