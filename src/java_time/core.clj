@@ -170,10 +170,10 @@
   ([x] true)
   ([x y] (single-before? x y))
   ([x y & more]
-   (if (before? x y)
+   (if (single-before? x y)
      (if-some [n (next more)]
        (recur y (first more) n)
-       (before? y (first more)))
+       (single-before? y (first more)))
      false)))
 
 (defn after?
@@ -191,10 +191,10 @@
   ([x] true)
   ([x y] (single-after? x y))
   ([x y & more]
-   (if (after? x y)
+   (if (single-after? x y)
      (if-some [n (next more)]
        (recur y (first more) n)
-       (after? y (first more)))
+       (single-after? y (first more)))
      false)))
 
 (def ^{:arglists '([x] [x y] [x y & more])} not-after?
