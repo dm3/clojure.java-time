@@ -301,7 +301,7 @@
   jt.c/KnowsIfLeap
   (leap? [o]
     (when-let [year (-> (jt.c/property o :year)
-                        (jt.c/value))]
+                        jt.c/value)]
       (if (satisfies? jt.c/HasChronology o)
         (.isLeapYear (jt.c/chronology o) year)
         (Year/isLeap year))))

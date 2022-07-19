@@ -13,8 +13,8 @@
 * #52: Fix before/after on Intervals
 
 ### Enhancements
-* #32: Asynchronously load implementation while compiling `java-time` namespace
-    * entire implementation will be loaded when `java-time` has loaded
+* add docstrings to all `java-time` fns
+* support clj-kondo in `java-time` ns by adding `:arglists` to all vars
 
 ### Internal
 * Deprecate `java-time.util/get-static-fields-of-type`
