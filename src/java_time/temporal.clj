@@ -169,9 +169,8 @@
              res (transient {})]
         (if f
           (recur (first r) (rest r)
-                 (if (jt.c/supports? o f)
-                   (assoc! res k f)
-                   res))
+                 (cond-> res 
+                   (jt.c/supports? o f) (assoc! k f)))
           (persistent! res)))))
 
   jt.c/HasProperties
@@ -256,7 +255,7 @@
   jt.c/HasUnits
   (unit* [o k]
     (when-let [u (jt.p/get-unit k)]
-      (first (filter #(= u %) (.getUnits o)))))
+      (some #{u} (.getUnits o))))
 
   (units [o]
     (let [[u & us] (.getUnits o)]
