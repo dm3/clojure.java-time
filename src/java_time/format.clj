@@ -59,11 +59,9 @@
                (string? fmt) (.. (get-case-formatter case)
                                  (appendPattern fmt)
                                  toFormatter)
-               :else (get predefined-formatters (name fmt)))
-         fmt (if resolver-style
-               (.withResolverStyle fmt (get-resolver-style resolver-style))
-               fmt)]
-     fmt)))
+               :else (get predefined-formatters (name fmt)))]
+     (cond-> fmt
+       resolver-style (.withResolverStyle (get-resolver-style resolver-style))))))
 
 (defn format
   "Formats the given time entity as a string.
