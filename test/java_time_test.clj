@@ -831,6 +831,17 @@
            (java.sql.Timestamp. 1)
            (j/instant->sql-timestamp (j/instant 1))
            (j/instant->sql-timestamp 1)))
+
+    (is (= (let [^java.time.LocalTime t (j/with-clock clock (j/local-time))]
+             (java.sql.Time/valueOf t))
+           (j/with-clock clock (j/sql-time))
+           (j/sql-time (j/with-clock clock (j/local-time)))))
+    (is (= (java.sql.Time/valueOf (j/local-time 20))
+           (j/sql-time 20)
+           (j/sql-time (j/local-time 20))))
+    (is (= (java.sql.Time/valueOf (j/local-time 20 30))
+           (j/sql-time 20 30)
+           (j/sql-time (j/local-time 20 30))))
     (is (= (java.sql.Time/valueOf (j/local-time 20 30 40))
            (j/sql-time 20 30 40)
            (j/sql-time (j/local-time 20 30 40))))
@@ -1100,3 +1111,10 @@
   (is (= (j/zoned-date-time #inst "1970-01-01T00:00:00.100" "UTC")
          (-> (j/instant 100)
              (j/zoned-date-time "UTC")))))
+
+(deftest sql-time-to-local-time-test
+  (is (= (j/local-time 1 12 13 456000000)
+         (j/local-time (j/sql-time (j/local-time 1 12 13 456000000)))))
+  (is (= (j/sql-time (j/local-time 1 12 13 456000000))
+         (let [millis-of-day (.get (j/local-time 1 12 13 456000000) java.time.temporal.ChronoField/MILLI_OF_DAY)]
+           (java.sql.Time. millis-of-day)))))
