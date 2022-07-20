@@ -1100,3 +1100,10 @@
   (is (= (j/zoned-date-time #inst "1970-01-01T00:00:00.100" "UTC")
          (-> (j/instant 100)
              (j/zoned-date-time "UTC")))))
+
+(deftest sql-time-to-local-time-test
+  (is (= (j/local-time 1 12 13 456000000)
+         (j/local-time (j/sql-time (j/local-time 1 12 13 456000000)))))
+  (is (= (j/sql-time (j/local-time 1 12 13 456000000))
+         (let [millis-of-day (.get (j/local-time 1 12 13 456000000) java.time.temporal.ChronoField/MILLI_OF_DAY)]
+           (java.sql.Time. millis-of-day)))))
