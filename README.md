@@ -112,7 +112,7 @@ Example usage:
 ;=> #<java.time.LocalTime 10:00>
 
 (jt/local-date-time 2015 10)
-:=> #<java.time.LocalDateTime 2015-10-01T00:00>
+;=> #<java.time.LocalDateTime 2015-10-01T00:00>
 ```
 
 #### Zoned Dates
