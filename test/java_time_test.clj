@@ -831,6 +831,17 @@
            (java.sql.Timestamp. 1)
            (j/instant->sql-timestamp (j/instant 1))
            (j/instant->sql-timestamp 1)))
+
+    (is (= (let [^java.time.LocalTime t (j/with-clock clock (j/local-time))]
+             (java.sql.Time/valueOf t))
+           (j/with-clock clock (j/sql-time))
+           (j/sql-time (j/with-clock clock (j/local-time)))))
+    (is (= (java.sql.Time/valueOf (j/local-time 20))
+           (j/sql-time 20)
+           (j/sql-time (j/local-time 20))))
+    (is (= (java.sql.Time/valueOf (j/local-time 20 30))
+           (j/sql-time 20 30)
+           (j/sql-time (j/local-time 20 30))))
     (is (= (java.sql.Time/valueOf (j/local-time 20 30 40))
            (j/sql-time 20 30 40)
            (j/sql-time (j/local-time 20 30 40))))
