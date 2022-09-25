@@ -1,6 +1,8 @@
 # Changelog
 
-## NEXT
+## 1.0.0-SNAPSHOT
+
+Released 2022-11-24.
 
 ### New Features
 
