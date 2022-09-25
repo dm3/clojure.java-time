@@ -13,6 +13,7 @@ Released 2022-11-24.
 * #78(liquidz): Add missing chrono fields (v0.3.3 has breaking changes)
 * #81(terop): Remove clj-tuple - no advantages over Clojure vector anymore
 * #52: Fix before/after on Intervals
+* #83(imrekoszo): Exclude clojure.core/abs
 
 ### Enhancements
 * add docstrings to all `java-time` fns
