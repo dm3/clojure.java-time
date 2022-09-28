@@ -2,6 +2,8 @@
 
 ## NEXT
 
+## 1.1.0
+
 Due to [#91](https://github.com/dm3/clojure.java-time/issues/91), the main `java-time`
 namespace has been deprecated. A new namespace `java-time.api` has been created
 
