@@ -1,2 +1,2 @@
 #!/bin/sh
-lein release
+lein release :minor
