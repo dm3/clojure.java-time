@@ -10,14 +10,6 @@
   :scm {:name "git"
         :url "http://github.com/dm3/clojure.java-time"}
   :dependencies [[org.clojure/clojure "1.11.1" :scope "provided"]]
-  :deploy-repositories [["snapshot" {:url "https://clojars.org/repo"
-                                     :username :env/clojars_user
-                                     :password  :env/clojars_token
-                                     :sign-releases false}]
-                        ["release" {:url "https://clojars.org/repo"
-                                    :username :env/clojars_user
-                                    :password  :env/clojars_token
-                                    :sign-releases false}]]
   :plugins [[lein-codox "0.10.8"]
             [lein-shell "0.5.0"]
             [jonase/eastwood "1.2.3"]]
@@ -28,7 +20,7 @@
                   ["shell" "./bin/-release-readme+changelog.clj"]
                   ["vcs" "commit"]
                   ["vcs" "tag" "--no-sign"]
-                  ["deploy" "release"]
+                  ["deploy" "clojars"]
                   ["change" "version" "leiningen.release/bump-version"]
                   ["vcs" "commit"]
                   ["vcs" "push"]]
