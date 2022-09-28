@@ -1,5 +1,8 @@
 #!/usr/bin/env bb
 (ns -release-readme+changelog
+  "Update README.md and CHANGELOG.md with the current version in project.clj.
+  
+  Usage: ./bin/-release-readme+changelog.clj"
   (:require [clojure.string :as str]))
 
 (defn get-project-version []
