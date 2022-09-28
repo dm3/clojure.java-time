@@ -4,7 +4,7 @@
 
 A Clojure wrapper for Java 8 Date-Time API.
 
-> Note: This library has no relation Clojure's (or Java's) core team.
+> Note: This library has no relation to Clojure's (or Java's) core team.
 > It's naming is legacy and preserved for backwards compatibility reasons.
 
 ## Rationale

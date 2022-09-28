@@ -4,7 +4,7 @@
 <p><a href="https://clojars.org/clojure.java-time"><img src="https://img.shields.io/clojars/v/clojure.java-time.svg" alt="Clojars Project" /></a></p>
 <p>A Clojure wrapper for Java 8 Date-Time API.</p>
 <blockquote>
-<p>Note: This library has no relation Clojure’s (or Java’s) core team. It’s naming is legacy and preserved for backwards compatibility reasons.</p>
+<p>Note: This library has no relation to Clojure’s (or Java’s) core team. It’s naming is legacy and preserved for backwards compatibility reasons.</p>
 </blockquote>
 <h2><a href="#rationale" id="rationale"></a>Rationale</h2>
 <p>Main goals:</p>
@@ -41,13 +41,13 @@
 </ul>
 <p>You can also take a look at a <a href="http://time4j.net/tutorial/appendix.html">comprehensive comparison</a> by the <a href="http://time4j.net/">Time4J</a> authors.</p>
 <h2><a href="#usage" id="usage"></a>Usage</h2>
-<p>Add the following dependency to your <code>deps.edn</code></p>
+<p>Add the following dependency to your <code>deps.edn</code>:</p>
 <pre><code class="language-clj">clojure.java-time/clojure.java-time {:mvn/version "1.0.0"}
 </code></pre>
 <p>or to your <code>project.clj</code> or <code>build.boot</code>:</p>
 <pre><code class="language-clj">[clojure.java-time "1.0.0"]
 </code></pre>
-<p>The <a href="https://dm3.github.io/clojure.java-time/">API</a> of the Clojure.Java-Time consists of one namespace, namely <code>java-time.api</code>.  For the purposes of this guide, we will <code>require</code> the main namespace:</p>
+<p>The <a href="https://dm3.github.io/clojure.java-time">API</a> of the Clojure.Java-Time consists of one namespace, namely <code>java-time.api</code>.  For the purposes of this guide, we will <code>require</code> the main namespace:</p>
 <pre><code class="language-clj">(require '[java-time.api :as jt]
          ;; for REPL experimentation
          'java-time.repl)
