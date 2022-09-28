@@ -1,5 +1,5 @@
 #!/usr/bin/env bb
-(ns release-next-readme+changelog
+(ns -release-readme+changelog
   (:require [clojure.string :as str]))
 
 (defn get-project-version []

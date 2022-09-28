@@ -25,7 +25,7 @@
                   ["vcs" "assert-committed"]
                   ["change" "version" "leiningen.release/bump-version" "release"]
                   ["doc"]
-                  ["shell" "./bin/release-readme+changelog.clj"]
+                  ["shell" "./bin/-release-readme+changelog.clj"]
                   ["vcs" "commit"]
                   ["vcs" "tag" "--no-sign"]
                   ["deploy" "release"]
