@@ -18,10 +18,14 @@
                                     :username :env/clojars_user
                                     :password  :env/clojars_token
                                     :sign-releases false}]]
+  :plugins [[lein-codox "0.10.8"]
+            [lein-shell "0.5.0"]
+            [jonase/eastwood "1.2.3"]]
   :release-tasks [["clean"]
                   ["vcs" "assert-committed"]
                   ["change" "version" "leiningen.release/bump-version" "release"]
                   ["doc"]
+                  ["shell" "./bin/sync-readme-version.clj"]
                   ["vcs" "commit"]
                   ["vcs" "tag" "--no-sign"]
                   ["deploy" "release"]
@@ -34,9 +38,6 @@
                                   [org.clojure/tools.namespace "1.3.0"]
                                   [joda-time/joda-time ~joda-time-version]
                                   [org.threeten/threeten-extra ~threeten-extra-version]]
-                   :plugins [[lein-codox "0.10.8"]
-                             [jonase/eastwood "1.2.3"]]
-                   
                    :source-paths ["dev"]
                    :global-vars {*warn-on-reflection* true}
                    :eastwood {:exclude-namespaces [java-time
