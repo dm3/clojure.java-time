@@ -10,7 +10,24 @@
   :scm {:name "git"
         :url "http://github.com/dm3/clojure.java-time"}
   :dependencies [[org.clojure/clojure "1.11.1" :scope "provided"]]
-  :plugins []
+  :deploy-repositories [["snapshot" {:url "https://clojars.org/repo"
+                                     :username :env/clojars_user
+                                     :password  :env/clojars_token
+                                     :sign-releases false}]
+                        ["release" {:url "https://clojars.org/repo"
+                                    :username :env/clojars_user
+                                    :password  :env/clojars_token
+                                    :sign-releases false}]]
+  :release-tasks [["clean"]
+                  ["vcs" "assert-committed"]
+                  ["change" "version" "leiningen.release/bump-version" "release"]
+                  ["doc"]
+                  ["vcs" "commit"]
+                  ["vcs" "tag" "--no-sign"]
+                  ["deploy" "release"]
+                  ["change" "version" "leiningen.release/bump-version"]
+                  ["vcs" "commit"]
+                  ["vcs" "push"]]
   :profiles {:dev {:dependencies [[criterium "0.4.4"]
                                   [com.taoensso/timbre "5.2.1"]
                                   [com.taoensso/tufte "2.2.0"]
