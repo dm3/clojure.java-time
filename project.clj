@@ -23,14 +23,15 @@
                    :source-paths ["dev"]
                    :global-vars {*warn-on-reflection* true}
                    :eastwood {:exclude-namespaces [java-time
+                                                   java-time.api
                                                    ;;FIXME
-                                                   java-time-test]
+                                                   java-time.api-test]
                               :exclude-linters []}}
              ;; lein doc
              :codox {:injections [(require 'java-time)
                                   (require 'java-time.dev.gen)
                                   (java-time.dev.gen/spit-java-time-ns)]
-                     :codox {:namespaces [java-time java-time.repl]
+                     :codox {:namespaces [java-time java-time.api java-time.repl]
                              :doc-files ["README.md" "CHANGELOG.md"]
                              :metadata {:doc/format :markdown}
                              :output-path "docs"

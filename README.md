@@ -4,6 +4,9 @@
 
 A Clojure wrapper for Java 8 Date-Time API.
 
+> Note: This library has no relation Clojure's (or Java's) core team.
+> It's naming is legacy and preserved for backwards compatibility reasons.
+
 ## Rationale
 
 Main goals:
@@ -38,7 +41,7 @@ is purely on the merits of a broader feature set.
 
 ## Documentation
 
-* [API](http://dm3.github.io/clojure.java-time/)
+* [API](https://dm3.github.io/clojure.java-time/)
 * [![cljdoc badge](https://cljdoc.org/badge/clojure.java-time/clojure.java-time)](https://cljdoc.org/d/clojure.java-time/clojure.java-time/CURRENT)
 
 ## What's different in Java Time API?
@@ -50,9 +53,9 @@ complicated than it has to be. Also, a few concepts have faulty designs which
 lead to hard to fix bugs and misuse. You can see the birds-eye view of changes
 and some of the rationale on the author's (Stephen Colebourne) blog:
 
-* [what's wrong with Joda-Time](http://blog.joda.org/2009/11/why-jsr-310-isn-joda-time_4941.html),
-* [when you should use Java-Time](http://blog.joda.org/2014/07/threeten-backport-vs-joda-time.html)
-* [what's different in Java-Time](http://blog.joda.org/2014/11/converting-from-joda-time-to-javatime.html).
+* [what's wrong with Joda-Time](https://blog.joda.org/2009/11/why-jsr-310-isn-joda-time_4941.html),
+* [when you should use Java-Time](https://blog.joda.org/2014/07/threeten-backport-vs-joda-time.html)
+* [what's different in Java-Time](https://blog.joda.org/2014/11/converting-from-joda-time-to-javatime.html).
 
 You can also take a look at a [comprehensive comparison](http://time4j.net/tutorial/appendix.html) by the
 [Time4J](http://time4j.net/) authors.
@@ -61,28 +64,28 @@ You can also take a look at a [comprehensive comparison](http://time4j.net/tutor
 
 Add the following dependency to your `deps.edn`
 ```clj
-clojure.java-time/clojure.java-time {:mvn/version "0.3.3"}
+clojure.java-time/clojure.java-time {:mvn/version "1.0.0"}
 ```
 
 or to your `project.clj` or `build.boot`:
 
 ```clj
-[clojure.java-time "0.3.3"]
+[clojure.java-time "1.0.0"]
 ```
 
 The [API](https://dm3.github.io/clojure.java-time/) of the Clojure.Java-Time
-consists of one namespace, namely `java-time`.  For the purposes of this guide,
+consists of one namespace, namely `java-time.api`.  For the purposes of this guide,
 we will `require` the main namespace:
 
 ```clj
-(require '[java-time :as jt]
+(require '[java-time.api :as jt]
          ;; for REPL experimentation
          'java-time.repl)
 ```
 
 ### Concept run-through
 
-Java Time API may seem daunting. Instead of a single `java.util.Date` you have
+The Java Time API may seem daunting. Instead of a single `java.util.Date` you have
 a `ZonedDateTime`, `OffsetDateTime`, `LocalDateTime`, `Instant`, and other
 types. You would be well served by reading the official documentation for the
 [Java Time API](https://docs.oracle.com/javase/tutorial/datetime/iso/index.html), 
@@ -96,11 +99,11 @@ are used to represent human-based dates/times. They are a good fit for represent
 the time of various events:
 
 * `LocalDate` - birthday, holiday
-    * see [`jt/local-date`](http://dm3.github.io/clojure.java-time/java-time.html#var-local-date)
+    * see [`jt/local-date`](https://dm3.github.io/clojure.java-time/java-time.api.html#var-local-date)
 * `LocalTime` - bus schedule, opening time of a shop
-    * see [`jt/local-time`](http://dm3.github.io/clojure.java-time/java-time.html#var-local-time)
+    * see [`jt/local-time`](https://dm3.github.io/clojure.java-time/java-time.api.html#var-local-time)
 * `LocalDateTime` - start of a competition
-    * see [`jt/local-date-time`](http://dm3.github.io/clojure.java-time/java-time.html#var-local-date-time)
+    * see [`jt/local-date-time`](https://dm3.github.io/clojure.java-time/java-time.api.html#var-local-date-time)
 
 Example usage:
 
@@ -119,9 +122,9 @@ Example usage:
 
 There are two types which deal with zones: 
 * `OffsetDateTime`
-  * see [`jt/offset-date-time`](https://dm3.github.io/clojure.java-time/java-time.html#var-offset-date-time)
+  * see [`jt/offset-date-time`](https://dm3.github.io/clojure.java-time/java-time.api.html#var-offset-date-time)
 * `ZonedDateTime`
-  * see [`jt/zoned-date-time`](https://dm3.github.io/clojure.java-time/java-time.html#var-zoned-date-time)
+  * see [`jt/zoned-date-time`](https://dm3.github.io/clojure.java-time/java-time.api.html#var-zoned-date-time)
 
 They do pretty much what you would expect from their name.
 You can think of the `Offset` time as a more concrete version of the `Zoned`
@@ -141,8 +144,8 @@ year due to DST or governmental regulations.
 
 Offset/Zone times only take the offset/zone as the last arguments for the
 maximum arity constructor. You can influence the zone/offset by using the
-[`jt/with-zone`](https://dm3.github.io/clojure.java-time/java-time.html#var-with-zone)
-or [`jt/with-offset`](https://dm3.github.io/clojure.java-time/java-time.html#var-with-offset) functions, like so:
+[`jt/with-zone`](https://dm3.github.io/clojure.java-time/java-time.api.html#var-with-zone)
+or [`jt/with-offset`](https://dm3.github.io/clojure.java-time/java-time.api.html#var-with-offset) functions, like so:
 
 ```clj
 (jt/with-zone (jt/zoned-date-time 2015 10) "UTC")
