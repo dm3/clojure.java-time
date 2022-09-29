@@ -8,11 +8,11 @@
 
 (defn ^java.util.Date java-date
   "Creates a `java.util.Date` out of any combination of arguments valid for
-  [[java-time/instant]] or the Instant itself.
+  [[instant]] or the Instant itself.
 
   A `java.util.Date` represents an instant in time. It's a direct analog of the
   `java.time.Instant` type introduced in the JSR-310. Please consider using the
-  `java.time.Instant` (through [[java-time/instant]]) directly."
+  `java.time.Instant` (through [[instant]]) directly."
   ([] (java.util.Date/from (jt.t/instant)))
   ([a] (java.util.Date/from (jt.t/instant a)))
   ([a b] (java.util.Date/from (jt.t/instant a b))))
@@ -43,7 +43,7 @@
 
 (defsqldate java.sql.Date sql-date jt.l/local-date 3
   "Creates a `java.sql.Date` out of any combination of arguments valid for
-  [[java-time/local-date]]` or the `LocalDate` itself.
+  [[local-date]] or the `LocalDate` itself.
 
   Please consider using the JSR-310 Java Time types instead of `java.sql.Date`
   if your drivers support them.
@@ -54,7 +54,7 @@
 
 (defsqldate java.sql.Timestamp sql-timestamp jt.l/local-date-time 7
   "Creates a `java.sql.Timestamp` in the local time zone out of any combination
-  of arguments valid for [[java-time/local-date-time]] or the `LocalDateTime`
+  of arguments valid for [[local-date-time]] or the `LocalDateTime`
   itself.
 
   Does not support `Timestamp` construction from an `Instant` or a long millis value---please use
@@ -85,7 +85,7 @@
 (jt.u/when-class "java.sql.Time"
   (defsqldate java.sql.Time sql-time jt.l/local-time 3
     "Creates a `java.sql.Time` out of any combination of arguments valid for
-    [[java-time/local-time]] (except the nanos constructor) or the `LocalTime`
+    [[local-time]] (except the nanos constructor) or the `LocalTime`
     itself.
 
     Please consider using the JSR-310 Java Time types instead of `java.sql.Time`
