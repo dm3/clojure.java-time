@@ -74,5 +74,8 @@
                                    :repositories [["sonatype-oss-public" {:url "https://oss.sonatype.org/content/groups/public"}]]}}
   :aliases {"all" ["with-profile" ~(str/join ":" (mapcat (juxt identity #(str % "-three-ten-joda")) clojure-versions))]
             "warm-deps" ["all" "deps"]
-            "doc" ["with-profile" "-user,+codox" "codox"]
+            "doc" ["do"
+                   ["with-profile" "-user,+codox" "codox"]
+                   ;; regenerating api namespaces seems to happen after codox generates
+                   ["with-profile" "-user,+codox" "codox"]]
             "test-all" ["all" "test"]})
