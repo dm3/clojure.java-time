@@ -215,7 +215,8 @@
     {:superseded-by "java-time.api"
      :deprecated "1.1.0"
      :doc
-     "This namespace has been deprecated due to https://github.com/dm3/clojure.java-time/issues/91
+     "This namespace has been deprecated due to [#91](https://github.com/dm3/clojure.java-time/issues/91).
+     Please migrate to [[java-time.api]]
 
      This namespace will continue to exist and be updated. For
      maximum JVM compatibility, please migrate to `java-time.api`,
@@ -225,8 +226,8 @@
      
      Migration steps:
 
-     1. rename all references to `java-time` to `java-time.api`.
-        eg., (:require [java-time :as jt]) => (:require [java-time.api :as jt])"}))
+     1. rename all references from `java-time` to [[java-time.api]].
+        eg., `(:require [java-time :as jt])` => `(:require [java-time.api :as jt])`"}))
 (def java-time-api-nsym
   (with-meta
     'java-time.api
