@@ -91,7 +91,7 @@
                         (import-macro sym)
                         (import-fn sym))]
              (if (-> sym meta ::no-babashka)
-               (reader-conditional (list :bb nil :default form) false)
+               (reader-conditional (list :bb [] :default form) false)
                form)))
          syms)))
 
@@ -181,7 +181,7 @@
           (:refer-clojure :exclude ~'(zero? range iterate max min contains? format abs))
           (:require ~(-> '[java-time core properties temporal amount zone single-field local chrono
                            convert sugar seqs adjuster interval format joda clock pre-java8]
-                         (conj (reader-conditional (list :bb nil :default ['mock]) true)))))]
+                         (conj (reader-conditional (list :bb [] :default ['mock]) true)))))]
       (apply import-vars (:macros impl-info))
       (apply import-vars (:fns impl-info))
       
