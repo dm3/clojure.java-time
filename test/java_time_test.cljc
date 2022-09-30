@@ -3,12 +3,15 @@
   alias j to point to java-time here."
   (:require [java-time :as j]))
 
+;; prefer over ()
 (with-open [rdr (-> (slurp "test/java_time/api_test.cljc")
-                  java.io.StringReader.
-                  clojure.lang.LineNumberingPushbackReader.)]
+                    java.io.StringReader.
+                    clojure.lang.LineNumberingPushbackReader.)]
   (let [opts {:read-cond :allow
               :eof (Object.)
-              :features (-> #{:clj} #?(:bb (conj :bb)))}
+              :features (-> #{:clj} #?(:bb (conj :bb)
+                                       ;for linter
+                                       :default identity))}
         ns-form (read opts rdr) ;;rm ns form
         _ (assert (= '(ns java-time.api-test
                         (:require [java-time.api :as j]))
