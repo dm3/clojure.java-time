@@ -22,9 +22,11 @@
                     'java-time.clock
                     'java-time.pre-java8
                     'java-time
+                    'java-time.api
                     ])
 
 (def test-nsyms ['java-time-test
+                 'java-time.api-test
                  'java-time.graph-test])
 
 (some->> (seq (concat require-nsyms test-nsyms))
