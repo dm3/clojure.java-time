@@ -578,6 +578,7 @@
       (is (j/not-before? apr-1 jan-1))
       (is (not (j/not-before? jan-1 apr-1))))))
 
+#?(:bb nil :default
 (deftest mock-clock-test
   (testing "constructors"
     (is (= (j/mock-clock)
@@ -625,7 +626,7 @@
 
         (testing "into past"
           (j/set-clock! clock 0)
-          (is (= 0 (j/value clock))))))))
+          (is (= 0 (j/value clock)))))))))
 
 (deftest properties-test
   (testing "units"

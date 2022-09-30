@@ -60,7 +60,9 @@
     (or (try (first (f args))
              (catch Exception e
                (throw
-                 (ex-info "Conversion failed"
+                 (ex-info (str "Conversion failed: "
+                               "Path: " (pr-str path)
+                               )
                           {:path (:path path), :arguments args, :to tp}
                           e))))
         (throw (ex-info

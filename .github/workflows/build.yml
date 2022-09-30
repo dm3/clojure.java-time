@@ -88,20 +88,21 @@ jobs:
           lein: ${{ env.LEIN_VERSION }}
       - name: Run JVM tests
         run: lein test-all
-#  test-bb:
-#    needs: setup
-#    runs-on: ubuntu-latest
-#    steps:
-#      - name: Checkout
-#        uses: actions/checkout@v2
-#      - name: Prepare java
-#        uses: actions/setup-java@v2
-#        with:
-#          distribution: 'temurin'
-#          java-version: 17
-#      - name: Setup Babashka
-#        uses: turtlequeue/setup-babashka@v1.3.0
-#        with:
-#          babashka-version: 0.8.156
-#      - name: Run Babashka tests
-#        run: ./bin/bb-test-runner.sh
+  test-bb:
+    needs: setup
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Prepare java
+        uses: actions/setup-java@v2
+        with:
+          distribution: 'temurin'
+          java-version: 17
+      - name: Setup Babashka
+        uses: turtlequeue/setup-babashka@v1.5.0
+        with:
+          babashka-version: 0.10.164-SNAPSHOT
+          babashka-url: "https://output.circle-artifacts.com/output/job/e752ca69-381f-4087-83c1-0686444fdf82/artifacts/0/release/babashka-0.10.164-SNAPSHOT-linux-amd64.tar.gz"
+      - name: Run Babashka tests
+        run: ./bin/bb-test-runner.sh

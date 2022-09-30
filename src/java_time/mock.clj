@@ -25,7 +25,9 @@
 
   You can move the clock back via advancing by a negative temporal amount.
 
-  Creates a clock at epoch in the default time zone when called without arguments."
+  Creates a clock at epoch in the default time zone when called without arguments.
+  
+  Not available in babashka."
   ([] (mock-clock 0))
   ([instant] (mock-clock instant (zone/zone-id)))
   ([instant zone]
@@ -55,14 +57,18 @@
 (defn advance-clock!
   "Advances the `clock` by the given time `amount`.
 
-  This mutates the mock clock."
+  This mutates the mock clock.
+  
+  Not available in babashka."
   [^IMockClock clock amount]
   (.advanceClock clock amount))
 
 (defn set-clock!
   "Sets the `clock` to the given `time`.
 
-  This mutates the mock clock."
+  This mutates the mock clock.
+
+  Not available in babashka."
   [^Clock clock time]
   (let [current (.instant clock)]
     (->> (core/time-between :millis current (temporal/instant time))
