@@ -3,19 +3,23 @@
   alias j to point to java-time here."
   (:require [java-time :as j]))
 
-(with-open [rdr (-> (slurp "test/java_time/api_test.clj")
+(with-open [rdr (-> (slurp "test/java_time/api_test.cljc")
                   java.io.StringReader.
                   clojure.lang.LineNumberingPushbackReader.)]
-  (let [ns-form (read rdr) ;;rm ns form
+  (let [opts {:read-cond :allow
+              :eof (Object.)
+              :features (-> #{:clj} #?(:bb (conj :bb)))}
+        ns-form (read opts rdr) ;;rm ns form
         _ (assert (= '(ns java-time.api-test
                         (:require [java-time.api :as j]))
                      (remove string? ns-form))
-                  (pr-str ns-form))
-        s (str (slurp rdr)
-               "\n(assert (= *ns* (the-ns 'java-time-test)) *ns*)")] 
-    #_
-    (println "DEBUG\n" s)
-    (load-string s)))
+                  (pr-str ns-form))] 
+    (loop []
+      (let [form (read opts rdr)]
+        (when-not (identical? (:eof opts) form)
+          ;(println "DEBUG\n" form)
+          (eval form)
+          (recur))))))
 (assert (= *ns* (the-ns 'java-time-test)) *ns*)
 (assert (= #'java-time-test/constructors-test
            (resolve 'constructors-test))
