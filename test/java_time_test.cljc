@@ -3,7 +3,7 @@
   alias j to point to java-time here."
   (:require [java-time :as j]))
 
-;; prefer over ()
+;; prefer over (load "common") to not compromise repl experience in java-time.api-test
 (with-open [rdr (-> (slurp "test/java_time/api_test.cljc")
                     java.io.StringReader.
                     clojure.lang.LineNumberingPushbackReader.)]
