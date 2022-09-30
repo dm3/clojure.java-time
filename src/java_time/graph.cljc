@@ -2,7 +2,7 @@
   (:require [clojure.set :as sets]
             [clojure.string :as string]
             #?@(:bb []
-                :default [java-time.potemkin.util :as u]))
+                :default [[java-time.potemkin.util :as u]]))
   #?@(:bb []
       :default [(:import [java.util PriorityQueue])]))
 

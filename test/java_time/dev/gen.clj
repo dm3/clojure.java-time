@@ -60,6 +60,8 @@
                                 (list* 'list (list 'quote sym) argv)))))
                     arglists))))))
 
+(def special-string-prefix ":java-time.dev.gen/special-string ")
+
 (defn import-vars
   "Imports a list of vars from other namespaces."
   [& syms]
@@ -75,7 +77,7 @@
                                      (when-let [n (namespace %)]
                                        (str "." n)))
                                 (name %))
-                              (meta %))))
+                              (merge (meta (first x)) (meta %)))))
                     [x]))
         syms (mapcat unravel syms)]
     (map (fn [sym]
@@ -84,10 +86,13 @@
                       (do (require (-> sym namespace symbol))
                           (resolve sym)))
                  _ (assert vr (str sym " is unresolvable"))
-                 m (meta vr)]
-             (if (:macro m)
-               (import-macro sym)
-               (import-fn sym))))
+                 m (meta vr)
+                 form (if (:macro m)
+                        (import-macro sym)
+                        (import-fn sym))]
+             (if (-> sym meta ::no-babashka)
+               (reader-conditional (list :bb nil :default form) false)
+               form)))
          syms)))
 
 (def impl-info
@@ -136,7 +141,8 @@
            zone-id? zoned-date-time? offset-date-time? offset-time?
            with-zone-same-instant with-offset with-offset-same-instant]
 
-         '[java-time.mock mock-clock advance-clock! set-clock!]
+         '[^::no-babashka java-time.mock
+           mock-clock advance-clock! set-clock!]
 
          '[java-time.convert
            as-map convert-amount to-java-date to-sql-date to-sql-timestamp
@@ -180,16 +186,17 @@
       
       [(list* 'java-time.util/when-class "org.threeten.extra.Temporals" (apply import-vars (:threeten-extra-fns impl-info)))])))
 
-(defn print-form [form]
-  (with-bindings
-    (cond-> {#'*print-meta* true
-             #'*print-length* nil
-             #'*print-level* nil}
-      (resolve '*print-namespace-maps*)
-      (assoc (resolve '*print-namespace-maps*) false))
-    (cond
-      (string? form) (println form)
-      :else (println (pr-str (walk/postwalk
+(defn print-form-str [form]
+  (with-out-str
+    (with-bindings
+      (cond-> {#'*print-meta* true
+               #'*print-length* nil
+               #'*print-level* nil}
+        (resolve '*print-namespace-maps*)
+        (assoc (resolve '*print-namespace-maps*) false))
+      (cond
+        (string? form) (print form)
+        :else (print (pr-str (walk/postwalk
                                (fn [v]
                                  (if (meta v)
                                    (if (symbol? v)
@@ -203,8 +210,10 @@
                                                        (some? (:arglists %)) (assoc :arglists (list 'quote (doall (map normalize-argv (:arglists %))))))))
                                      (with-meta v nil))
                                    v))
-                               form)))))
-  nil)
+                               form)))))))
+
+(defn print-form [form]
+  (println (print-form-str form)))
 
 (defn print-java-time-ns [nsym]
   (run! print-form (gen-java-time-ns-forms nsym)))
@@ -234,8 +243,8 @@
     {:supercedes "java-time"}))
 
 (def gen-source->nsym
-  {"src/java_time.clj" java-time-nsym
-   "src/java_time/api.clj" java-time-api-nsym})
+  {"src/java_time.cljc" java-time-nsym
+   "src/java_time/api.cljc" java-time-api-nsym})
 
 (defn spit-java-time-ns []
   (doseq [[source nsym] gen-source->nsym]
