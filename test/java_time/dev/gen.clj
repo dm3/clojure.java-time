@@ -36,7 +36,7 @@
     (when (:macro m)
       (throw (IllegalArgumentException.
                (str "Calling import-fn on a macro: " sym))))
-    (cond->> (list 'def (with-meta n forward-meta) sym)
+    (cond->> (list 'def (with-meta n forward-meta) (with-meta sym nil))
       when-class (list 'java-time.util/when-class when-class))))
 
 (defn import-macro [sym]
@@ -196,21 +196,26 @@
         (assoc (resolve '*print-namespace-maps*) false))
       (cond
         (string? form) (print form)
-        :else (print (pr-str (walk/postwalk
-                               (fn [v]
-                                 (if (meta v)
-                                   (if (symbol? v)
-                                     (vary-meta v #(not-empty
-                                                     (cond-> (sorted-map)
-                                                       (some? (:tag %)) (assoc :tag (:tag %))
-                                                       (some? (:doc %)) (assoc :doc (:doc %))
-                                                       ((some-fn true? string?) (:deprecated %)) (assoc :deprecated (:deprecated %))
-                                                       (string? (:superseded-by %)) (assoc :superseded-by (:superseded-by %))
-                                                       (string? (:supercedes %)) (assoc :supercedes (:supercedes %))
-                                                       (some? (:arglists %)) (assoc :arglists (list 'quote (doall (map normalize-argv (:arglists %))))))))
-                                     (with-meta v nil))
-                                   v))
-                               form)))))))
+        :else (let [massage (fn massage [form]
+                              (walk/postwalk
+                                (fn [v]
+                                  (if (reader-conditional? v)
+                                    (reader-conditional (massage (:form v))
+                                                        (:splicing? v))
+                                    (if (meta v)
+                                      (if (symbol? v)
+                                        (vary-meta v #(not-empty
+                                                        (cond-> (sorted-map)
+                                                          (some? (:tag %)) (assoc :tag (:tag %))
+                                                          (some? (:doc %)) (assoc :doc (:doc %))
+                                                          ((some-fn true? string?) (:deprecated %)) (assoc :deprecated (:deprecated %))
+                                                          (string? (:superseded-by %)) (assoc :superseded-by (:superseded-by %))
+                                                          (string? (:supercedes %)) (assoc :supercedes (:supercedes %))
+                                                          (some? (:arglists %)) (assoc :arglists (list 'quote (doall (map normalize-argv (:arglists %))))))))
+                                        (with-meta v nil))
+                                      v)))
+                                form))]
+                (print (pr-str (massage form))))))))
 
 (defn print-form [form]
   (println (print-form-str form)))
