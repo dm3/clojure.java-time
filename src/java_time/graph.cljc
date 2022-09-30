@@ -1,10 +1,7 @@
 (ns java-time.graph
-  (:require [clojure.set :as sets]
-            [clojure.string :as string]
-            #?@(:bb []
-                :default [[java-time.potemkin.util :as u]]))
   #?@(:bb []
-      :default [(:import [java.util PriorityQueue])]))
+      :default [(:require [java-time.potemkin.util :as u])
+                (:import [java.util PriorityQueue])]))
 
 ;; Concept heavily inspired by Zach Tellman's ByteStreams
 ;; https://github.com/ztellman/byte-streams/blob/master/src/byte_streams/graph.clj
@@ -101,9 +98,7 @@
   (#?(:bb memoize :default u/fast-memoize)
     (fn [n]
       (let [rng (range n)]
-        (into [] (comp (map inc)
-                       (map #(combinations % rng))
-                       cat
+        (into [] (comp (mapcat #(combinations (inc %) rng))
                        (filter #(apply = 1 (map - (rest %) %))))
               rng)))))
 
@@ -170,6 +165,9 @@
   (ConversionGraph.
     (zipmap (map inc (range max-arity)) (repeat {})) #{}))
 
+(defn compare-conversion-paths [p1 p2]
+  (compare ))
+
 (defrecord ConversionPath [path fns visited? cost]
   #?@(:bb [] :default [
   Comparable
@@ -199,7 +197,6 @@
             add #?(:bb #(swap! q (fn [prev]
                                    (sort-by (fn [^ConversionPath p]
                                               [(.cost p) (count (.path p))])
-                                            (fn [a b] (compare b a))
                                             (conj prev %))))
                    :default #(.add q %))
             poll #?(:bb #(-> (swap-vals! q next) ffirst)
@@ -307,7 +304,8 @@
         (let [more-conversions (sub-conversions g next-src)
               [new-conversions g'] (with-conversions g more-conversions)
               accepted-conversions (filter (fn [[conv-src _ _ cost]]
-                                             (>= max-cost cost)) new-conversions)]
+                                             (>= max-cost cost))
+                                           new-conversions)]
           (recur g' (reduce (fn [q [_ dst _ _]] (conj q [dst (inc step)]))
                             (pop q) accepted-conversions))))
       g)))
