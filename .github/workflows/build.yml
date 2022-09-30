@@ -100,8 +100,9 @@ jobs:
           distribution: 'temurin'
           java-version: 17
       - name: Setup Babashka
-        uses: turtlequeue/setup-babashka@v1.3.0
+        uses: turtlequeue/setup-babashka@v1.5.0
         with:
-          babashka-version: 0.8.156
+          babashka-version: 0.10.164-SNAPSHOT
+          babashka-url: "https://output.circle-artifacts.com/output/job/b80e1633-dce9-4ec9-bdce-592d3fbdfcbe/artifacts/0/release/babashka-0.10.164-SNAPSHOT-macos-amd64.tar.gz"
       - name: Run Babashka tests
         run: ./bin/bb-test-runner.sh
