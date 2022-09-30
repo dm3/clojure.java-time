@@ -165,21 +165,20 @@
   (ConversionGraph.
     (zipmap (map inc (range max-arity)) (repeat {})) #{}))
 
-(defn compare-conversion-paths [p1 p2]
-  (compare ))
+(declare conversion-path-comparator)
 
 (defrecord ConversionPath [path fns visited? cost]
   #?@(:bb [] :default [
   Comparable
-  (compareTo [_ x]
-    (let [cmp (compare cost (.cost ^ConversionPath x))]
-      (if (zero? cmp)
-        (compare (count path) (count (.path ^ConversionPath x)))
-        cmp)))
+  (compareTo [this x] (conversion-path-comparator this x))
   ])
   Object
   (toString [_]
     (str path cost)))
+
+(defn conversion-path-comparator [^ConversionPath p1 ^ConversionPath p2]
+  (compare [(.cost p1) (count (.path p1))]
+           [(.cost p2) (count (.path p2))]))
 
 (defn- conj-path [^ConversionPath p src dst ^Conversion c]
   (ConversionPath.
@@ -195,8 +194,8 @@
       (let [q #?(:bb (atom ())
                  :default (PriorityQueue.))
             add #?(:bb #(swap! q (fn [prev]
-                                   (sort-by (fn [^ConversionPath p]
-                                              [(.cost p) (count (.path p))])
+                                   (sort-by identity
+                                            conversion-path-comparator
                                             (conj prev %))))
                    :default #(.add q %))
             poll #?(:bb #(-> (swap-vals! q next) ffirst)
