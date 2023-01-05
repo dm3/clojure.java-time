@@ -25,6 +25,7 @@
     (= 1 (count arities)) first))
 
 (defn import-fn [sym]
+  {:pre [(namespace sym)]}
   (let [vr (find-var sym)
         m (meta vr)
         n (:name m)
@@ -32,11 +33,18 @@
         protocol (:protocol m)
         when-class (-> sym meta :when-class)
         forward-meta (into (sorted-map) (select-keys m [:tag :arglists :doc :deprecated]))
-        _ (assert (not= n impl-local-sym))]
-    (when (:macro m)
-      (throw (IllegalArgumentException.
-               (str "Calling import-fn on a macro: " sym))))
-    (cond->> (list 'def (with-meta n forward-meta) sym)
+        _ (assert (not= n impl-local-sym))
+        _ (when (:macro m)
+            (throw (IllegalArgumentException.
+                     (str "Calling import-fn on a macro: " sym))))
+        form (if protocol
+               (list* 'defn (with-meta n (dissoc forward-meta :arglists))
+                      (map (fn [argv]
+                             {:pre [(not-any? #{'&} argv)]}
+                             (list argv (list* sym argv)))
+                           arglists))
+               (list 'def (with-meta n forward-meta) sym))]
+    (cond->> form
       when-class (list 'java-time.util/when-class when-class))))
 
 (defn import-macro [sym]
