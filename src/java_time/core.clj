@@ -4,86 +4,86 @@
            [java.time.chrono Chronology]))
 
 (defprotocol Amount
-  (zero? [a]
+  (^:redef zero? [a]
     "True if the amount is zero")
-  (negative? [a]
+  (^:redef negative? [a]
     "True if the amount is negative")
-  (negate [a]
+  (^:redef negate [a]
     "Negates a temporal amount:
 
       (negate (negate x)) == x")
-  (abs [a]
+  (^:redef abs [a]
     "Returns the absolute value of a temporal amount:
 
       (abs (negate x)) == (abs x)"))
 
 (defprotocol Supporting
-  (supports? [o p]
+  (^:redef supports? [o p]
     "True if the `o` entity supports the `p` property"))
 
 (defprotocol HasChronology
-  (^java.time.chrono.Chronology chronology [o]
+  (^:redef ^java.time.chrono.Chronology chronology [o]
     "The `Chronology` of the entity"))
 
 (defprotocol HasFields
-  (fields [o]
+  (^:redef fields [o]
     "Fields present in this temporal entity")
-  (field* [o k]
+  (^:redef field* [o k]
     "Internal use"))
 
 (defprotocol HasUnits
-  (units [o]
+  (^:redef units [o]
     "Units present in this temporal entity.")
-  (unit* [o k]
+  (^:redef unit* [o k]
     "Internal use"))
 
 (defprotocol HasProperties
-  (properties [o]
+  (^:redef properties [o]
     "Map of properties present in this temporal entity")
-  (property [o k]
+  (^:redef property [o k]
     "Property of this temporal entity under key `k`"))
 
 (defprotocol As
-  (as* [o k]
+  (^:redef as* [o k]
     "Value of property/unit identified by key/object `k` of the temporal
     entity `o`"))
 
 (defprotocol ReadableProperty
-  (value [p]
+  (^:redef value [p]
     "Value of the property"))
 
 (defprotocol ReadableRangeProperty
-  (range [p]
+  (^:redef range [p]
     "Range of values for this property")
-  (min-value [p]
+  (^:redef min-value [p]
     "Minimum value of this property")
-  (largest-min-value [p]
+  (^:redef largest-min-value [p]
     "Largest minimum value of this property")
-  (smallest-max-value [p]
+  (^:redef smallest-max-value [p]
     "Smallest maximum value of this property, e.g. 28th of February for months")
-  (max-value [p]
+  (^:redef max-value [p]
     "Maximum value of this property, e.g. 29th of February for months"))
 
 (defprotocol WritableProperty
-  (with-value [p v]
+  (^:redef with-value [p v]
     "Underlying temporal entity with the value of this property set to `v`"))
 
 (defprotocol WritableRangeProperty
-  (with-min-value [p]
+  (^:redef with-min-value [p]
     "Underlying temporal entity with the value set to the minimum available for
     this property")
-  (with-largest-min-value [p]
+  (^:redef with-largest-min-value [p]
     "Underlying temporal entity with the value set to the largest minimum
     available for this property")
-  (with-smallest-max-value [p]
+  (^:redef with-smallest-max-value [p]
     "Underlying temporal entity with the value set to the smallest maximum
     available for this property")
-  (with-max-value [p]
+  (^:redef with-max-value [p]
     "Underlying temporal entity with the value set to the maximum
     available for this property"))
 
 (defprotocol KnowsTimeBetween
-  (time-between [o e u]
+  (^:redef time-between [o e u]
     "Time between temporal entities `o` and `e` in unit `u`.
 
     ```
@@ -95,34 +95,34 @@
     ```"))
 
 (defprotocol KnowsIfLeap
-  (leap? [o]
+  (^:redef leap? [o]
     "True if the year of this entity is a leap year."))
 
 (defprotocol Truncatable
-  (truncate-to [o u]
+  (^:redef truncate-to [o u]
     "Truncates this entity to the specified time unit. Only works for units that
     divide into the length of standard day without remainder (up to `:days`)."))
 
 (defprotocol HasZone
-  (with-zone [o z]
+  (^:redef with-zone [o z]
     "Returns this temporal entity with the specified `ZoneId`"))
 
 (defprotocol Plusable
   "Internal"
-  (seq-plus [o os]))
+  (^:redef seq-plus [o os]))
 
 (defprotocol Minusable
   "Internal"
-  (seq-minus [o os]))
+  (^:redef seq-minus [o os]))
 
 (defprotocol Multipliable
-  (multiply-by [o v]
+  (^:redef multiply-by [o v]
     "Entity `o` multiplied by the value `v`"))
 
 (defprotocol Ordered
-  (single-before? [a b]
+  (^:redef single-before? [a b]
     "Internal use")
-  (single-after? [a b]
+  (^:redef single-after? [a b]
     "Internal use"))
 
 (defn as
