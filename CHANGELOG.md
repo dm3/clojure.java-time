@@ -2,6 +2,8 @@
 
 ## NEXT
 
+## 1.2.0
+
 - [#95](https://github.com/dm3/clojure.java-time/issues/95) work around [CLJ-1796](https://clojure.atlassian.net/browse/CLJ-1796)
 
 ## 1.1.0
