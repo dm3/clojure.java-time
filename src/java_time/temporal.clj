@@ -135,7 +135,7 @@
 ;;;;; FACTORY
 
 (defprotocol PropertyFactory
-  (^:redef mk-property [factory entity prop-key prop-obj]))
+  (mk-property [factory entity prop-key prop-obj]))
 
 (def default-field-property-factory
   (reify PropertyFactory

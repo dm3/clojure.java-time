@@ -2,6 +2,8 @@
 
 ## NEXT
 
+- remove `:redef` on protocol methods, they are never direct-linked: https://ask.clojure.org/index.php/10967/are-protocol-methods-guaranteed-to-not-be-directly-linked?show=10990#a10990
+
 ## 1.2.0
 
 - [#95](https://github.com/dm3/clojure.java-time/issues/95) work around [CLJ-1796](https://clojure.atlassian.net/browse/CLJ-1796)

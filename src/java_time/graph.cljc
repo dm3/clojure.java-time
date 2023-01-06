@@ -77,11 +77,11 @@
                          true))))))))))
 
 (defprotocol IConversionGraph
-  (^:redef get-conversion [_ src dst])
-  (^:redef assoc-conversion [_ src dst f cost])
-  (^:redef equivalent-targets [_ dst])
-  (^:redef possible-sources [_])
-  (^:redef possible-conversions [_ src]))
+  (get-conversion [_ src dst])
+  (assoc-conversion [_ src dst f cost])
+  (equivalent-targets [_ dst])
+  (possible-sources [_])
+  (possible-conversions [_ src]))
 
 (defn- expand [[a b]]
   (when-some [[bf & br] (seq b)] 

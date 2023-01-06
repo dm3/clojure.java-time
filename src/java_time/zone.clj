@@ -316,7 +316,7 @@
       (.toZonedDateTime cal))))
 
 (defprotocol HasOffset
-  (^:redef with-offset [o offset]
+  (with-offset [o offset]
     "Sets the offset to the specified value ensuring that the local time stays
     the same.
 
@@ -324,7 +324,7 @@
       => #<java.time.OffsetTime 10:30+02:00>
       (with-offset *1 +3)
       => #<java.time.OffsetTime 10:30+03:00>")
-  (^:redef with-offset-same-instant [o offset]
+  (with-offset-same-instant [o offset]
     "Sets the offset to the specified value ensuring that the result has the same instant, e.g.:
 
       (offset-time 10 30 0 0 +2)

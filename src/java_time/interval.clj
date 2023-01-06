@@ -7,11 +7,11 @@
   (:import [java.time Instant Duration]))
 
 (defprotocol ^:private AnyInterval
-  (^:redef seq-move-start-by [i os]
+  (seq-move-start-by [i os]
     "Use `move-start-by` with vararags")
-  (^:redef seq-move-end-by [i os]
+  (seq-move-end-by [i os]
     "Use `move-end-by` with vararags")
-  (^:redef move-start-to [i new-start]
+  (move-start-to [i new-start]
    "Moves the start instant of the interval to the given instant (or something
    convertible to an instant):
 
@@ -26,7 +26,7 @@
    (move-start-to (interval 0 10000) (millis 15000))
    => DateTimeException...
    ```")
-  (^:redef move-end-to [i new-end]
+  (move-end-to [i new-end]
    "Moves the end of the interval to the given instant (or something
    convertible to an instant):
 
@@ -41,13 +41,13 @@
    (move-end-to (interval 0 10000) (millis -1))
    => DateTimeException...
    ```")
-  (^:redef start [i] "Gets the start instant of the interval")
-  (^:redef end [i] "Gets the end instant of the interval")
-  (^:redef contains? [i o] "True if the interval contains the given instant or interval")
-  (^:redef overlaps? [i oi] "True if this interval overlaps the other one")
-  (^:redef abuts? [i oi] "True if this interval abut with the other one")
-  (^:redef overlap [i oi] "Gets the overlap between this interval and the other one or `nil`")
-  (^:redef gap [i oi] "Gets the gap between this interval and the other one or `nil`"))
+  (start [i] "Gets the start instant of the interval")
+  (end [i] "Gets the end instant of the interval")
+  (contains? [i o] "True if the interval contains the given instant or interval")
+  (overlaps? [i oi] "True if this interval overlaps the other one")
+  (abuts? [i oi] "True if this interval abut with the other one")
+  (overlap [i oi] "Gets the overlap between this interval and the other one or `nil`")
+  (gap [i oi] "Gets the gap between this interval and the other one or `nil`"))
 
 ;;;;;;;;;;;;; ReadableInterval
 
