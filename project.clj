@@ -2,7 +2,7 @@
 (def clojure-versions ["1.8" "1.9" "1.10" "1.11" "1.12"])
 (def threeten-extra-version "1.4")
 (def joda-time-version "2.10.1")
-(defproject clojure.java-time "1.3.0"
+(defproject clojure.java-time "1.4.0-SNAPSHOT"
   :description "Clojure wrapper for Java 8 Time API"
   :url "http://github.com/dm3/clojure.java-time"
   :license {:name "MIT License"
