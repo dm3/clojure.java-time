@@ -9,12 +9,16 @@
          '[java-time.util :as jt.u])
 (import java.util.Locale)
 
-(def clock (j/fixed-clock "2015-11-26T10:20:30.000000040Z" "UTC"))
+(def ^java.time.Clock clock (j/fixed-clock "2015-11-26T10:20:30.000000040Z" "UTC"))
 
 (deftest constructors-test
   (testing "clocks"
     (testing ", with-clock"
+      (is (= (j/with-clock clock (j/zone-offset))
+             (j/with-clock-fn clock j/zone-offset)
+             (j/zone-offset clock)))
       (are [f] (= (j/with-clock clock (f))
+                  (j/with-clock clock (f (j/zone-id "UTC")))
                   (j/with-clock-fn clock f)
                   (f clock))
            j/zoned-date-time
@@ -23,8 +27,18 @@
            j/local-date-time
            j/local-time
            j/local-date
-           j/zone-offset
-           j/zone-id))
+           j/zone-id)
+      (doseq [offset ["+01:00" "-01:00"]]
+        (testing offset
+          (are [f] (= (j/with-clock clock (f (j/zone-id offset)))
+                      (f (.withZone clock (j/zone-id offset))))
+               j/zoned-date-time
+               j/offset-date-time
+               j/offset-time
+               j/local-date-time
+               j/local-time
+               j/local-date
+               j/zone-id))))
 
     (testing ", system"
       (let [now-millis (j/value (j/system-clock))]

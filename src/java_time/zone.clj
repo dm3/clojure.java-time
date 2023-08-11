@@ -200,17 +200,23 @@
 
 (conversion! ZoneId ZonedDateTime
   (fn [^ZoneId z]
-    (ZonedDateTime/now z))
+    (jt.clock/make
+      (fn [^Clock c]
+        (ZonedDateTime/now (.withZone c z)))))
   2)
 
 (conversion! ZoneId OffsetDateTime
   (fn [^ZoneId z]
-    (OffsetDateTime/now z))
+    (jt.clock/make
+      (fn [^Clock c]
+        (OffsetDateTime/now (.withZone c z)))))
   2)
 
 (conversion! ZoneId OffsetTime
   (fn [^ZoneId z]
-    (OffsetTime/now z))
+    (jt.clock/make
+      (fn [^Clock c]
+        (OffsetTime/now (.withZone c z)))))
   2)
 
 (conversion! CharSequence ZonedDateTime
