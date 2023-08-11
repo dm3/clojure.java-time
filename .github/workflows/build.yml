@@ -64,7 +64,7 @@ jobs:
     needs: setup
     strategy:
       matrix:
-        java: ['8', '11', '17', '19']
+        java: ['8', '11', '17', '20']
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
