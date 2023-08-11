@@ -1,6 +1,6 @@
 # Changelog
 
-## NEXT
+## 1.3.0
 
 - remove `:redef` on protocol methods, they are never direct-linked: https://ask.clojure.org/index.php/10967/are-protocol-methods-guaranteed-to-not-be-directly-linked?show=10990#a10990
 - [#100](https://github.com/dm3/clojure.java-time/issues/100): respect `*clock*` when only providing a zone id in constructors
