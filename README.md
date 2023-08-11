@@ -64,12 +64,12 @@ You can also take a look at a [comprehensive comparison](http://time4j.net/tutor
 
 Add the following dependency to your `deps.edn`:
 ```clj
-clojure.java-time/clojure.java-time {:mvn/version "1.2.0"}
+clojure.java-time/clojure.java-time {:mvn/version "1.3.0"}
 ```
 
 or to your `project.clj` or `build.boot`:
 ```clj
-[clojure.java-time "1.2.0"]
+[clojure.java-time "1.3.0"]
 ```
 
 The [API](https://dm3.github.io/clojure.java-time) of the Clojure.Java-Time
