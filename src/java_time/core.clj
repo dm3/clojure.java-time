@@ -197,13 +197,27 @@
        (single-after? y (first more)))
      false)))
 
-(def ^{:arglists '([x] [x y] [x y & more])} not-after?
+(defn not-after?
   "Like [[before?]], except returns `true` if the inputs are equal."
-  (complement after?))
+  ([x] true)
+  ([x y] (not (single-after? x y)))
+  ([x y & more]
+   (if (single-after? x y)
+     false
+     (if-some [n (next more)]
+       (recur y (first more) n)
+       (not (single-after? y (first more)))))))
 
-(def ^{:arglists '([x] [x y] [x y & more])} not-before?
+(defn not-before?
   "Like [[after?]], except returns `true` if the inputs are equal."
-  (complement before?))
+  ([x] true)
+  ([x y] (not (single-before? x y)))
+  ([x y & more]
+   (if (single-before? x y)
+     false
+     (if-some [n (next more)]
+       (recur y (first more) n)
+       (not (single-before? y (first more)))))))
 
 (defn plus
   "Adds all of the `os` to the time entity `o`. `plus` is not commutative, the
