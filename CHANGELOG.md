@@ -2,6 +2,8 @@
 
 ## NEXT
 
+- [#104](https://github.com/dm3/clojure.java-time/issues/104): fix transivitity of `not-{before,after}?` when called with intervals
+
 ## 1.4.0
 
 - [#98](https://github.com/dm3/clojure.java-time/issues/98): fix `not-before?` and `not-after?` with one or more than two arguments

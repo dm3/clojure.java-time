@@ -186,6 +186,10 @@
        (single-after? y (first more)))
      false)))
 
+(defn ^:private single-not-after? [x y]
+  (or (single-before? x y)
+      (= x y)))
+
 (defn not-after?
   "Returns `true` if time entities are ordered from the earliest to the
   latest (same semantics as `<=`), otherwise `false`.
@@ -199,13 +203,16 @@
   ;=> true
   ```"
   ([x] true)
-  ([x y] (not (single-after? x y)))
+  ([x y] (single-not-after? x y))
   ([x y & more]
-   (if (single-after? x y)
-     false
-     (if-some [n (next more)]
-       (recur y (first more) n)
-       (not (single-after? y (first more)))))))
+   (and (single-not-after? x y)
+        (if-some [n (next more)]
+          (recur y (first more) n)
+          (single-not-after? y (first more))))))
+
+(defn ^:private single-not-before? [x y]
+  (or (single-after? x y)
+      (= x y)))
 
 (defn not-before?
   "Returns `true` if time entities are ordered from the latest to the
@@ -220,13 +227,12 @@
   ;=> true
   ```"
   ([x] true)
-  ([x y] (not (single-before? x y)))
+  ([x y] (single-not-before? x y))
   ([x y & more]
-   (if (single-before? x y)
-     false
-     (if-some [n (next more)]
-       (recur y (first more) n)
-       (not (single-before? y (first more)))))))
+   (and (single-not-before? x y)
+        (if-some [n (next more)]
+          (recur y (first more) n)
+          (single-not-before? y (first more))))))
 
 (defn plus
   "Adds all of the `os` to the time entity `o`. `plus` is not commutative, the
