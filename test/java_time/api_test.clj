@@ -438,6 +438,23 @@
   (is (= j/plus j/+))
   (is (= j/minus j/-)))
 
+(defmacro is-<-coerce
+  [a b c a' b' c']
+  (assert ((every-pred symbol?) a b c))
+  (assert ((every-pred (some-fn number? keyword?)) a' b' c'))
+  `(do (is (j/> ~b ~a'))
+       (is (not (j/> ~a ~b')))
+       (is (j/< ~b ~c'))
+       (is (not (j/< ~c ~b')))
+       (is (j/<= ~b ~c'))
+       ;;FIXME https://github.com/dm3/clojure.java-time/issues/105
+       ;;(is (j/<= ~b ~b'))
+       (is (not (j/<= ~c ~b')))
+       ;;FIXME https://github.com/dm3/clojure.java-time/issues/105
+       ;;(is (j/>= ~b ~b'))
+       (is (j/>= ~b ~a'))
+       (is (not (j/>= ~a ~b')))))
+
 (defmacro is-< [a b c]
   (assert ((every-pred symbol?) a b c))
   `(do (is (j/> ~a))
@@ -504,34 +521,22 @@
     (let [thursday (j/day-of-week :thursday)
           saturday (j/day-of-week :saturday)
           sunday (j/day-of-week :sunday)]
-      ;; no properties
-      (is (j/after? saturday :thursday))
-      (is (not (j/after? thursday :saturday)))
-      (is (j/before? saturday :sunday))
-      (is (not (j/before? sunday :saturday)))
-      ;; has properties
+      (is-<-coerce  thursday  saturday  sunday
+                   :thursday :saturday :sunday)
       (is-< thursday saturday sunday))
 
     (let [january (j/month :january)
           february (j/month :february)
           march (j/month :march)]
-      ;; no properties
-      (is (j/after? february :january))
-      (is (not (j/after? january :february)))
-      (is (j/before? february :march))
-      (is (not (j/before? march :february)))
-      ;; has properties
+      (is-<-coerce  january  february  march
+                   :january :february :march)
       (is-< january february march))
 
     (let [year-2009 (j/year 2009)
           year-2010 (j/year 2010)
           year-2011 (j/year 2011)]
-      ;; no properties
-      (is (j/after? year-2010 2009))
-      (is (not (j/after? year-2009 2010)))
-      (is (j/before? year-2009 2010))
-      (is (not (j/before? year-2010 2009)))
-      ;; has properties
+      (is-<-coerce year-2009 year-2010 year-2011
+                        2009      2010      2011)
       (is-< year-2009 year-2010 year-2011))
 
     (let [jan-1 (j/month-day 1 1)
