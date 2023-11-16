@@ -6,7 +6,9 @@
 
 ;; share with java-time-test
 (require '[clojure.test :refer :all]
-         '[java-time.util :as jt.u])
+         '[java-time.util :as jt.u]
+         '[java-time.test-utils :refer [is-antisymmetric
+                                        is-asymmetric]])
 (import java.util.Locale)
 
 (def ^java.time.Clock clock (j/fixed-clock "2015-11-26T10:20:30.000000040Z" "UTC"))
@@ -346,17 +348,17 @@
     (is (not (j/duration? nil)))
     (testing "plus"
       (is (= (j/duration 100000001)
-             (j/plus (j/standard-days 1) (j/hours 3) (j/minutes 46) (j/seconds 40) (j/millis 1) (j/nanos 0))
-             (j/plus (j/duration 1 :days)
-                     (j/duration 3 :hours)
-                     (j/duration 46 :minutes)
-                     (j/duration 40 :seconds)
-                     (j/duration 1 :millis)
-                     (j/duration 0 :nanos)))))
+             (j/+ (j/standard-days 1) (j/hours 3) (j/minutes 46) (j/seconds 40) (j/millis 1) (j/nanos 0))
+             (j/+ (j/duration 1 :days)
+                  (j/duration 3 :hours)
+                  (j/duration 46 :minutes)
+                  (j/duration 40 :seconds)
+                  (j/duration 1 :millis)
+                  (j/duration 0 :nanos)))))
 
     (testing "minus"
       (is (= (j/duration "PT22H58M58.998999999S")
-             (j/minus (j/standard-days 1) (j/hours 1) (j/minutes 1) (j/seconds 1) (j/millis 1) (j/nanos 1)))))
+             (j/- (j/standard-days 1) (j/hours 1) (j/minutes 1) (j/seconds 1) (j/millis 1) (j/nanos 1)))))
 
     (testing "multiply"
       (is (= (j/hours 2)
@@ -375,18 +377,17 @@
   (testing "period"
     (testing "plus"
       (is (= (j/period 10 20 30)
-             (j/plus (j/years 10) (j/months 20) (j/days 30))
-             (j/plus (j/period 10)
-                     (j/period 0 20)
-                     (j/period 0 0 30))
-             (j/plus (j/period 10 :years)
-                     (j/period 20 :months)
-                     (j/period 30 :days)))))
+             (j/+ (j/years 10) (j/months 20) (j/days 30))
+             (j/+ (j/period 10)
+                  (j/period 0 20)
+                  (j/period 0 0 30))
+             (j/+ (j/period 10 :years)
+                  (j/period 20 :months)
+                  (j/period 30 :days)))))
 
     (testing "minus"
       (is (= (j/period 0 0 0)
-             (j/minus (j/period 10 20 30)
-                      (j/years 10) (j/months 20) (j/days 30)))))
+             (j/- (j/period 10 20 30) (j/years 10) (j/months 20) (j/days 30)))))
 
     (testing "multiply"
       (is (= (j/days 2)
@@ -401,196 +402,142 @@
   (testing "year"
     (testing "plus"
       (is (= (j/year 5)
-             (j/plus (j/year 2) (j/years 3)))))
+             (j/+ (j/year 2) (j/years 3)))))
 
     (testing "minus"
       (is (= (j/year 0)
-             (j/minus (j/year 5) (j/years 5))))))
+             (j/- (j/year 5) (j/years 5))))))
 
   (testing "month"
     (testing "plus"
       (is (= (j/month :may)
-             (j/plus (j/month 2) 3)
-             (j/plus (j/month 2) (j/months 3)))))
+             (j/+ (j/month 2) 3)
+             (j/+ (j/month 2) (j/months 3)))))
 
     (testing "minus"
       (is (= (j/month :january)
-             (j/minus (j/month 5) 4)
-             (j/minus (j/month 5) (j/months 4))))))
+             (j/- (j/month 5) 4)
+             (j/- (j/month 5) (j/months 4))))))
 
   (testing "day of week"
     (testing "plus"
       (is (= (j/day-of-week :sunday)
-             (j/plus (j/day-of-week 1) 6)
-             (j/plus (j/day-of-week 1) (j/days 6)))))
+             (j/+ (j/day-of-week 1) 6)
+             (j/+ (j/day-of-week 1) (j/days 6)))))
 
     (testing "minus"
       (is (= (j/day-of-week :monday)
-             (j/minus (j/day-of-week 6) 5)
-             (j/minus (j/day-of-week 6) (j/days 5)))))))
+             (j/- (j/day-of-week 6) 5)
+             (j/- (j/day-of-week 6) (j/days 5)))))))
+
+(deftest aliases-test
+  (is (= j/before? j/<))
+  (is (= j/not-after? j/<=))
+  (is (= j/after? j/>))
+  (is (= j/not-before? j/>=))
+  (is (= j/plus j/+))
+  (is (= j/minus j/-)))
+
+(defmacro is-< [a b c]
+  (assert ((every-pred symbol?) a b c))
+  `(do (is (j/> ~a))
+       (is (j/< ~a))
+       (is-asymmetric (j/> ~b ~a))
+       (is-asymmetric (j/< ~a ~b))
+       (is-asymmetric (j/> ~c ~b ~a))
+       (is-asymmetric (j/< ~a ~b ~c))
+       (is (j/<= ~a))
+       (is (j/>= ~a))
+       (is-antisymmetric (j/<= ~a ~a))
+       (is-antisymmetric (j/<= ~a ~b))
+       (is-antisymmetric (j/>= ~a ~a))
+       (is-antisymmetric (j/>= ~b ~a))
+       (is-antisymmetric (j/<= ~a ~b ~c))
+       (is-antisymmetric (j/>= ~c ~b ~a))
+       (is-antisymmetric (j/<= ~a ~a ~b ~b ~c ~c))
+       (is-antisymmetric (j/>= ~c ~c ~b ~b ~a ~a))))
 
 (deftest ordering-test
-
   (testing "times"
     (let [ldt (j/local-date-time clock)
-          ldt+5 (j/plus ldt (j/days 5))]
-      (is (j/after? ldt+5 ldt))
-      (is (not (j/after? ldt ldt+5)))
-      (is (j/before? ldt ldt+5))
-      (is (not (j/before? ldt+5 ldt)))
-      (is (j/not-after? ldt ldt))
-      (is (j/not-after? ldt ldt+5))
-      (is (not (j/not-after? ldt+5 ldt)))
-      (is (j/not-before? ldt ldt))
-      (is (j/not-before? ldt+5 ldt))
-      (is (not (j/not-before? ldt ldt+5))))
+          ldt+5 (j/+ ldt (j/days 5))
+          ldt+10 (j/+ ldt (j/days 10))]
+      (is-< ldt ldt+5 ldt+10))
 
     (let [ld (j/local-date clock)
-          ld+5 (j/plus ld (j/days 5))]
-      (is (j/after? ld+5 ld))
-      (is (not (j/after? ld ld+5)))
-      (is (j/before? ld ld+5))
-      (is (not (j/before? ld+5 ld)))
-      (is (j/not-after? ld ld))
-      (is (j/not-after? ld ld+5))
-      (is (not (j/not-after? ld+5 ld)))
-      (is (j/not-before? ld ld))
-      (is (j/not-before? ld+5 ld))
-      (is (not (j/not-before? ld ld+5))))
+          ld+5 (j/+ ld (j/days 5))
+          ld+10 (j/+ ld (j/days 10))]
+      (is-< ld ld+5 ld+10))
 
     (let [lt (j/local-time clock)
-          lt+5 (j/plus lt (j/minutes 5))]
-      (is (j/after? lt+5 lt))
-      (is (not (j/after? lt lt+5)))
-      (is (j/before? lt lt+5))
-      (is (not (j/before? lt+5 lt)))
-      (is (j/not-after? lt lt))
-      (is (j/not-after? lt lt+5))
-      (is (not (j/not-after? lt+5 lt)))
-      (is (j/not-before? lt lt))
-      (is (j/not-before? lt+5 lt))
-      (is (not (j/not-before? lt lt+5))))
+          lt+5 (j/+ lt (j/minutes 5))
+          lt+10 (j/+ lt (j/minutes 10))]
+      (is-< lt lt+5 lt+10))
 
     (let [zdt (j/zoned-date-time clock)
-          zdt+5 (j/plus zdt (j/minutes 5))]
-      (is (j/after? zdt+5 zdt))
-      (is (not (j/after? zdt zdt+5)))
-      (is (j/before? zdt zdt+5))
-      (is (not (j/before? zdt+5 zdt)))
-      (is (j/not-after? zdt zdt))
-      (is (j/not-after? zdt zdt+5))
-      (is (not (j/not-after? zdt+5 zdt)))
-      (is (j/not-before? zdt zdt))
-      (is (j/not-before? zdt+5 zdt))
-      (is (not (j/not-before? zdt zdt+5))))
+          zdt+5 (j/+ zdt (j/minutes 5))
+          zdt+10 (j/+ zdt (j/minutes 10))]
+      (is-< zdt zdt+5 zdt+10))
 
     (let [odt (j/offset-date-time clock)
-          odt+5 (j/plus odt (j/minutes 5))]
-      (is (j/after? odt+5 odt))
-      (is (not (j/after? odt odt+5)))
-      (is (j/before? odt odt+5))
-      (is (not (j/before? odt+5 odt)))
-      (is (j/not-after? odt odt))
-      (is (j/not-after? odt odt+5))
-      (is (not (j/not-after? odt+5 odt)))
-      (is (j/not-before? odt odt))
-      (is (j/not-before? odt+5 odt))
-      (is (not (j/not-before? odt odt+5))))
+          odt+5 (j/+ odt (j/minutes 5))
+          odt+10 (j/+ odt (j/minutes 10))]
+      (is-< odt odt+5 odt+10))
 
     (let [ot (j/offset-time clock)
-          ot+5 (j/plus ot (j/minutes 5))]
-      (is (j/after? ot+5 ot))
-      (is (not (j/after? ot ot+5)))
-      (is (j/before? ot ot+5))
-      (is (not (j/before? ot+5 ot)))
-      (is (j/not-after? ot ot))
-      (is (j/not-after? ot ot+5))
-      (is (not (j/not-after? ot+5 ot)))
-      (is (j/not-before? ot ot))
-      (is (j/not-before? ot+5 ot))
-      (is (not (j/not-before? ot ot+5))))
+          ot+5 (j/+ ot (j/minutes 5))
+          ot+10 (j/+ ot (j/minutes 10))]
+      (is-< ot ot+5 ot+10))
 
     (let [i (j/instant clock)
-          i+5 (j/plus i (j/minutes 5))]
-      (is (j/after? i+5 i))
-      (is (not (j/after? i i+5)))
-      (is (j/before? i i+5))
-      (is (not (j/before? i+5 i)))
-      (is (j/not-after? i i))
-      (is (j/not-after? i i+5))
-      (is (not (j/not-after? i+5 i)))
-      (is (j/not-before? i i))
-      (is (j/not-before? i+5 i))
-      (is (not (j/not-before? i i+5)))))
+          i+5 (j/+ i (j/minutes 5))
+          i+10 (j/+ i (j/minutes 10))]
+      (is-< i i+5 i+10)))
 
   (testing "clocks"
     (let [fc (j/fixed-clock 0)
-          fc+1000 (j/fixed-clock 1000)]
-      (is (j/after? fc+1000 fc))
-      (is (not (j/after? fc fc+1000)))
-      (is (j/before? fc fc+1000))
-      (is (not (j/before? fc+1000 fc)))
-      (is (j/not-after? fc fc))
-      (is (j/not-after? fc fc+1000))
-      (is (not (j/not-after? fc+1000 fc)))
-      (is (j/not-before? fc fc))
-      (is (j/not-before? fc+1000 fc))
-      (is (not (j/not-before? fc fc+1000)))))
+          fc+1000 (j/fixed-clock 1000)
+          fc+2000 (j/fixed-clock 2000)]
+      (is-< fc fc+1000 fc+2000)))
 
   (testing "fields"
     (let [thursday (j/day-of-week :thursday)
           saturday (j/day-of-week :saturday)
           sunday (j/day-of-week :sunday)]
+      ;; no properties
       (is (j/after? saturday :thursday))
       (is (not (j/after? thursday :saturday)))
       (is (j/before? saturday :sunday))
       (is (not (j/before? sunday :saturday)))
-      (is (j/not-after? saturday saturday))
-      (is (j/not-after? saturday sunday))
-      (is (not (j/not-after? sunday saturday)))
-      (is (j/not-before? saturday saturday))
-      (is (j/not-before? sunday saturday))
-      (is (not (j/not-before? saturday sunday))))
+      ;; has properties
+      (is-< thursday saturday sunday))
 
     (let [january (j/month :january)
           february (j/month :february)
           march (j/month :march)]
+      ;; no properties
       (is (j/after? february :january))
       (is (not (j/after? january :february)))
       (is (j/before? february :march))
       (is (not (j/before? march :february)))
-      (is (j/not-after? january january))
-      (is (j/not-after? february march))
-      (is (not (j/not-after? march february)))
-      (is (j/not-before? january january))
-      (is (j/not-before? february january))
-      (is (not (j/not-before? january february))))
+      ;; has properties
+      (is-< january february march))
 
     (let [year-2009 (j/year 2009)
-          year-2010 (j/year 2010)]
+          year-2010 (j/year 2010)
+          year-2011 (j/year 2011)]
+      ;; no properties
       (is (j/after? year-2010 2009))
       (is (not (j/after? year-2009 2010)))
       (is (j/before? year-2009 2010))
       (is (not (j/before? year-2010 2009)))
-      (is (j/not-after? year-2010 year-2010))
-      (is (j/not-after? year-2009 year-2010))
-      (is (not (j/not-after? year-2010 year-2009)))
-      (is (j/not-before? year-2010 year-2010))
-      (is (j/not-before? year-2010 year-2009))
-      (is (not (j/not-before? year-2009 year-2010))))
+      ;; has properties
+      (is-< year-2009 year-2010 year-2011))
 
     (let [jan-1 (j/month-day 1 1)
-          apr-1 (j/month-day 4 1)]
-      (is (j/after? apr-1 jan-1))
-      (is (not (j/after? jan-1 apr-1)))
-      (is (j/before? jan-1 apr-1))
-      (is (not (j/before? apr-1 jan-1)))
-      (is (j/not-after? jan-1 jan-1))
-      (is (j/not-after? jan-1 apr-1))
-      (is (not (j/not-after? apr-1 jan-1)))
-      (is (j/not-before? jan-1 jan-1))
-      (is (j/not-before? apr-1 jan-1))
-      (is (not (j/not-before? jan-1 apr-1))))))
+          apr-1 (j/month-day 4 1)
+          may-1 (j/month-day 5 1)]
+      (is-< jan-1 apr-1 may-1))))
 
 (deftest mock-clock-test
   (testing "constructors"
@@ -736,7 +683,7 @@
 
 (deftest seq-test
   (is (= [(j/local-date 2015) (j/local-date 2016)]
-         (take 2 (j/iterate j/plus (j/local-date 2015) (j/years 1))))))
+         (take 2 (j/iterate j/+ (j/local-date 2015) (j/years 1))))))
 
 (deftest adjuster-test
   (testing "predefined adjusters"
@@ -753,7 +700,7 @@
            (j/local-date 2016 1 1))))
 
   (testing "functions as adjusters"
-    (is (= (j/adjust (j/local-date 2015 1 1) j/plus (j/days 1))
+    (is (= (j/adjust (j/local-date 2015 1 1) j/+ (j/days 1))
            (j/local-date 2015 1 2)))))
 
 (deftest sugar-test
@@ -925,50 +872,59 @@
     (testing "ordering"
       (let [interval-1-2 (j/interval 1 2)
             interval-3-4 (j/interval 3 4)
+            interval-1-3 (j/interval 1 3)
             instant-1 (j/instant 1)
+            instant-2 (j/instant 2)
             instant-3 (j/instant 3)]
-        (is (j/before? interval-1-2 interval-3-4))
-        (is (not (j/before? interval-3-4 interval-1-2)))
-        (is (j/before? interval-1-2 instant-3))
-        (is (not (j/before? interval-3-4 instant-1)))
+        (is-asymmetric (j/before? interval-1-2 interval-3-4))
+        (is-asymmetric (j/before? interval-1-2 instant-3))
+        (is-asymmetric ((complement j/before?) interval-3-4 instant-1))
 
-        (is (j/after? interval-3-4 interval-1-2))
-        (is (not (j/after? interval-1-2 interval-3-4)))
-        (is (j/after? interval-3-4 instant-1))
-        (is (not (j/after? interval-1-2 instant-3)))
+        (is-asymmetric (j/after? interval-3-4 interval-1-2))
+        (is-asymmetric (j/after? interval-3-4 instant-1))
+        (is-asymmetric ((complement j/after?) interval-1-2 instant-3))
 
-        (is (j/not-before? interval-3-4 interval-3-4))
-        (is (not (j/not-before? interval-1-2 interval-3-4)))
+        (is-antisymmetric (j/not-before? interval-3-4 interval-3-4))
+        (is-antisymmetric ((complement j/not-before?) interval-1-2 interval-3-4))
+        ;; not antisymmetric since they overlap
         (is (j/not-before? interval-3-4 instant-3))
-        (is (j/not-before? interval-3-4 instant-1))
-        (is (not (j/not-before? interval-1-2 instant-3)))
+        (is (j/not-before? instant-3 interval-3-4))
+        (is-antisymmetric (j/not-before? interval-3-4 instant-1))
+        (is-antisymmetric ((complement j/not-before?) interval-1-2 instant-3))
 
-        (is (j/not-after? interval-1-2 interval-1-2))
-        (is (j/not-after? interval-1-2 interval-3-4))
-        (is (not (j/not-after? interval-3-4 interval-1-2)))
+        (is-antisymmetric (j/not-after? interval-1-2 interval-1-2))
+        (is-antisymmetric (j/not-after? interval-1-2 interval-3-4))
+        ;; not antisymmetric since they overlap
         (is (j/not-after? interval-1-2 instant-1))
-        (is (j/not-after? interval-1-2 instant-3))
-        (is (not (j/not-after? interval-3-4 instant-1))))
-      (is (j/before? (j/interval 1000 2000) (j/instant 5000)))
-      (is (j/before? (j/interval 1000 5000) (j/instant 5000))
-          "exclusive end")
-      (is (j/before? (j/interval 1000 5000) (j/interval 5000 6000))
-          "exclusive end")
-      (is (j/before? (j/interval 1000 5000) (j/interval 5001 6000)))
+        (is (j/not-after? instant-1 interval-1-2))
+        (is (j/<= instant-1 interval-1-2 instant-2))
+        (is (not (j/<= instant-1 interval-1-2 instant-2 interval-1-2 instant-1)))
+        ;; FIXME breaks transitivity!!
+        ;; (is (not (j/not-after? instant-1 interval-1-3 instant-2 interval-1-3 instant-1)))
+        (is (j/<= instant-1 interval-1-2 interval-1-2 instant-1))
+        (is-antisymmetric (j/not-after? interval-1-2 instant-3))
+        (is-antisymmetric ((complement j/not-after?) interval-3-4 instant-1)))
+      (is-asymmetric (j/before? (j/interval 1000 2000) (j/instant 5000)))
+      (testing "exclusive end"
+        (is-asymmetric (j/before? (j/interval 1000 5000) (j/instant 5000)))
+        (is-asymmetric (j/before? (j/interval 1000 5000) (j/interval 5000 6000))))
+      (is-asymmetric (j/before? (j/interval 1000 5000) (j/interval 5001 6000)))
 
-      (is (j/after? (j/interval 1000 5000) (j/instant 100)))
-      (is (j/after? (j/interval 1000 5000) (j/instant 999)))
+      (is-asymmetric (j/after? (j/interval 1000 5000) (j/instant 100)))
+      (is-asymmetric (j/after? (j/interval 1000 5000) (j/instant 999)))
       (is (not (j/after? (j/interval 1000 5000) (j/instant 1000)))
           "inclusive start")
+      (is (not (j/after? (j/instant 1000) (j/interval 1000 5000)))
+          "inclusive start")
       (is (not (j/after? (j/interval 1000 5000) (j/instant 2000))))
-      (is (j/after? (j/interval 1000 5000) (j/interval 100 999)))
-      (is (j/after? (j/interval 1000 5000) (j/interval 100 1000))
-          "exclusive end")
+      (is-asymmetric (j/after? (j/interval 1000 5000) (j/interval 100 999)))
+      (testing "exclusive end"
+        (is-asymmetric (j/after? (j/interval 1000 5000) (j/interval 100 1000))))
       (testing "instant<interval"
-        (is (j/before? (j/instant 100) (j/interval (j/instant 1000) (j/instant 2000)))
-            "before start")
-        (is (not (j/before? (j/instant 1000) (j/interval (j/instant 1000) (j/instant 2000))))
-            "start is inclusive")
+        (testing "before start"
+          (is-asymmetric (j/before? (j/instant 100) (j/interval (j/instant 1000) (j/instant 2000)))))
+        (testing "start is inclusive"
+          (is (not (j/before? (j/instant 1000) (j/interval (j/instant 1000) (j/instant 2000))))))
         (is (not (j/before? (j/instant 1500) (j/interval (j/instant 1000) (j/instant 2000))))
             "middle")
         (is (not (j/before? (j/instant 1999) (j/interval (j/instant 1000) (j/instant 2000))))
@@ -986,10 +942,10 @@
             "middle")
         (is (not (j/after? (j/instant 1999) (j/interval (j/instant 1000) (j/instant 2000))))
             "before end")
-        (is (j/after? (j/instant 2000) (j/interval (j/instant 1000) (j/instant 2000)))
-            "end is exclusive")
-        (is (j/after? (j/instant 3000) (j/interval (j/instant 1000) (j/instant 2000)))
-            "after end")))))
+        (testing "end is exclusive"
+          (is-asymmetric (j/after? (j/instant 2000) (j/interval (j/instant 1000) (j/instant 2000)))))
+        (testing "after end"
+          (is-asymmetric (j/after? (j/instant 3000) (j/interval (j/instant 1000) (j/instant 2000)))))))))
 
 (jt.u/when-joda-time-loaded
 
@@ -1015,8 +971,7 @@
             (j/duration (Duration/standardDays 1))
             (j/duration (Period/days 1))))
 
-      (is (= (j/plus (j/millis 1) (j/seconds 1) (j/minutes 1) (j/hours 1)
-               (j/standard-days 1))
+      (is (= (j/+ (j/millis 1) (j/seconds 1) (j/minutes 1) (j/hours 1) (j/standard-days 1))
             (j/duration (.plus (Duration/millis 1)
                           (.plus (Duration/standardSeconds 1)
                             (.plus (Duration/standardMinutes 1)
@@ -1035,10 +990,10 @@
       (is (= (j/period 1 :months) (j/period (Period/months 1))))
       (is (= (j/period 1 :years) (j/period (Period/years 1))))
 
-      (is (= (j/plus (j/days 1) (j/months 1) (j/years 1))
-            (j/period (.plus (Period/days 1)
-                        (.plus (Period/months 1)
-                          (Period/years 1)))))))
+      (is (= (j/+ (j/days 1) (j/months 1) (j/years 1))
+             (j/period (.plus (Period/days 1)
+                         (.plus (Period/months 1)
+                           (Period/years 1)))))))
 
     #_(testing "instant"
       (is (= (j/instant joda-clock)
