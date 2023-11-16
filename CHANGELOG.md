@@ -2,6 +2,16 @@
 
 ## NEXT
 
+- [#105](https://github.com/dm3/clojure.java-time/issues/105): fix `not-{before,after}?` on unconverted values
+  - a consequence of fixing [#104](https://github.com/dm3/clojure.java-time/issues/104)
+- add `java-time.api/=` for equality of times (with conversions)
+- add support to intermix unconverted values in comparison operations after first argument
+  - supported by `{before,after}?`, `not-{before,after}?`, `j/=`, and aliases of those ops
+  - examples:
+    - `(j/< (j/day-of-week :thursday) :saturday :sunday)`
+    - `(j/<= (j/day-of-week :thursday) :thursday (j/day-of-week :saturday) :sunday)`
+    - `(j/= (j/day-of-week :thursday) :thursday (j/day-of-week :thursday) :thursday)`
+
 ## 1.4.1
 
 - [#104](https://github.com/dm3/clojure.java-time/issues/104): fix transivitity of `not-{before,after}?` when called with intervals

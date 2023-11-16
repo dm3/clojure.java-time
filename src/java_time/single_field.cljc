@@ -39,6 +39,7 @@
   (assert (string? doc))
   (let [tp (resolve-tag tp)
         fname (with-meta (symbol (jt.u/dashize (-> (str tp) (string/split #"\.") peek))) {:tag tp})
+        o (with-meta (gensym 'o) {:tag tp})
         fields (symbol (str fname "-fields"))]
     `(do
        (def ~fields
@@ -71,10 +72,13 @@
 
        (extend-type ~tp
          jt.c/Ordered
-         (single-after? [d# o#]
-           (> (.getValue d#) (.getValue (~fname o#))))
-         (single-before? [d# o#]
-           (< (.getValue d#) (.getValue (~fname o#)))))
+         (single-after? [d# ~o]
+           (> (.getValue d#) (.getValue ~o)))
+         (single-before? [d# ~o]
+           (< (.getValue d#) (.getValue ~o)))
+         
+         jt.c/Convert
+         (-convert [_# o#] (~fname o#)))
 
         ;; Enum-based entities do not implement `Temporal`, thus we don't have an easy
         ;; option to add/subtract a TemporalAmount.
@@ -98,6 +102,7 @@
   (let [^Class tpcls (resolve tp)
         tp (symbol (.getName tpcls))
         fname (with-meta (symbol (jt.u/dashize (-> (str tp) (string/split #"\.") peek))) {:tag tp})
+        o (with-meta (gensym 'o) {:tag tp})
         arg (gensym)]
     `(do
        (defn ~(symbol (str fname "?"))
@@ -133,10 +138,13 @@
 
        (extend-type ~tp
          jt.c/Ordered
-         (single-after? [d# o#]
-           (> (.getValue d#) (.getValue (~fname o#))))
-         (single-before? [d# o#]
-           (< (.getValue d#) (.getValue (~fname o#))))))))
+         (single-after? [d# ~o]
+           (> (.getValue d#) (.getValue ~o)))
+         (single-before? [d# ~o]
+           (< (.getValue d#) (.getValue ~o)))
+
+         jt.c/Convert
+         (-convert [_# o#] (~fname o#))))))
 
 (defmacro two-field-entity [tp doc & {:keys [major-field-types major-field-ctor
                                              minor-field-ctor minor-field-default]}]

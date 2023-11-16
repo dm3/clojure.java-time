@@ -1,5 +1,5 @@
 (ns java-time.core
-  (:refer-clojure :exclude (zero? range max min abs < > <= >= * - + neg?))
+  (:refer-clojure :exclude (zero? range max min abs < > <= >= * - + neg? =))
   (:require [clojure.core :as cc])
   (:import [java.time.temporal ValueRange]
            [java.time.chrono Chronology]))
@@ -126,6 +126,16 @@
   (single-after? [a b]
     "Internal use"))
 
+(defprotocol Convert
+  (-convert [a b] "Internal use.
+                  Convert `b` to a value compatible with `a`'s implementation
+                  of single-after? etc, and one that is useable as the first argument
+                  to single-after? etc."))
+
+(extend-type Object
+  Convert
+  (-convert [a b] b))
+
 (defn as
   "Values of property/unit identified by keys/objects `ks` of the temporal
   entity `o`, e.g.
@@ -157,13 +167,14 @@
   => true
   ```"
   ([x] true)
-  ([x y] (single-before? x y))
+  ([x y] (single-before? x (-convert x y)))
   ([x y & more]
-   (if (single-before? x y)
-     (if-some [n (next more)]
-       (recur y (first more) n)
-       (single-before? y (first more)))
-     false)))
+   (let [y (-convert x y)]
+     (if (single-before? x y)
+       (if-some [n (next more)]
+         (recur y (first more) n)
+         (single-before? y (-convert y (first more))))
+       false))))
 
 (defn after?
   "Returns `true` if time entities are ordered from the latest to the
@@ -178,17 +189,18 @@
   => true
   ```"
   ([x] true)
-  ([x y] (single-after? x y))
+  ([x y] (single-after? x (-convert x y)))
   ([x y & more]
-   (if (single-after? x y)
-     (if-some [n (next more)]
-       (recur y (first more) n)
-       (single-after? y (first more)))
-     false)))
+   (let [y (-convert x y)]
+     (if (single-after? x y)
+       (if-some [n (next more)]
+         (recur y (first more) n)
+         (single-after? y (-convert y (first more))))
+       false))))
 
 (defn ^:private single-not-after? [x y]
-  (or (single-before? x y)
-      (= x y)))
+  (or (cc/= x y)
+      (single-before? x y)))
 
 (defn not-after?
   "Returns `true` if time entities are ordered from the earliest to the
@@ -203,16 +215,17 @@
   ;=> true
   ```"
   ([x] true)
-  ([x y] (single-not-after? x y))
+  ([x y] (single-not-after? x (-convert x y)))
   ([x y & more]
-   (and (single-not-after? x y)
-        (if-some [n (next more)]
-          (recur y (first more) n)
-          (single-not-after? y (first more))))))
+   (let [y (-convert x y)]
+     (and (single-not-after? x y)
+          (if-some [n (next more)]
+            (recur y (first more) n)
+            (single-not-after? y (-convert y (first more))))))))
 
 (defn ^:private single-not-before? [x y]
-  (or (single-after? x y)
-      (= x y)))
+  (or (cc/= x y)
+      (single-after? x y)))
 
 (defn not-before?
   "Returns `true` if time entities are ordered from the latest to the
@@ -227,12 +240,13 @@
   ;=> true
   ```"
   ([x] true)
-  ([x y] (single-not-before? x y))
+  ([x y] (single-not-before? x (-convert x y)))
   ([x y & more]
-   (and (single-not-before? x y)
-        (if-some [n (next more)]
-          (recur y (first more) n)
-          (single-not-before? y (first more))))))
+   (let [y (-convert x y)]
+     (and (single-not-before? x y)
+          (if-some [n (next more)]
+            (recur y (first more) n)
+            (single-not-before? y (-convert y (first more))))))))
 
 (defn plus
   "Adds all of the `os` to the time entity `o`. `plus` is not commutative, the
@@ -393,6 +407,22 @@
   type"
   [o & os]
   (first (sort (cons o os))))
+
+(defn =
+  "Returns true if all time entities represent the same time, otherwise false.
+
+  `j/=` is not commutative, the first argument is always the entity which will
+  accumulate the rest of the arguments.
+  
+  e.g., (j/= (j/day-of-week :thursday) :thursday) => true"
+  ([x] true)
+  ([x y] (cc/= x (-convert x y)))
+  ([x y & more]
+   (let [y (-convert x y)]
+     (and (cc/= x y)
+          (if-some [n (next more)]
+            (recur y (first more) n)
+            (cc/= y (-convert y (first more))))))))
 
 ;; these can't be aliased since they're protocol methods
 
