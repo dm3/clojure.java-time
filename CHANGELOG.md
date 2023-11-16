@@ -2,6 +2,8 @@
 
 ## NEXT
 
+## 1.4.0
+
 - [#98](https://github.com/dm3/clojure.java-time/issues/98): fix `not-before?` and `not-after?` with one or more than two arguments
 - new aliases
   - `java-time.api/+` aliases `java-time.api/plus`
