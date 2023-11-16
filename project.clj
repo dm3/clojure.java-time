@@ -3,7 +3,7 @@
 (def threeten-extra-version "1.4")
 (def joda-time-version "2.10.1")
 (def math-combinatorics-version "0.2.0")
-(defproject clojure.java-time "1.4.2-SNAPSHOT"
+(defproject clojure.java-time "1.4.2"
   :description "Clojure wrapper for Java 8 Time API"
   :url "http://github.com/dm3/clojure.java-time"
   :license {:name "MIT License"

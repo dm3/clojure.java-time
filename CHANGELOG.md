@@ -2,6 +2,8 @@
 
 ## NEXT
 
+## 1.4.2
+
 - [#105](https://github.com/dm3/clojure.java-time/issues/105): fix `not-{before,after}?` on unconverted values
   - a consequence of fixing [#104](https://github.com/dm3/clojure.java-time/issues/104)
 - add `java-time.api/=` for equality of times (with conversions)
