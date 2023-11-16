@@ -1,5 +1,6 @@
 (ns java-time.core
-  (:refer-clojure :exclude (zero? range max min abs))
+  (:refer-clojure :exclude (zero? range max min abs < > <= >= * - + neg?))
+  (:require [clojure.core :as cc])
   (:import [java.time.temporal ValueRange]
            [java.time.chrono Chronology]))
 
@@ -141,19 +142,7 @@
   ([o k1 k2]
    [(as* o k1) (as* o k2)])
   ([o k1 k2 & ks]
-   (concat (as o k1 k2) (mapv #(as* o %) ks))))
-
-(defn max
-  "Latest/longest of the given time entities. Entities should be of the same
-  type"
-  [o & os]
-  (first (sort #(compare %2 %1) (cons o os))))
-
-(defn min
-  "Earliest/shortest of the given time entities. Entities should be of the same
-  type"
-  [o & os]
-  (first (sort (cons o os))))
+   (into (as o k1 k2) (map #(as* o %)) ks)))
 
 (defn before?
   "Returns `true` if time entities are ordered from the earliest to the
@@ -197,13 +186,47 @@
        (single-after? y (first more)))
      false)))
 
-(def ^{:arglists '([x] [x y] [x y & more])} not-after?
-  "Like [[before?]], except returns `true` if the inputs are equal."
-  (complement after?))
+(defn not-after?
+  "Returns `true` if time entities are ordered from the earliest to the
+  latest (same semantics as `<=`), otherwise `false`.
 
-(def ^{:arglists '([x] [x y] [x y & more])} not-before?
-  "Like [[after?]], except returns `true` if the inputs are equal."
-  (complement before?))
+  ```
+  (not-after? (local-date 2009) (local-date 2010) (local-date 2011))
+  ;=> true
+
+  (not-after? (interval (instant 10000) (instant 1000000))
+              (instant 99999999))
+  ;=> true
+  ```"
+  ([x] true)
+  ([x y] (not (single-after? x y)))
+  ([x y & more]
+   (if (single-after? x y)
+     false
+     (if-some [n (next more)]
+       (recur y (first more) n)
+       (not (single-after? y (first more)))))))
+
+(defn not-before?
+  "Returns `true` if time entities are ordered from the latest to the
+  earliest (same semantics as `>=`), otherwise `false`.
+
+  ```
+  (not-before? (local-date 2011) (local-date 2010) (local-date 2009))
+  ;=> true
+
+  (not-before? (instant 99999999)
+               (interval (instant 10000) (instant 1000000)))
+  ;=> true
+  ```"
+  ([x] true)
+  ([x y] (not (single-before? x y)))
+  ([x y & more]
+   (if (single-before? x y)
+     false
+     (if-some [n (next more)]
+       (recur y (first more) n)
+       (not (single-before? y (first more)))))))
 
 (defn plus
   "Adds all of the `os` to the time entity `o`. `plus` is not commutative, the
@@ -240,20 +263,20 @@
 
   Plusable
   (seq-plus [n xs]
-    (apply + n xs))
+    (apply cc/+ n xs))
 
   Minusable
   (seq-minus [n xs]
-    (apply - n xs))
+    (apply cc/- n xs))
 
   Multipliable
   (multiply-by [n v]
-    (* n (value v)))
+    (cc/* n (value v)))
 
   Amount
-  (zero? [n] (clojure.core/zero? n))
-  (negative? [n] (neg? n))
-  (negate [n] (- n))
+  (zero? [n] (cc/zero? n))
+  (negative? [n] (cc/neg? n))
+  (negate [n] (cc/- n))
   (abs [n] (Math/abs (long n))))
 
 (extend-type nil
@@ -268,3 +291,111 @@
    :largest-min-value (fn [p] (.getLargestMinimum ^ValueRange (range p)))
    :smallest-max-value (fn [p] (.getSmallestMaximum ^ValueRange (range p)))
    :max-value (fn [p] (.getMaximum ^ValueRange (range p)))})
+
+;; vars named after excluded clojure.core vars
+
+(def ^{:arglists '([x] [x y] [x y & more])}
+  <=
+  "Returns `true` if time entities are ordered from the earliest to the
+  latest (same semantics as `<=`), otherwise `false`.
+
+  ```
+  (j/<= (local-date 2009) (local-date 2010) (local-date 2011))
+  ;=> true
+
+  (j/<= (interval (instant 10000) (instant 1000000))
+        (instant 99999999))
+  ;=> true
+  ```"
+  not-after?)
+
+(def ^{:arglists '([x] [x y] [x y & more])}
+  >=
+  "Returns `true` if time entities are ordered from the latest to the
+  earliest (same semantics as `>=`), otherwise `false`.
+
+  ```
+  (j/>= (local-date 2011) (local-date 2010) (local-date 2009))
+  ;=> true
+
+  (j/>= (instant 99999999)
+        (interval (instant 10000) (instant 1000000)))
+  ;=> true
+  ```"
+  not-before?)
+
+(def ^{:arglists '([x] [x y] [x y & more])}
+  < 
+  "Returns `true` if time entities are ordered from the earliest to the
+  latest (same semantics as `<`), otherwise `false`.
+
+  ```
+  (j/< (local-date 2009) (local-date 2010) (local-date 2011))
+  => true
+
+  (j/< (interval (instant 10000) (instant 1000000))
+       (instant 99999999))
+  => true
+  ```"
+  before?)
+
+(def ^{:arglists '([x] [x y] [x y & more])}
+  > 
+  "Returns `true` if time entities are ordered from the latest to the
+  earliest (same semantics as `>`), otherwise `false`.
+
+  ```
+  (j/> (local-date 2011) (local-date 2010) (local-date 2009))
+  => true
+
+  (j/> (instant 99999999)
+       (interval (instant 10000) (instant 1000000)))
+  => true
+  ```"
+  after?)
+
+(def ^{:arglists '([o & os])}
+  +
+  "Adds all of the `os` to the time entity `o`. `+` is not commutative, the
+  first argument is always the entity which will accumulate the rest of the
+  arguments.
+
+  ```
+  (j/+ (j/local-date 2015) (j/years 1))
+  => <java.time.LocalDate \"2016-01-01\">
+  ```"
+  plus)
+
+(def ^{:arglists '([o & os])}
+  -
+  "Subtracts all of the `os` from the time entity `o`
+
+  ```
+  (j/- (j/local-date 2015) (j/years 1))
+  => <java.time.LocalDate \"2014-01-01\">
+  ```"
+  minus)
+
+(defn max
+  "Latest/longest of the given time entities. Entities should be of the same
+  type"
+  [o & os]
+  (first (sort #(compare %2 %1) (cons o os))))
+
+(defn min
+  "Earliest/shortest of the given time entities. Entities should be of the same
+  type"
+  [o & os]
+  (first (sort (cons o os))))
+
+;; these can't be aliased since they're protocol methods
+
+(defn neg?
+  "True if the amount is negative"
+  [a]
+  (negative? a))
+
+(defn *
+  "Entity `o` multiplied by the value `v`"
+  [o v]
+  (multiply-by o v))

@@ -1,5 +1,17 @@
 # Changelog
 
+## NEXT
+
+- [#98](https://github.com/dm3/clojure.java-time/issues/98): fix `not-before?` and `not-after?` with one or more than two arguments
+- new aliases
+  - `java-time.api/+` aliases `java-time.api/plus`
+  - `java-time.api/-` aliases `java-time.api/minus`
+  - `java-time.api/neg?` aliases `java-time.api/negative?`
+  - `java-time.api/<` aliases `java-time.api/before?`
+  - `java-time.api/>` aliases `java-time.api/after?`
+  - `java-time.api/<=` aliases `java-time.api/not-after?`
+  - `java-time.api/>=` aliases `java-time.api/not-before?`
+
 ## 1.3.0
 
 - remove `:redef` on protocol methods, they are never direct-linked: https://ask.clojure.org/index.php/10967/are-protocol-methods-guaranteed-to-not-be-directly-linked?show=10990#a10990
