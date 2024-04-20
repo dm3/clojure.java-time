@@ -141,7 +141,7 @@
   entity `o`, e.g.
 
   ```
-  (as (duration 1 :hour) :minutes)
+  (as (duration 1 :hours) :minutes)
   => 60
 
   (as (local-date 2015 9) :year :month-of-year)
