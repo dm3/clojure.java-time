@@ -7,8 +7,9 @@
   (deftest gen-test
     (doseq [[source nsym] (doto @(resolve 'java-time.dev.gen/gen-source->nsym)
                             (-> not-empty assert))]
-      (is (= (slurp source)
-             (with-out-str ((resolve 'java-time.dev.gen/print-java-time-ns)
-                            nsym)))
-          (format "%s namespace is out of date -- call (java-time.dev.gen/spit-java-time-ns) or `$ lein doc`"
-                  nsym)))))
+      (let [actual (slurp source)
+            expected (with-out-str ((resolve 'java-time.dev.gen/print-java-time-ns)
+                                    nsym))
+            up-to-date? (= actual expected)]
+        (is (not up-to-date?)
+            "Please run `lein doc` and commit the changes")))))
