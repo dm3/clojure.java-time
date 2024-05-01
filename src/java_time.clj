@@ -18,7 +18,7 @@
 (defn ^{:doc "Units present in this temporal entity."} units ([o] (java-time.core/units o)))
 (defn ^{:doc "Map of properties present in this temporal entity"} properties ([o] (java-time.core/properties o)))
 (defn ^{:doc "Property of this temporal entity under key `k`"} property ([o k] (java-time.core/property o k)))
-(def ^{:arglists (quote ([o k] [o k1 k2] [o k1 k2 & ks])), :doc "Values of property/unit identified by keys/objects `ks` of the temporal\n  entity `o`, e.g.\n\n  ```\n  (as (duration 1 :hour) :minutes)\n  => 60\n\n  (as (local-date 2015 9) :year :month-of-year)\n  => [2015 9]\n  ```"} as java-time.core/as)
+(def ^{:arglists (quote ([o k] [o k1 k2] [o k1 k2 & ks])), :doc "Values of property/unit identified by keys/objects `ks` of the temporal\n  entity `o`, e.g.\n\n  ```\n  (as (duration 1 :hours) :minutes)\n  => 60\n\n  (as (local-date 2015 9) :year :month-of-year)\n  => [2015 9]\n  ```"} as java-time.core/as)
 (defn ^{:doc "Value of the property"} value ([p] (java-time.core/value p)))
 (defn ^{:doc "Range of values for this property"} range ([p] (java-time.core/range p)))
 (defn ^{:doc "Minimum value of this property"} min-value ([p] (java-time.core/min-value p)))
