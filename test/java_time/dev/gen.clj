@@ -1,9 +1,20 @@
 (ns java-time.dev.gen
-  (:require [clojure.string :as str]
-            [clojure.set :as set]
-            [clojure.walk :as walk]))
+  (:require
+    [clojure.set :as set]
+    [clojure.string :as str]
+    [clojure.walk :as walk])
+  (:import
+    (java.io Writer)))
 
 (def impl-local-sym '+impl+)
+
+(deftype DocString [value])
+
+(defmethod print-method DocString
+  [^DocString this ^Writer w]
+  (->> (str/replace (.-value this) "\"" "\\\"")
+       (format "\"%s\"")
+       (.write w)))
 
 (defn normalize-argv [argv]
   {:post [(or (empty? %)
@@ -54,11 +65,10 @@
             (throw (IllegalArgumentException.
                      (str "Calling import-macro on a non-macro: " sym))))
         n (:name m)
-        arglists (:arglists m)]
-    (list* 'defmacro n 
+        arglists (:arglists m)
+        forwarded-meta (not-empty (into (sorted-map) (select-keys m [:doc :deprecated])))]
+    (list* 'defmacro (with-meta n forwarded-meta)
            (concat
-             (some-> (not-empty (into (sorted-map) (select-keys m [:doc :deprecated])))
-                     list)
              (normalize-arities
                (map (fn [argv]
                       (let [argv (normalize-argv argv)]
@@ -206,7 +216,7 @@
                                      (vary-meta v #(not-empty
                                                      (cond-> (sorted-map)
                                                        (some? (:tag %)) (assoc :tag (:tag %))
-                                                       (some? (:doc %)) (assoc :doc (:doc %))
+                                                       (some? (:doc %)) (assoc :doc (DocString. (:doc %)))
                                                        ((some-fn true? string?) (:deprecated %)) (assoc :deprecated (:deprecated %))
                                                        (string? (:superseded-by %)) (assoc :superseded-by (:superseded-by %))
                                                        (string? (:supercedes %)) (assoc :supercedes (:supercedes %))
@@ -253,5 +263,4 @@
 
 (comment
   (print-java-time-ns java-time-nsym)
-  (spit-java-time-ns)
-  )
+  (spit-java-time-ns))
