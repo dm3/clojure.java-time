@@ -49,7 +49,7 @@
 
   Accepts a map of options as an optional second argument:
 
-  * `resolver-style` - either `:strict`, `:smart `or `:lenient`
+  * `resolver-style` - either `:strict`, `:smart` or `:lenient`
   * `case` - either `:insensitive` or `:sensitive` (defaults to :sensitive)"
   ([fmt]
    (formatter fmt {}))
