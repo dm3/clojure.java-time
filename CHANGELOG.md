@@ -2,6 +2,8 @@
 
 ## NEXT
 
+- [#114](https://github.com/dm3/clojure.java-time/pull/114): fix doc typo ([@metayan](https://github.com/metayan))
+
 ## 1.4.2
 
 - [#105](https://github.com/dm3/clojure.java-time/issues/105): fix `not-{before,after}?` on unconverted values
