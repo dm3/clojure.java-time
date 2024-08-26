@@ -11,5 +11,5 @@
             expected (with-out-str ((resolve 'java-time.dev.gen/print-java-time-ns)
                                     nsym))
             up-to-date? (= actual expected)]
-        (is (not up-to-date?)
+        (is up-to-date?
             "Please run `lein doc` and commit the changes")))))
