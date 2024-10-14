@@ -34,7 +34,7 @@
   (apply t/run-tests test-nsyms))
 
 (def failures-and-errors
-  (let [{:keys [:fail :error]} test-results]
-    (+ fail error)))
+  (let [{:keys [fail error]} test-results]
+    (min 1 (+ fail error))))
 
 (System/exit failures-and-errors)
