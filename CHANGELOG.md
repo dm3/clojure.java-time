@@ -3,6 +3,7 @@
 ## NEXT
 
 - [#114](https://github.com/dm3/clojure.java-time/pull/114): fix doc typo ([@metayan](https://github.com/metayan))
+- [#111](https://github.com/dm3/clojure.java-time/issues/111): docstrings of java-time.api contain literal \n ([@devurandom](https://github.com/devurandom)
 
 ## 1.4.2
 
