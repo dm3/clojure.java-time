@@ -1,10 +1,8 @@
 (ns java-time.dev.gen
-  (:require
-    [clojure.set :as set]
-    [clojure.string :as str]
-    [clojure.walk :as walk])
-  (:import
-    (java.io Writer)))
+  (:require [clojure.set :as set]
+            [clojure.string :as str]
+            [clojure.walk :as walk])
+  (:import (java.io Writer)))
 
 (def impl-local-sym '+impl+)
 
