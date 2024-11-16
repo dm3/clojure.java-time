@@ -1,6 +1,6 @@
 (ns java-time.dev.gen
-  (:require [clojure.set :as set]
-            [clojure.string :as str]
+  (:require [clojure.string :as str]
+            [clojure.set :as set]
             [clojure.walk :as walk])
   (:import (java.io Writer)))
 
