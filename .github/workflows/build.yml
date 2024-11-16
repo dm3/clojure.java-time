@@ -12,27 +12,28 @@ on:
 env:
   #bump to clear caches
   ACTION_CACHE_VERSION: 'v2'
-  LEIN_VERSION: '2.9.8'
+  LEIN_VERSION: '2.11.2'
 
 jobs:
   setup:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
-      - uses: actions/cache@v2
+        uses: actions/checkout@v4
+      - uses: actions/cache@v4
         with:
-          path: ~/.m2/repository
-          key: ${{ env.ACTION_CACHE_VERSION }}-${{ runner.os }}-maven-${{ hashFiles('**/project.clj') }}
+          path: |
+            ~/.m2/repository
+          key: ${{ env.ACTION_CACHE_VERSION }}-${{ runner.os }}-maven-${{ hashFiles('**/project.clj', '**/bb.edn') }}
           restore-keys: |
             ${{ env.ACTION_CACHE_VERSION }}-${{ runner.os }}-maven-
       - name: Prepare java
-        uses: actions/setup-java@v2
+        uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
           java-version: 11
       - name: Install clojure tools
-        uses: DeLaGuardo/setup-clojure@5.1
+        uses: DeLaGuardo/setup-clojure@12.6
         with:
           lein: ${{ env.LEIN_VERSION }}
       - name: Warm deps cache
@@ -42,20 +43,20 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
-      - uses: actions/cache@v2
+        uses: actions/checkout@v4
+      - uses: actions/cache@v4
         with:
           path: ~/.m2/repository
-          key: ${{ env.ACTION_CACHE_VERSION }}-${{ runner.os }}-maven-${{ hashFiles('**/project.clj') }}
+          key: ${{ env.ACTION_CACHE_VERSION }}-${{ runner.os }}-maven-${{ hashFiles('**/project.clj', '**/bb.edn') }}
           restore-keys: |
             ${{ env.ACTION_CACHE_VERSION }}-${{ runner.os }}-maven-
       - name: Prepare java
-        uses: actions/setup-java@v2
+        uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
           java-version: 11
       - name: Install clojure tools
-        uses: DeLaGuardo/setup-clojure@5.1
+        uses: DeLaGuardo/setup-clojure@12.6
         with:
           lein: ${{ env.LEIN_VERSION }}
       - name: Run Eastwood
@@ -68,20 +69,20 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
-      - uses: actions/cache@v2
+        uses: actions/checkout@v4
+      - uses: actions/cache@v4
         with:
           path: ~/.m2/repository
-          key: ${{ env.ACTION_CACHE_VERSION }}-${{ runner.os }}-maven-${{ hashFiles('**/project.clj') }}
+          key: ${{ env.ACTION_CACHE_VERSION }}-${{ runner.os }}-maven-${{ hashFiles('**/project.clj', '**/bb.edn') }}
           restore-keys: |
             ${{ env.ACTION_CACHE_VERSION }}-${{ runner.os }}-maven-
       - name: Prepare java
-        uses: actions/setup-java@v2
+        uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
           java-version: ${{ matrix.java }}
       - name: Install clojure tools
-        uses: DeLaGuardo/setup-clojure@5.1
+        uses: DeLaGuardo/setup-clojure@12.6
         with:
           lein: ${{ env.LEIN_VERSION }}
       - name: Run JVM tests
@@ -91,15 +92,15 @@ jobs:
 #    runs-on: ubuntu-latest
 #    steps:
 #      - name: Checkout
-#        uses: actions/checkout@v2
+#        uses: actions/checkout@v4
 #      - name: Prepare java
-#        uses: actions/setup-java@v2
+#        uses: actions/setup-java@v4
 #        with:
 #          distribution: 'temurin'
 #          java-version: 17
-#      - name: Setup Babashka
-#        uses: turtlequeue/setup-babashka@v1.3.0
+#      - name: Install clojure tools
+#        uses: DeLaGuardo/setup-clojure@12.6
 #        with:
-#          babashka-version: 0.8.156
+#          bb: latest
 #      - name: Run Babashka tests
 #        run: ./bin/bb-test-runner.sh
