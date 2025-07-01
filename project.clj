@@ -66,16 +66,14 @@
                                                   [org.threeten/threeten-extra ~threeten-extra-version]
                                                   [joda-time/joda-time ~joda-time-version]]}
              :1.11 {:dependencies [[org.clojure/clojure "1.11.1"]]}
-             :1.11-three-ten-joda {:dependencies [[org.clojure/clojure "1.11.1"]
+             :1.11-three-ten-joda {:dependencies [[org.clojure/clojure "1.11.4"]
                                                   [org.threeten/threeten-extra ~threeten-extra-version]
                                                   [joda-time/joda-time ~joda-time-version]]
                                    :repositories [["sonatype-oss-public" {:url "https://oss.sonatype.org/content/groups/public"}]]}
-             :1.12 {:dependencies [[org.clojure/clojure "1.12.0-master-SNAPSHOT"]]
-                    :repositories [["sonatype-oss-public" {:url "https://oss.sonatype.org/content/groups/public"}]]}
-             :1.12-three-ten-joda {:dependencies [[org.clojure/clojure "1.12.0-master-SNAPSHOT"]
+             :1.12 {:dependencies [[org.clojure/clojure "1.12.1"]]}
+             :1.12-three-ten-joda {:dependencies [[org.clojure/clojure "1.12.1"]
                                                   [org.threeten/threeten-extra ~threeten-extra-version]
-                                                  [joda-time/joda-time ~joda-time-version]]
-                                   :repositories [["sonatype-oss-public" {:url "https://oss.sonatype.org/content/groups/public"}]]}}
+                                                  [joda-time/joda-time ~joda-time-version]]}}
   :aliases {"all" ["with-profile" ~(str "test," (str/join ":" (mapcat (juxt identity #(str % "-three-ten-joda")) clojure-versions)))]
             "warm-deps" ["all" "deps"]
             "doc" ["do"
